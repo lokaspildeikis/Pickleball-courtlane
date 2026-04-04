@@ -1,0 +1,72 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Product } from '../../lib/shopify';
+
+interface ProductCardProps {
+  key?: React.Key;
+  product: Product;
+}
+
+export function ProductCard({ product }: ProductCardProps) {
+  const firstImage = product.images.edges[0]?.node;
+  const price = product.priceRange.minVariantPrice;
+  const compareAtPrice = product.compareAtPriceRange?.minVariantPrice;
+  
+  const isSale = compareAtPrice && parseFloat(compareAtPrice.amount) > parseFloat(price.amount);
+  const isNew = product.tags.includes('new');
+  const isBestSeller = product.tags.includes('best-seller');
+
+  return (
+    <Link to={`/product/${product.handle}`} className="group block">
+      <div className="relative bg-gray-50 aspect-[4/5] mb-4 overflow-hidden rounded-sm">
+        {firstImage ? (
+          <img 
+            src={firstImage.url} 
+            alt={firstImage.altText || product.title}
+            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+            No image
+          </div>
+        )}
+        
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
+          {isSale && (
+            <span className="bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm">
+              Sale
+            </span>
+          )}
+          {isNew && !isSale && (
+            <span className="bg-teal-800 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm">
+              New
+            </span>
+          )}
+          {isBestSeller && !isSale && !isNew && (
+            <span className="bg-gray-900 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm">
+              Best Seller
+            </span>
+          )}
+        </div>
+      </div>
+      
+      <div>
+        <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
+          {product.title}
+        </h3>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-900">
+            ${parseFloat(price.amount).toFixed(2)}
+          </span>
+          {isSale && (
+            <span className="text-xs text-gray-500 line-through">
+              ${parseFloat(compareAtPrice.amount).toFixed(2)}
+            </span>
+          )}
+        </div>
+      </div>
+    </Link>
+  );
+}
