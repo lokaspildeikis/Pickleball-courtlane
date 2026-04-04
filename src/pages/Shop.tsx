@@ -26,17 +26,13 @@ export function Shop() {
   // Filter logic
   let filteredProducts = [...products];
   if (currentFilter !== 'all') {
-    if (currentFilter === 'bundles') {
-      filteredProducts = filteredProducts.filter(p => p.tags.includes('bundle'));
-    } else if (currentFilter === 'essentials') {
-      filteredProducts = filteredProducts.filter(p => p.tags.includes('essentials'));
-    } else if (currentFilter === 'rackets') {
-      filteredProducts = filteredProducts.filter(p => p.tags.includes('racket'));
-    } else if (currentFilter === 'grips') {
-      filteredProducts = filteredProducts.filter(p => p.tags.includes('grip'));
-    } else if (currentFilter === 'protection') {
-      filteredProducts = filteredProducts.filter(p => p.tags.includes('protection'));
-    }
+    const filterTag = currentFilter === 'bundles' ? 'bundle' : 
+                      currentFilter === 'rackets' ? 'racket' : 
+                      currentFilter === 'grips' ? 'grip' : currentFilter;
+    
+    filteredProducts = filteredProducts.filter(p => 
+      p.tags.some(tag => tag.toLowerCase() === filterTag)
+    );
   }
 
   // Sort logic
