@@ -158,6 +158,25 @@ const MOCK_PRODUCTS: Product[] = [
       ]
     },
     tags: ["bundle", "beginner", "best-seller"]
+  },
+  {
+    id: "gid://shopify/Product/5",
+    handle: "court-pro-backpack",
+    title: "Court Pro Backpack",
+    description: "The ultimate tournament bag. Features a dedicated paddle compartment, ventilated shoe garage, and plenty of space for your gear.",
+    descriptionHtml: "<p>The ultimate tournament bag. Features a dedicated paddle compartment, ventilated shoe garage, and plenty of space for your gear.</p><ul><li>Water-resistant fabric</li><li>Padded shoulder straps</li><li>Fits up to 4 paddles</li></ul>",
+    priceRange: { minVariantPrice: { amount: "85.00", currencyCode: "USD" } },
+    images: {
+      edges: [
+        { node: { url: "https://images.unsplash.com/photo-1553062407-98eeb94c6a62?auto=format&fit=crop&q=80&w=800", altText: "Premium backpack" } }
+      ]
+    },
+    variants: {
+      edges: [
+        { node: { id: "gid://shopify/ProductVariant/6", title: "Midnight Black", availableForSale: true, price: { amount: "85.00", currencyCode: "USD" } } }
+      ]
+    },
+    tags: ["backpack", "travel", "essentials"]
   }
 ];
 

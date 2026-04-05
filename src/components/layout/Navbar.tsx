@@ -33,6 +33,7 @@ export function Navbar() {
           <nav className="hidden md:flex space-x-8">
             <Link to="/shop" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Shop All</Link>
             <Link to="/shop?filter=essentials" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Essentials</Link>
+            <Link to="/shop?filter=backpacks" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Backpacks</Link>
             <Link to="/shop?filter=bundles" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Bundles</Link>
             <Link to="/about" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Our Story</Link>
           </nav>
@@ -72,6 +73,13 @@ export function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Essentials
+            </Link>
+            <Link 
+              to="/shop?filter=backpacks" 
+              className="block px-3 py-4 text-base font-medium text-gray-900 border-b border-gray-50"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Backpacks
             </Link>
             <Link 
               to="/shop?filter=bundles" 

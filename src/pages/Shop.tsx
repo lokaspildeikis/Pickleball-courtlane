@@ -28,7 +28,8 @@ export function Shop() {
   if (currentFilter !== 'all') {
     const filterTag = currentFilter === 'bundles' ? 'bundle' : 
                       currentFilter === 'rackets' ? 'racket' : 
-                      currentFilter === 'grips' ? 'grip' : currentFilter;
+                      currentFilter === 'grips' ? 'grip' : 
+                      currentFilter === 'backpacks' ? 'backpack' : currentFilter;
     
     filteredProducts = filteredProducts.filter(p => 
       p.tags.some(tag => tag.toLowerCase() === filterTag)
@@ -68,8 +69,9 @@ export function Shop() {
       <div className="mb-10">
         <h1 className="text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
           {currentFilter === 'all' ? 'All Gear' : 
-           currentFilter === 'bundles' ? 'Starter Bundles' :
+            currentFilter === 'bundles' ? 'Starter Bundles' :
            currentFilter === 'essentials' ? 'Court Essentials' :
+           currentFilter === 'backpacks' ? 'Court Backpacks' :
            currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1)}
         </h1>
         <p className="text-gray-500 max-w-2xl">
@@ -126,6 +128,12 @@ export function Shop() {
             className={`text-sm font-bold uppercase tracking-wide transition-colors ${currentFilter === 'bundles' ? 'text-teal-700 border-b-2 border-teal-700 pb-1' : 'text-gray-500 hover:text-gray-900'}`}
           >
             Bundles
+          </button>
+          <button 
+            onClick={() => handleFilterChange('backpacks')}
+            className={`text-sm font-bold uppercase tracking-wide transition-colors ${currentFilter === 'backpacks' ? 'text-teal-700 border-b-2 border-teal-700 pb-1' : 'text-gray-500 hover:text-gray-900'}`}
+          >
+            Backpacks
           </button>
         </div>
 
