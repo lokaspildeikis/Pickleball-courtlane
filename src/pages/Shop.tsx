@@ -26,13 +26,15 @@ export function Shop() {
   // Filter logic
   let filteredProducts = [...products];
   if (currentFilter !== 'all') {
-    const filterTag = currentFilter === 'bundles' ? 'bundle' : 
-                      currentFilter === 'rackets' ? 'racket' : 
-                      currentFilter === 'grips' ? 'grip' : 
-                      currentFilter === 'backpacks' ? 'backpack' : currentFilter;
+    // Flexible tag matching (handles singular/plural and common typos)
+    const filterTags = currentFilter === 'bundles' ? ['bundle', 'bundles'] :
+                       currentFilter === 'rackets' ? ['racket', 'rackets'] :
+                       currentFilter === 'grips' ? ['grip', 'grips'] :
+                       currentFilter === 'backpacks' ? ['backpack', 'backpacks', 'backpakcs'] :
+                       [currentFilter];
     
     filteredProducts = filteredProducts.filter(p => 
-      p.tags.some(tag => tag.toLowerCase() === filterTag)
+      p.tags.some(tag => filterTags.some(ft => tag.toLowerCase() === ft))
     );
   }
 
