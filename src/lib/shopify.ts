@@ -221,7 +221,7 @@ async function mockShopifyFetch({ query, variables }: { query: string, variables
 export async function getProducts() {
   const query = `
     query getProducts {
-      products(first: 20) {
+      products(first: 250) {
         edges {
           node {
             id

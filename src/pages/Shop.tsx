@@ -34,7 +34,7 @@ export function Shop() {
                        [currentFilter];
     
     filteredProducts = filteredProducts.filter(p => 
-      p.tags.some(tag => filterTags.some(ft => tag.toLowerCase() === ft))
+      p.tags.some(tag => filterTags.some(ft => tag.trim().toLowerCase() === ft.trim().toLowerCase()))
     );
   }
 
