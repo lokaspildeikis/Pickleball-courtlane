@@ -18,12 +18,12 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link to={`/product/${product.handle}`} className="group block">
-      <div className="relative bg-gray-50 aspect-[4/5] mb-4 overflow-hidden rounded-sm">
+      <div className="relative bg-white aspect-[4/5] mb-4 overflow-hidden rounded-sm border border-gray-100 flex items-center justify-center p-6">
         {firstImage ? (
           <img 
             src={firstImage.url} 
             alt={firstImage.altText || product.title}
-            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+            className="object-contain max-h-full w-full transition-transform duration-500 group-hover:scale-110 mix-blend-multiply"
             loading="lazy"
           />
         ) : (
