@@ -4,7 +4,7 @@ import { Button } from '../ui/Button';
 import { useEffect } from 'react';
 
 export function CartDrawer() {
-  const { isCartOpen, closeCart, items, updateQuantity, removeFromCart, cartTotal, createCheckout } = useCart();
+  const { isCartOpen, closeCart, items, updateQuantity, removeFromCart, cartTotal, createCheckout, isCheckingOut } = useCart();
 
   // Prevent body scroll when cart is open
   useEffect(() => {
@@ -115,8 +115,8 @@ export function CartDrawer() {
               <p>${cartTotal.toFixed(2)}</p>
             </div>
             <p className="text-xs text-gray-500 mb-6">Shipping and taxes calculated at checkout.</p>
-            <Button size="full" onClick={createCheckout}>
-              Checkout
+            <Button size="full" onClick={createCheckout} disabled={isCheckingOut}>
+              {isCheckingOut ? 'Redirecting...' : 'Checkout'}
             </Button>
           </div>
         )}

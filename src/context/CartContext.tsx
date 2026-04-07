@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { shopifyFetch } from '../lib/shopify';
 
 export interface CartItem {
   id: string;
@@ -23,6 +24,7 @@ interface CartContextType {
   cartCount: number;
   checkoutUrl: string | null;
   createCheckout: () => Promise<void>;
+  isCheckingOut: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -31,6 +33,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [items, setItems] = useState<CartItem[]>([]);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   // Load cart from local storage on mount
   useEffect(() => {
@@ -81,22 +84,55 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const cartCount = items.reduce((count, item) => count + item.quantity, 0);
 
   const createCheckout = async () => {
-    // In a real Shopify implementation, this would call the Storefront API
-    // to create a checkout with the current line items and return the webUrl.
-    // For this demo, we'll just simulate a delay and redirect to a mock URL.
-    
-    // Example Shopify API call:
-    // const mutation = `mutation checkoutCreate($input: CheckoutCreateInput!) { ... }`
-    // const variables = { input: { lineItems: items.map(i => ({ variantId: i.variantId, quantity: i.quantity })) } }
-    // const response = await shopifyFetch(mutation, variables);
-    // window.location.href = response.data.checkoutCreate.checkout.webUrl;
+    if (!items.length || isCheckingOut) return;
 
-    console.log("Creating Shopify checkout with items:", items);
-    
-    // Mock checkout process
-    setTimeout(() => {
-      alert("In a real implementation, you would be redirected to Shopify Checkout now.\n\nItems: " + items.map(i => `${i.quantity}x ${i.title}`).join(', '));
-    }, 500);
+    setIsCheckingOut(true);
+    try {
+      const mutation = `
+        mutation checkoutCreate($input: CheckoutCreateInput!) {
+          checkoutCreate(input: $input) {
+            checkout {
+              id
+              webUrl
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      `;
+
+      const variables = {
+        input: {
+          lineItems: items.map((item) => ({
+            variantId: item.variantId,
+            quantity: item.quantity,
+          })),
+        },
+      };
+
+      const response = await shopifyFetch({ query: mutation, variables });
+      const payload = response.body?.data?.checkoutCreate;
+      const userErrors = payload?.userErrors || [];
+      const webUrl = payload?.checkout?.webUrl as string | undefined;
+
+      if (userErrors.length > 0) {
+        throw new Error(userErrors.map((e: { message: string }) => e.message).join(', '));
+      }
+
+      if (!webUrl) {
+        throw new Error('Checkout URL was not returned by Shopify.');
+      }
+
+      setCheckoutUrl(webUrl);
+      window.location.href = webUrl;
+    } catch (error) {
+      console.error('Checkout creation failed:', error);
+      alert('Could not start checkout. Please try again in a moment.');
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   return (
@@ -111,7 +147,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       cartTotal,
       cartCount,
       checkoutUrl,
-      createCheckout
+      createCheckout,
+      isCheckingOut
     }}>
       {children}
     </CartContext.Provider>
