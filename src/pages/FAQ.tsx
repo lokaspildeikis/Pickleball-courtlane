@@ -1,14 +1,6 @@
 export function FAQ() {
   const faqs = [
     {
-      question: "How long does shipping take?",
-      answer: "We process all orders within 1-2 business days. Standard shipping within the US typically takes 3-5 business days. Expedited options are available at checkout."
-    },
-    {
-      question: "Do you offer international shipping?",
-      answer: "Currently, we only ship within the United States. We are working hard to expand our shipping options to Canada and Europe soon."
-    },
-    {
       question: "What is your return policy?",
       answer: "We offer a 30-day return policy on all unused items in their original packaging. If you're not satisfied with your purchase, please contact our support team to initiate a return."
     },
