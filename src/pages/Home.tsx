@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { getProducts, Product } from '../lib/shopify';
 import { ProductCard } from '../components/product/ProductCard';
 import { Button } from '../components/ui/Button';
-import { ShieldCheck, Zap, RefreshCcw } from 'lucide-react';
+import { ShieldCheck, Zap, RefreshCcw, Truck } from 'lucide-react';
 
 export function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -63,7 +63,7 @@ export function Home() {
       {/* Trust Bar */}
       <section className="bg-teal-900 text-teal-50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-teal-800">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-teal-800">
             <div className="flex items-center justify-center gap-3 pt-4 md:pt-0">
               <Zap size={20} className="text-teal-400" />
               <span className="text-sm font-medium uppercase tracking-wide">Pro-Level Performance</span>
@@ -71,6 +71,10 @@ export function Home() {
             <div className="flex items-center justify-center gap-3 pt-4 md:pt-0">
               <ShieldCheck size={20} className="text-teal-400" />
               <span className="text-sm font-medium uppercase tracking-wide">Premium Materials</span>
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-4 md:pt-0">
+              <Truck size={20} className="text-teal-400" />
+              <span className="text-sm font-medium uppercase tracking-wide">Free Shipping</span>
             </div>
             <div className="flex items-center justify-center gap-3 pt-4 md:pt-0">
               <RefreshCcw size={20} className="text-teal-400" />

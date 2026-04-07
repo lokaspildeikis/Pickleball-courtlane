@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-950 text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
           
           <div className="col-span-1 md:col-span-1">
             <Link to="/" className="text-2xl font-black tracking-tighter text-white uppercase italic block mb-4">
@@ -29,8 +29,14 @@ export function Footer() {
             <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-gray-200">Support</h3>
             <ul className="space-y-3">
               <li><Link to="/faq" className="text-gray-400 hover:text-white text-sm transition-colors">FAQ</Link></li>
-              <li><Link to="/shipping" className="text-gray-400 hover:text-white text-sm transition-colors">Shipping & Returns</Link></li>
               <li><a href="mailto:support@courtlane.example.com" className="text-gray-400 hover:text-white text-sm transition-colors">Contact Us</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-gray-200">Shipping</h3>
+            <ul className="space-y-3">
+              <li><Link to="/shipping" className="text-gray-400 hover:text-white text-sm transition-colors">Shipping Policy</Link></li>
             </ul>
           </div>
 

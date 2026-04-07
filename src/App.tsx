@@ -6,6 +6,7 @@ import { Shop } from './pages/Shop';
 import { ProductDetail } from './pages/ProductDetail';
 import { About } from './pages/About';
 import { FAQ } from './pages/FAQ';
+import { Shipping } from './pages/Shipping';
 
 export default function App() {
   return (
@@ -18,7 +19,7 @@ export default function App() {
             <Route path="product/:handle" element={<ProductDetail />} />
             <Route path="about" element={<About />} />
             <Route path="faq" element={<FAQ />} />
-            <Route path="shipping" element={<FAQ />} />
+            <Route path="shipping" element={<Shipping />} />
           </Route>
         </Routes>
       </Router>
