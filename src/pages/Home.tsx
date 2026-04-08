@@ -154,7 +154,7 @@ export function Home() {
                   Performance Grips
                 </li>
               </ul>
-              <Link to="/product/starter-bundle">
+              <Link to="/shop?filter=bundles">
                 <Button size="lg">Shop Bundle - $45</Button>
               </Link>
             </div>
