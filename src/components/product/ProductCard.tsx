@@ -8,6 +8,19 @@ interface ProductCardProps {
   product: Product;
 }
 
+function renderStars(rating: number) {
+  const fullStars = Math.round(rating);
+  return (
+    <div className="flex items-center gap-0.5" aria-label={`${rating.toFixed(1)} out of 5 stars`}>
+      {Array.from({ length: 5 }).map((_, idx) => (
+        <span key={idx} className={idx < fullStars ? 'text-amber-500' : 'text-gray-300'}>
+          ★
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function getRoundedComparePrice(currentPrice: number): number {
   const increased = currentPrice * 1.15;
   const base = Math.floor(increased);
@@ -71,8 +84,9 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
       
       <div>
-        <div className="text-xs text-gray-500 mb-1">
-          {reviewSummary.rating.toFixed(1)} stars • {reviewSummary.reviewCount} reviews
+        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+          {renderStars(reviewSummary.rating)}
+          <span>{reviewSummary.rating.toFixed(1)} • {reviewSummary.reviewCount} reviews</span>
         </div>
         <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
           {product.title}

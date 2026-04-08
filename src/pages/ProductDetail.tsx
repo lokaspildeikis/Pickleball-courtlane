@@ -18,6 +18,19 @@ function getRoundedComparePrice(currentPrice: number): number {
   return Number(rounded.toFixed(2));
 }
 
+function renderStars(rating: number) {
+  const fullStars = Math.round(rating);
+  return (
+    <div className="flex items-center gap-0.5" aria-label={`${rating.toFixed(1)} out of 5 stars`}>
+      {Array.from({ length: 5 }).map((_, idx) => (
+        <span key={idx} className={idx < fullStars ? 'text-amber-500' : 'text-gray-300'}>
+          ★
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function ProductDetail() {
   const { handle } = useParams<{ handle: string }>();
   const { addToCart } = useCart();
@@ -261,7 +274,10 @@ export function ProductDetail() {
                     <p className="font-semibold text-gray-900">{review.author}</p>
                     <p className="text-xs text-gray-500">{review.date}</p>
                   </div>
-                  <p className="text-sm text-teal-700 font-semibold mb-1">{review.rating.toFixed(1)} stars</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    {renderStars(review.rating)}
+                    <p className="text-sm text-teal-700 font-semibold">{review.rating.toFixed(1)}</p>
+                  </div>
                   <p className="text-sm font-semibold text-gray-900 mb-1">{review.title}</p>
                   <p className="text-sm text-gray-600">{review.text}</p>
                   {review.photoUrl && (
