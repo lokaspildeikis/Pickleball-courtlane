@@ -31,7 +31,7 @@ export function Home() {
       <section className="relative bg-gray-900 text-white overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&q=80&w=2000" 
+            src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&q=80&w=2000" 
             alt="Pickleball court" 
             className="w-full h-full object-cover opacity-40"
           />
