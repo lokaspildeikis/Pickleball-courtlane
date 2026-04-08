@@ -127,31 +127,31 @@ export function Home() {
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="w-full md:w-1/2">
               <img 
-                src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&q=80&w=1000" 
+                src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Pickleball_ball.jpg" 
                 alt="Pickleball gear bundle" 
                 className="w-full h-auto rounded-sm shadow-xl"
               />
             </div>
             <div className="w-full md:w-1/2 md:pl-8">
-              <span className="text-teal-700 font-bold text-sm uppercase tracking-widest mb-2 block">Save 20%</span>
+              <span className="text-teal-700 font-bold text-sm uppercase tracking-widest mb-2 block">Save 15%</span>
               <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
                 The Starter Bundle
               </h2>
               <p className="text-gray-600 mb-6 text-lg">
-                Everything you need to hit the courts with confidence. Includes our pro-tour overgrips, a protective neoprene paddle cover, and a cooling towel for those intense summer matches.
+                Everything you need to start strong on day one. Includes pickleball balls, a paddle, and performance grips in one ready-to-play kit.
               </p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center text-gray-700">
                   <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3"></div>
-                  3x Pro Tour Overgrips
+                  Pickleball Balls
                 </li>
                 <li className="flex items-center text-gray-700">
                   <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3"></div>
-                  1x Aero Neoprene Cover
+                  Pickleball Paddle
                 </li>
                 <li className="flex items-center text-gray-700">
                   <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3"></div>
-                  1x Cooling Performance Towel
+                  Performance Grips
                 </li>
               </ul>
               <Link to="/product/starter-bundle">
