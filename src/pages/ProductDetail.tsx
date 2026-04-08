@@ -260,9 +260,7 @@ export function ProductDetail() {
           <div className="mt-10">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-gray-900">Customer Reviews</h2>
-              <span className="text-xs px-2 py-1 rounded bg-white text-white border border-white font-medium">
-                Simulated (Research)
-              </span>
+              <span className="text-xs px-2 py-1 rounded bg-white text-white border border-white font-medium" aria-hidden="true"></span>
             </div>
             <p className="text-sm text-gray-600 mb-4">
               {reviewSummary.rating.toFixed(1)} / 5 • {reviewSummary.reviewCount} reviews
