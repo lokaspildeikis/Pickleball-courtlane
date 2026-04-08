@@ -4,6 +4,20 @@ import { getProduct, Product } from '../lib/shopify';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/ui/Button';
 import { Minus, Plus, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
+import AIOptimizer from '../components/product/AIOptimizer';
+import { OptimizationResult } from '../lib/gemini';
+
+function getRoundedComparePrice(currentPrice: number): number {
+  const increased = currentPrice * 1.15;
+  const base = Math.floor(increased);
+  let rounded = base + 0.99;
+
+  if (rounded < increased) {
+    rounded = base + 1 + 0.99;
+  }
+
+  return Number(rounded.toFixed(2));
+}
 
 export function ProductDetail() {
   const { handle } = useParams<{ handle: string }>();
@@ -65,7 +79,11 @@ export function ProductDetail() {
     );
   }
 
-  const isSale = selectedVariant.compareAtPrice && parseFloat(selectedVariant.compareAtPrice.amount) > parseFloat(selectedVariant.price.amount);
+  const currentPriceValue = parseFloat(selectedVariant.price.amount);
+  const existingCompareAtValue = selectedVariant.compareAtPrice ? parseFloat(selectedVariant.compareAtPrice.amount) : 0;
+  const generatedCompareAtValue = getRoundedComparePrice(currentPriceValue);
+  const displayCompareAtValue = Math.max(existingCompareAtValue, generatedCompareAtValue);
+  const isSale = displayCompareAtValue > currentPriceValue;
   const hasMultipleVariants = product.variants.edges.length > 1 && product.variants.edges[0].node.title !== 'Default Title';
 
   const handleAddToCart = () => {
@@ -77,6 +95,18 @@ export function ProductDetail() {
       price: parseFloat(selectedVariant.price.amount),
       image: activeImage || product.images.edges[0]?.node.url,
       quantity: quantity
+    });
+  };
+
+  const handleApplyOptimization = (optimized: OptimizationResult) => {
+    if (!product) return;
+    
+    setProduct({
+      ...product,
+      title: optimized.title,
+      description: optimized.description,
+      // Simple conversion for the mock UI
+      descriptionHtml: optimized.description.split('\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('')
     });
   };
 
@@ -96,7 +126,7 @@ export function ProductDetail() {
         
         {/* Image Gallery */}
         <div className="w-full md:w-1/2">
-          <div className="bg-gray-50 aspect-square rounded-sm overflow-hidden mb-4 relative">
+          <div className="bg-white aspect-square rounded-sm overflow-hidden mb-4 relative flex items-center justify-center p-4 border border-gray-100">
             {isSale && (
               <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-sm z-10">
                 Sale
@@ -105,7 +135,7 @@ export function ProductDetail() {
             <img 
               src={activeImage} 
               alt={product.title} 
-              className="w-full h-full object-cover"
+              className="max-w-full max-h-full object-contain"
             />
           </div>
           
@@ -118,7 +148,7 @@ export function ProductDetail() {
                   onClick={() => setActiveImage(img.node.url)}
                   className={`aspect-square bg-gray-50 rounded-sm overflow-hidden border-2 transition-colors ${activeImage === img.node.url ? 'border-teal-800' : 'border-transparent hover:border-gray-300'}`}
                 >
-                  <img src={img.node.url} alt="" className="w-full h-full object-cover" />
+                  <img src={img.node.url} alt="" className="w-full h-full object-contain" />
                 </button>
               ))}
             </div>
@@ -127,17 +157,28 @@ export function ProductDetail() {
 
         {/* Product Info */}
         <div className="w-full md:w-1/2 flex flex-col">
+          {/* AI Optimizer - Always visible for easier access */}
+          <div className="mb-6 flex gap-4 items-center">
+            <AIOptimizer 
+              originalTitle={product.title}
+              originalDescription={product.description}
+              originalTags={product.tags}
+              onApply={handleApplyOptimization}
+            />
+            <span className="bg-red-500 text-white px-2 py-1 rounded text-[10px]">DEBUG: Master AI ACTIVE</span>
+          </div>
+
           <h1 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-2">
             {product.title}
           </h1>
           
           <div className="flex items-center gap-3 mb-6">
             <span className="text-2xl font-bold text-gray-900">
-              ${parseFloat(selectedVariant.price.amount).toFixed(2)}
+              ${currentPriceValue.toFixed(2)}
             </span>
             {isSale && (
               <span className="text-lg text-gray-500 line-through">
-                ${parseFloat(selectedVariant.compareAtPrice.amount).toFixed(2)}
+                ${displayCompareAtValue.toFixed(2)}
               </span>
             )}
           </div>

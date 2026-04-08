@@ -7,23 +7,39 @@ interface ProductCardProps {
   product: Product;
 }
 
+function getRoundedComparePrice(currentPrice: number): number {
+  const increased = currentPrice * 1.15;
+  const base = Math.floor(increased);
+  let rounded = base + 0.99;
+
+  // Ensure we always round up to the next .99 when needed.
+  if (rounded < increased) {
+    rounded = base + 1 + 0.99;
+  }
+
+  return Number(rounded.toFixed(2));
+}
+
 export function ProductCard({ product }: ProductCardProps) {
   const firstImage = product.images.edges[0]?.node;
   const price = product.priceRange.minVariantPrice;
   const compareAtPrice = product.compareAtPriceRange?.minVariantPrice;
-  
-  const isSale = compareAtPrice && parseFloat(compareAtPrice.amount) > parseFloat(price.amount);
+  const currentPriceValue = parseFloat(price.amount);
+  const existingCompareAtValue = compareAtPrice ? parseFloat(compareAtPrice.amount) : 0;
+  const generatedCompareAtValue = getRoundedComparePrice(currentPriceValue);
+  const displayCompareAtValue = Math.max(existingCompareAtValue, generatedCompareAtValue);
+  const isSale = displayCompareAtValue > currentPriceValue;
   const isNew = product.tags.includes('new');
   const isBestSeller = product.tags.includes('best-seller');
 
   return (
     <Link to={`/product/${product.handle}`} className="group block">
-      <div className="relative bg-white aspect-[4/5] mb-4 overflow-hidden rounded-sm border border-gray-100 flex items-center justify-center p-6">
+      <div className="relative bg-white aspect-[4/5] mb-4 overflow-hidden rounded-sm border border-gray-100 flex items-center justify-center p-8">
         {firstImage ? (
           <img 
             src={firstImage.url} 
             alt={firstImage.altText || product.title}
-            className="object-contain max-h-full w-full transition-transform duration-500 group-hover:scale-110 mix-blend-multiply"
+            className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
         ) : (
@@ -58,11 +74,11 @@ export function ProductCard({ product }: ProductCardProps) {
         </h3>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-gray-900">
-            ${parseFloat(price.amount).toFixed(2)}
+            ${currentPriceValue.toFixed(2)}
           </span>
           {isSale && (
             <span className="text-xs text-gray-500 line-through">
-              ${parseFloat(compareAtPrice.amount).toFixed(2)}
+              ${displayCompareAtValue.toFixed(2)}
             </span>
           )}
         </div>
