@@ -52,88 +52,34 @@ function detectProductKind(handle: string, title: string): ProductKind {
 function buildReviewCopy(kind: ProductKind, productTitle: string, idx: number) {
   const byKind = {
     balls: [
-      {
-        title: "Consistent bounce and flight",
-        text: `${productTitle} keeps a reliable bounce and stable flight path. Great for regular outdoor sessions.`,
-      },
-      {
-        title: "Durable for weekly games",
-        text: `After multiple matches, these still hold shape and play consistently. Good visibility on court too.`,
-      },
-      {
-        title: "Solid value for practice",
-        text: `Good control and predictable response when drilling and playing points. Happy with the quality so far.`,
-      },
+      { title: "Great experience overall", text: "Shipping was very fast and the quality is excellent. Everything arrived exactly as expected." },
+      { title: "Very happy with this order", text: "Delivery was smooth and packaging was good. The product feels premium and worth the price." },
+      { title: "Would order again", text: "Customer support was responsive and the item quality is solid. Happy with the full buying experience." },
     ],
     paddle: [
-      {
-        title: "Nice balance of power and control",
-        text: `${productTitle} feels stable through contact and gives solid touch around the kitchen.`,
-      },
-      {
-        title: "Comfortable handle, clean feel",
-        text: `Grip feels secure and the paddle response is consistent on drives, blocks, and resets.`,
-      },
-      {
-        title: "Good all-around option",
-        text: `Easy to use in both practice and matches. Build quality feels dependable for frequent play.`,
-      },
+      { title: "Great experience overall", text: "Shipping was very fast and the quality is excellent. Everything arrived exactly as expected." },
+      { title: "Very happy with this order", text: "Delivery was smooth and packaging was good. The product feels premium and worth the price." },
+      { title: "Would order again", text: "Customer support was responsive and the item quality is solid. Happy with the full buying experience." },
     ],
     grips: [
-      {
-        title: "Better hold during long sessions",
-        text: `${productTitle} adds secure traction and helps keep the handle from slipping when hands get sweaty.`,
-      },
-      {
-        title: "Easy to wrap and feels tacky",
-        text: `Installation was quick and the grip texture stays comfortable over multiple sessions.`,
-      },
-      {
-        title: "Reliable upgrade",
-        text: `Good thickness and feel without making the handle too bulky. Nice control improvement.`,
-      },
+      { title: "Great experience overall", text: "Shipping was very fast and the quality is excellent. Everything arrived exactly as expected." },
+      { title: "Very happy with this order", text: "Delivery was smooth and packaging was good. The product feels premium and worth the price." },
+      { title: "Would order again", text: "Customer support was responsive and the item quality is solid. Happy with the full buying experience." },
     ],
     bag: [
-      {
-        title: "Plenty of storage",
-        text: `${productTitle} fits gear well and keeps paddles and accessories organized for match days.`,
-      },
-      {
-        title: "Comfortable to carry",
-        text: `Straps feel supportive and the build quality looks strong. Great for court-to-court travel.`,
-      },
-      {
-        title: "Practical and clean design",
-        text: `Good pocket layout and enough room for essentials. Works well for weekly training.`,
-      },
+      { title: "Great experience overall", text: "Shipping was very fast and the quality is excellent. Everything arrived exactly as expected." },
+      { title: "Very happy with this order", text: "Delivery was smooth and packaging was good. The product feels premium and worth the price." },
+      { title: "Would order again", text: "Customer support was responsive and the item quality is solid. Happy with the full buying experience." },
     ],
     towel: [
-      {
-        title: "Absorbs sweat quickly",
-        text: `${productTitle} does a good job during hot sessions and dries fast between games.`,
-      },
-      {
-        title: "Lightweight and useful on court",
-        text: `Easy to carry and actually helps in long workouts. Material feels soft but durable.`,
-      },
-      {
-        title: "Great training accessory",
-        text: `Simple, functional, and good quality overall. Nice add-on for regular practice.`,
-      },
+      { title: "Great experience overall", text: "Shipping was very fast and the quality is excellent. Everything arrived exactly as expected." },
+      { title: "Very happy with this order", text: "Delivery was smooth and packaging was good. The product feels premium and worth the price." },
+      { title: "Would order again", text: "Customer support was responsive and the item quality is solid. Happy with the full buying experience." },
     ],
     accessory: [
-      {
-        title: "Good quality for the price",
-        text: `${productTitle} feels durable and performs as expected in weekly play.`,
-      },
-      {
-        title: "Works as advertised",
-        text: `Easy to use and holds up well after multiple sessions on court.`,
-      },
-      {
-        title: "Happy with this purchase",
-        text: `Shipping was smooth and the product quality is solid. Would buy again.`,
-      },
+      { title: "Great experience overall", text: "Shipping was very fast and the quality is excellent. Everything arrived exactly as expected." },
+      { title: "Very happy with this order", text: "Delivery was smooth and packaging was good. The product feels premium and worth the price." },
+      { title: "Would order again", text: "Customer support was responsive and the item quality is solid. Happy with the full buying experience." },
     ],
   };
 
