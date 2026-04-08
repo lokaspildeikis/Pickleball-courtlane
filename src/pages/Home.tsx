@@ -127,7 +127,7 @@ export function Home() {
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="w-full md:w-1/2">
               <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Pickleball_ball.jpg" 
+                src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Pickleball_Pros.jpg" 
                 alt="Pickleball gear bundle" 
                 className="w-full h-auto rounded-sm shadow-xl"
               />
