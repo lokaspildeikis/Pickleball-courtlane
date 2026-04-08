@@ -24,8 +24,12 @@ export function Navbar() {
 
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center justify-center md:justify-start flex-1 md:flex-none">
-            <Link to="/" className="text-2xl font-black tracking-tighter text-teal-900 uppercase italic">
-              Court<span className="text-teal-600">lane</span>
+            <Link to="/" className="flex items-center" aria-label="Go to homepage">
+              <img
+                src="/logo-courtlane.svg"
+                alt="Courtlane"
+                className="h-8 w-auto"
+              />
             </Link>
           </div>
 

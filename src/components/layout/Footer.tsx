@@ -7,8 +7,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-6 gap-12 mb-12">
           
           <div className="col-span-1 md:col-span-1">
-            <Link to="/" className="text-2xl font-black tracking-tighter text-white uppercase italic block mb-4">
-              Court<span className="text-teal-500">lane</span>
+            <Link to="/" className="inline-flex items-center mb-4" aria-label="Go to homepage">
+              <img
+                src="/logo-courtlane.svg"
+                alt="Courtlane"
+                className="h-8 w-auto"
+              />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
               Premium pickleball accessories designed for players who demand performance, durability, and style on the court.

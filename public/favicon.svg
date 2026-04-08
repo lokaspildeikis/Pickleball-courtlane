@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Courtlane favicon</title>
+  <rect width="128" height="128" rx="20" fill="#0F172A"/>
+  <path d="M34 36h20c-10 0-18 8-18 18v20c0 10 8 18 18 18h-20c-10 0-18-8-18-18V54c0-10 8-18 18-18z" fill="#FFFFFF"/>
+  <path d="M62 36h18c10 0 18 8 18 18v2H80v-2c0-2-2-4-4-4H62V36zm0 20h36v16H76v20H62V56z" fill="#14B8A6"/>
+</svg>
