@@ -34,6 +34,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const storefrontDomain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN as string | undefined;
 
   // Load cart from local storage on mount
   useEffect(() => {
@@ -129,7 +130,34 @@ export function CartProvider({ children }: { children: ReactNode }) {
       window.location.href = webUrl;
     } catch (error) {
       console.error('Checkout creation failed:', error);
-      alert('Could not start checkout. Please try again in a moment.');
+      // Fallback: redirect through Shopify cart permalink.
+      // This keeps checkout working even when Storefront checkoutCreate fails.
+      try {
+        if (!storefrontDomain) {
+          throw new Error('VITE_SHOPIFY_STORE_DOMAIN is missing.');
+        }
+
+        const lineItems = items
+          .map((item) => {
+            const variantNumericId = item.variantId.split('/').pop();
+            if (!variantNumericId) return null;
+            return `${variantNumericId}:${item.quantity}`;
+          })
+          .filter(Boolean)
+          .join(',');
+
+        if (!lineItems) {
+          throw new Error('No valid variant IDs found for checkout.');
+        }
+
+        const fallbackUrl = `https://${storefrontDomain}/cart/${lineItems}`;
+        setCheckoutUrl(fallbackUrl);
+        window.location.href = fallbackUrl;
+        return;
+      } catch (fallbackError) {
+        console.error('Fallback checkout failed:', fallbackError);
+        alert('Could not start checkout. Please verify Shopify env settings and try again.');
+      }
     } finally {
       setIsCheckingOut(false);
     }
