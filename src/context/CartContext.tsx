@@ -90,11 +90,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setIsCheckingOut(true);
     try {
       const mutation = `
-        mutation checkoutCreate($input: CheckoutCreateInput!) {
-          checkoutCreate(input: $input) {
-            checkout {
+        mutation cartCreate($input: CartInput) {
+          cartCreate(input: $input) {
+            cart {
               id
-              webUrl
+              checkoutUrl
             }
             userErrors {
               field
@@ -106,24 +106,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       const variables = {
         input: {
-          lineItems: items.map((item) => ({
-            variantId: item.variantId,
-            quantity: item.quantity,
+          lines: items.map((item) => ({
+            merchandiseId: item.variantId,
+            quantity: item.quantity
           })),
         },
       };
 
       const response = await shopifyFetch({ query: mutation, variables });
-      const payload = response.body?.data?.checkoutCreate;
+      const payload = response.body?.data?.cartCreate;
       const userErrors = payload?.userErrors || [];
-      const webUrl = payload?.checkout?.webUrl as string | undefined;
+      const webUrl = payload?.cart?.checkoutUrl as string | undefined;
 
       if (userErrors.length > 0) {
         throw new Error(userErrors.map((e: { message: string }) => e.message).join(', '));
       }
 
       if (!webUrl) {
-        throw new Error('Checkout URL was not returned by Shopify.');
+        throw new Error('Checkout URL was not returned by Shopify cartCreate.');
       }
 
       setCheckoutUrl(webUrl);
