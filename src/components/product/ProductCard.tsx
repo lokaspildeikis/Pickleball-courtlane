@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../lib/shopify';
+import { getSyntheticReviewSummary } from '../../lib/syntheticReviews';
 
 interface ProductCardProps {
   key?: React.Key;
@@ -31,6 +32,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const isSale = displayCompareAtValue > currentPriceValue;
   const isNew = product.tags.includes('new');
   const isBestSeller = product.tags.includes('best-seller');
+  const reviewSummary = getSyntheticReviewSummary(product.handle);
 
   return (
     <Link to={`/product/${product.handle}`} className="group block">
@@ -69,6 +71,9 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
       
       <div>
+        <div className="text-xs text-gray-500 mb-1">
+          {reviewSummary.rating.toFixed(1)} stars • {reviewSummary.reviewCount} reviews
+        </div>
         <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
           {product.title}
         </h3>

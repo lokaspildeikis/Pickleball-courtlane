@@ -4,6 +4,7 @@ import { getProduct, Product } from '../lib/shopify';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/ui/Button';
 import { Minus, Plus, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
+import { getSyntheticReviewSummary, getSyntheticReviews } from '../lib/syntheticReviews';
 
 function getRoundedComparePrice(currentPrice: number): number {
   const increased = currentPrice * 1.15;
@@ -83,6 +84,8 @@ export function ProductDetail() {
   const displayCompareAtValue = Math.max(existingCompareAtValue, generatedCompareAtValue);
   const isSale = displayCompareAtValue > currentPriceValue;
   const hasMultipleVariants = product.variants.edges.length > 1 && product.variants.edges[0].node.title !== 'Default Title';
+  const reviewSummary = getSyntheticReviewSummary(product.handle);
+  const reviews = getSyntheticReviews(product.handle, product.title);
 
   const handleAddToCart = () => {
     addToCart({
@@ -238,6 +241,35 @@ export function ProductDetail() {
           {/* Description */}
           <div className="prose prose-sm md:prose-base prose-teal max-w-none text-gray-600">
             <div dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
+          </div>
+
+          {/* Simulated Reviews (Research) */}
+          <div className="mt-10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Customer Reviews</h2>
+              <span className="text-xs px-2 py-1 rounded bg-amber-100 text-amber-800 font-medium">
+                Simulated (Research)
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              {reviewSummary.rating.toFixed(1)} / 5 • {reviewSummary.reviewCount} reviews
+            </p>
+            <div className="space-y-4">
+              {reviews.map((review) => (
+                <div key={review.id} className="border border-gray-200 rounded-sm p-4 bg-white">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="font-semibold text-gray-900">{review.author}</p>
+                    <p className="text-xs text-gray-500">{review.date}</p>
+                  </div>
+                  <p className="text-sm text-teal-700 font-semibold mb-1">{review.rating.toFixed(1)} stars</p>
+                  <p className="text-sm font-semibold text-gray-900 mb-1">{review.title}</p>
+                  <p className="text-sm text-gray-600">{review.text}</p>
+                  {review.photoUrl && (
+                    <img src={review.photoUrl} alt="Review attachment" className="mt-3 w-24 h-24 object-cover rounded" />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
         </div>
