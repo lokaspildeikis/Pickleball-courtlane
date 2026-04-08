@@ -4,8 +4,6 @@ import { getProduct, Product } from '../lib/shopify';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/ui/Button';
 import { Minus, Plus, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
-import AIOptimizer from '../components/product/AIOptimizer';
-import { OptimizationResult } from '../lib/gemini';
 
 function getRoundedComparePrice(currentPrice: number): number {
   const increased = currentPrice * 1.15;
@@ -98,18 +96,6 @@ export function ProductDetail() {
     });
   };
 
-  const handleApplyOptimization = (optimized: OptimizationResult) => {
-    if (!product) return;
-    
-    setProduct({
-      ...product,
-      title: optimized.title,
-      description: optimized.description,
-      // Simple conversion for the mock UI
-      descriptionHtml: optimized.description.split('\n').map(p => p.trim() ? `<p>${p}</p>` : '').join('')
-    });
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       
@@ -157,17 +143,6 @@ export function ProductDetail() {
 
         {/* Product Info */}
         <div className="w-full md:w-1/2 flex flex-col">
-          {/* AI Optimizer - Always visible for easier access */}
-          <div className="mb-6 flex gap-4 items-center">
-            <AIOptimizer 
-              originalTitle={product.title}
-              originalDescription={product.description}
-              originalTags={product.tags}
-              onApply={handleApplyOptimization}
-            />
-            <span className="bg-red-500 text-white px-2 py-1 rounded text-[10px]">DEBUG: Master AI ACTIVE</span>
-          </div>
-
           <h1 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-2">
             {product.title}
           </h1>
