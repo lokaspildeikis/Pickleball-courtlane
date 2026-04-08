@@ -131,12 +131,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // force redirect to myshopify domain so checkout path resolves correctly.
       if (storefrontDomain) {
         try {
-          const parsed = new URL(webUrl);
+          const parsed = new URL(webUrl, `https://${storefrontDomain}`);
           parsed.hostname = storefrontDomain;
+          parsed.protocol = 'https:';
           redirectUrl = parsed.toString();
         } catch {
           // Keep original URL if parsing fails.
-          redirectUrl = webUrl;
+          redirectUrl = `https://${storefrontDomain}${webUrl.startsWith('/') ? '' : '/'}${webUrl}`;
         }
       }
 
