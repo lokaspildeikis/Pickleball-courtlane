@@ -126,8 +126,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
         throw new Error('Checkout URL was not returned by Shopify cartCreate.');
       }
 
-      setCheckoutUrl(webUrl);
-      window.location.href = webUrl;
+      let redirectUrl = webUrl;
+      // If Shopify returns checkout on custom domain (mapped to Vercel),
+      // force redirect to myshopify domain so checkout path resolves correctly.
+      if (storefrontDomain) {
+        try {
+          const parsed = new URL(webUrl);
+          parsed.hostname = storefrontDomain;
+          redirectUrl = parsed.toString();
+        } catch {
+          // Keep original URL if parsing fails.
+          redirectUrl = webUrl;
+        }
+      }
+
+      setCheckoutUrl(redirectUrl);
+      window.location.href = redirectUrl;
     } catch (error) {
       console.error('Checkout creation failed:', error);
       // Fallback: redirect through Shopify cart permalink.
