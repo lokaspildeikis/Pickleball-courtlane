@@ -100,16 +100,25 @@ export function getSyntheticReviews(handle: string, productTitle: string): Synth
 
   return [0, 1, 2].map((idx) => {
     const author = `${FIRST_NAMES[(seed + idx) % FIRST_NAMES.length]} ${LAST_INITIALS[(seed + idx * 2) % LAST_INITIALS.length]}`;
-    const rating = Number(Math.max(3.9, Math.min(5, summary.rating - (idx === 2 ? 0.3 : 0) + seededFloat(seed + idx * 11) * 0.2)).toFixed(1));
+    const rawRating = Math.max(
+      3.9,
+      Math.min(
+        5,
+        summary.rating - (idx === 2 ? 0.3 : 0) + seededFloat(seed + idx * 11) * 0.2,
+      ),
+    );
+    // One decimal label must match what ProductDetail shows (review.rating.toFixed(1))
+    const ratingLabel = rawRating.toFixed(1);
+    const rating = Number(ratingLabel);
     const copy = buildReviewCopy(kind, productTitle, idx);
-    const isLowerRated = rating <= 4.0;
+    const useBalancedThreeNineCopy = ratingLabel === "3.9";
     return {
       id: `${handle}-${idx}`,
       author,
       rating,
       date: formatDateFromSeed(seed + idx * 19),
-      title: isLowerRated ? "Good support, slower delivery" : copy.title,
-      text: isLowerRated
+      title: useBalancedThreeNineCopy ? "Good support, slower delivery" : copy.title,
+      text: useBalancedThreeNineCopy
         ? "Shipping took around 10 working days, which was a bit longer than I expected. Support replied quickly and offered a discount for my next purchase."
         : copy.text,
       source: "synthetic",
