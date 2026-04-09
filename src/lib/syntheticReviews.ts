@@ -27,15 +27,21 @@ function hashString(input: string): number {
   return Math.abs(hash);
 }
 
+/** FNV-1a over handle + title + purpose — avoids Math.sin collisions that made many PDPs pick the same review lines. */
+function stableIndex(handle: string, title: string, purpose: string, modulo: number): number {
+  if (modulo <= 1) return 0;
+  const combined = `${handle}\n${title}\n${purpose}`;
+  let h = 2166136261;
+  for (let i = 0; i < combined.length; i += 1) {
+    h ^= combined.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return Math.abs(h >>> 0) % modulo;
+}
+
 function seededFloat(seed: number): number {
   const x = Math.sin(seed) * 10000;
   return x - Math.floor(x);
-}
-
-function pickIndex(seed: number, salt: number, length: number): number {
-  if (length <= 1) return 0;
-  const f = seededFloat(seed + salt * 41);
-  return Math.min(length - 1, Math.floor(f * length));
 }
 
 function formatDateFromSeed(seed: number): string {
@@ -160,23 +166,18 @@ const BALANCED_TITLES = [
 ];
 
 function composeBalancedSnippet(handle: string, productTitle: string, idx: number): Snippet {
-  const mix =
-    hashString(handle) +
-    hashString(productTitle) * 1_009 +
-    hashString(`${handle}|${productTitle}|balanced`) * 503 +
-    idx * 9_181;
-  const o = pickIndex(mix, 11, BALANCED_OPENERS.length);
-  const m = pickIndex(mix, 29, BALANCED_MIDDLES.length);
-  const c = pickIndex(mix, 47, BALANCED_CLOSERS.length);
-  const t = pickIndex(mix, 61, BALANCED_TITLES.length);
+  const o = stableIndex(handle, productTitle, `review:balanced:${idx}:opener:v2`, BALANCED_OPENERS.length);
+  const m = stableIndex(handle, productTitle, `review:balanced:${idx}:middle:v2`, BALANCED_MIDDLES.length);
+  const c = stableIndex(handle, productTitle, `review:balanced:${idx}:closer:v2`, BALANCED_CLOSERS.length);
+  const t = stableIndex(handle, productTitle, `review:balanced:${idx}:title:v2`, BALANCED_TITLES.length);
   const text = `${BALANCED_OPENERS[o]} ${BALANCED_MIDDLES[m]} ${BALANCED_CLOSERS[c]}`;
   return { title: BALANCED_TITLES[t], text };
 }
 
-function buildReviewCopy(kind: ProductKind, seed: number, idx: number): Snippet {
+function buildReviewCopy(kind: ProductKind, handle: string, productTitle: string, idx: number): Snippet {
   const slot = Math.min(idx, 2) as 0 | 1 | 2;
   const pool = positiveSnippetsForSlot(slot, itemPhrase(kind));
-  const choice = pickIndex(seed, idx * 19 + slot * 7 + hashString(kind), pool.length);
+  const choice = stableIndex(handle, productTitle, `review:positive:slot${slot}:idx${idx}:kind${kind}:v2`, pool.length);
   return pool[choice];
 }
 
@@ -193,7 +194,9 @@ export function getSyntheticReviews(handle: string, productTitle: string): Synth
   const kind = detectProductKind(handle, productTitle);
 
   return [0, 1, 2].map((idx) => {
-    const author = `${FIRST_NAMES[(seed + idx) % FIRST_NAMES.length]} ${LAST_INITIALS[(seed + idx * 2) % LAST_INITIALS.length]}`;
+    const fn = stableIndex(handle, productTitle, `review:author-fn:${idx}`, FIRST_NAMES.length);
+    const li = stableIndex(handle, productTitle, `review:author-li:${idx}`, LAST_INITIALS.length);
+    const author = `${FIRST_NAMES[fn]} ${LAST_INITIALS[li]}`;
     const rawRating = Math.max(
       3.9,
       Math.min(
@@ -203,7 +206,7 @@ export function getSyntheticReviews(handle: string, productTitle: string): Synth
     );
     const ratingLabel = rawRating.toFixed(1);
     const rating = Number(ratingLabel);
-    const copy = buildReviewCopy(kind, seed, idx);
+    const copy = buildReviewCopy(kind, handle, productTitle, idx);
     const score = Number(ratingLabel);
     const useBalancedThreeNineCopy = ratingLabel === "3.9" || (idx === 2 && score <= 4.1);
     const balanced = composeBalancedSnippet(handle, productTitle, idx);
