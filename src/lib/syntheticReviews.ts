@@ -111,7 +111,10 @@ export function getSyntheticReviews(handle: string, productTitle: string): Synth
     const ratingLabel = rawRating.toFixed(1);
     const rating = Number(ratingLabel);
     const copy = buildReviewCopy(kind, productTitle, idx);
-    const useBalancedThreeNineCopy = ratingLabel === "3.9";
+    const score = Number(ratingLabel);
+    // Lowest slot (idx 2) is intentionally milder; it often lands at 4.0–4.1, not always 3.9.
+    // Match 3.9 anywhere, and use the same realistic "mixed" copy for the softest review when it is ≤ 4.1.
+    const useBalancedThreeNineCopy = ratingLabel === "3.9" || (idx === 2 && score <= 4.1);
     return {
       id: `${handle}-${idx}`,
       author,
