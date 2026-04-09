@@ -106,43 +106,78 @@ function positiveSnippetsForSlot(slot: 0 | 1 | 2, item: string): Snippet[] {
   return raw[slot].map((s) => ({ title: s.title, text: fillItem(s.text, item) }));
 }
 
-const BALANCED_SNIPPETS: Snippet[] = [
-  {
-    title: "Good support, slower delivery",
-    text: "Shipping took around 10 working days—longer than I hoped. Support got back to me quickly and offered a discount on my next order.",
-  },
-  {
-    title: "Took a bit to arrive",
-    text: "Delivery dragged for about two weeks on business days. The team replied fast when I asked for an update and added a small voucher for next time.",
-  },
-  {
-    title: "Mixed on speed",
-    text: "It was slower to get here than other orders I've placed online. On the bright side, support was helpful and I got a credit toward a future purchase.",
-  },
-  {
-    title: "Patience required",
-    text: "The wait was noticeable—roughly 10 working days in my case. Customer service was responsive and made it right with a next-order discount.",
-  },
-  {
-    title: "Shipping was the weak spot",
-    text: "Arrival time felt long for my schedule. I will say support answered within a day and sent a courtesy discount code for my next checkout.",
-  },
-  {
-    title: "Okay overall",
-    text: "Not the fastest parcel I've received, but the product showed up intact. Support was quick and offered a discount if I order again.",
-  },
+/** Composed “mixed” reviews: independent pools × each other → unique wording per product, still deterministic. */
+const BALANCED_OPENERS = [
+  "It took a little over a week of business days before the package landed—longer than I'm used to.",
+  "Delivery was on the slow side for me, roughly nine or ten working days door to door.",
+  "Tracking stayed quiet for a while and the box needed almost two weeks on business days.",
+  "Shipping wasn't fast; I'd guess about twelve working days from order to doorstep.",
+  "The parcel felt slower than my last few online orders—closer to two weeks on weekdays.",
+  "I wasn't in a rush, but the wait still wound up longer than the estimate I had in mind.",
+  "The label sat in transit longer than expected—I'm thinking nine or eleven business days total.",
+  "Arrival dragged enough that I checked in once; it was not next-day speed by any means.",
+  "From checkout to delivery it was a stretch—I'd call it a slow-but-steady shipment.",
+  "If you need gear tomorrow, budget extra time. Mine needed the better part of two work weeks.",
 ];
+
+const BALANCED_MIDDLES = [
+  "When I reached out, someone replied quickly and didn't leave me guessing.",
+  "Support answered my email the same day and was clear about what was going on.",
+  "I used the contact form and got a human response fast—no boilerplate runaround.",
+  "Customer service was on it: short wait, straight answers, and a polite tone.",
+  "The team got back within a day and actually read my note instead of auto-replying.",
+  "I had one question about the shipment; they responded sooner than I expected.",
+  "No drama talking to support—they were prompt and normal to deal with.",
+  "They acknowledged the delay without excuses and kept the message simple.",
+  "Support felt small-shop helpful, not robotic, which I appreciated.",
+  "Quick reply from their side once I nudged them—professional enough for me.",
+];
+
+const BALANCED_CLOSERS = [
+  "They offered a modest discount on a future order, which felt like a fair make-good.",
+  "They sent a code I can use next checkout—small gesture, but it helped.",
+  "Got a store credit note toward my next buy; not huge, but it squared things for me.",
+  "They added a courtesy percentage off my next purchase without me having to push.",
+  "There was a voucher-style credit for round two; made the wait easier to swallow.",
+  "They matched the situation with a next-order discount—reasonable fix on their end.",
+  "A small savings on my follow-up order was enough for me to try buying here again.",
+  "They didn't leave it at 'sorry'—there was a concrete perk for ordering again.",
+  "I got a one-time code for my next cart; simple and I’ll use it.",
+  "They pointed me to a loyalty-style discount for the next go—fine by me.",
+];
+
+const BALANCED_TITLES = [
+  "Good support, slower delivery",
+  "Took longer than expected",
+  "Shipping lagged, help didn't",
+  "Mixed experience",
+  "Slow parcel, fast replies",
+  "Patience helps on shipping",
+  "Okay once it arrived",
+  "Support made up for the wait",
+  "Not the speediest order",
+  "Worth noting the timeline",
+];
+
+function composeBalancedSnippet(handle: string, productTitle: string, idx: number): Snippet {
+  const mix =
+    hashString(handle) +
+    hashString(productTitle) * 1_009 +
+    hashString(`${handle}|${productTitle}|balanced`) * 503 +
+    idx * 9_181;
+  const o = pickIndex(mix, 11, BALANCED_OPENERS.length);
+  const m = pickIndex(mix, 29, BALANCED_MIDDLES.length);
+  const c = pickIndex(mix, 47, BALANCED_CLOSERS.length);
+  const t = pickIndex(mix, 61, BALANCED_TITLES.length);
+  const text = `${BALANCED_OPENERS[o]} ${BALANCED_MIDDLES[m]} ${BALANCED_CLOSERS[c]}`;
+  return { title: BALANCED_TITLES[t], text };
+}
 
 function buildReviewCopy(kind: ProductKind, seed: number, idx: number): Snippet {
   const slot = Math.min(idx, 2) as 0 | 1 | 2;
   const pool = positiveSnippetsForSlot(slot, itemPhrase(kind));
   const choice = pickIndex(seed, idx * 19 + slot * 7 + hashString(kind), pool.length);
   return pool[choice];
-}
-
-function pickBalancedSnippet(seed: number, idx: number): Snippet {
-  const i = pickIndex(seed, idx * 23 + 999, BALANCED_SNIPPETS.length);
-  return BALANCED_SNIPPETS[i];
 }
 
 export function getSyntheticReviewSummary(handle: string) {
@@ -171,7 +206,7 @@ export function getSyntheticReviews(handle: string, productTitle: string): Synth
     const copy = buildReviewCopy(kind, seed, idx);
     const score = Number(ratingLabel);
     const useBalancedThreeNineCopy = ratingLabel === "3.9" || (idx === 2 && score <= 4.1);
-    const balanced = pickBalancedSnippet(seed, idx);
+    const balanced = composeBalancedSnippet(handle, productTitle, idx);
     return {
       id: `${handle}-${idx}`,
       author,
