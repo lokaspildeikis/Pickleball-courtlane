@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getProducts, Product } from '../lib/shopify';
 import { ProductCard } from '../components/product/ProductCard';
 import { Button } from '../components/ui/Button';
+import { WhyBuyCourtlane } from '../components/home/WhyBuyCourtlane';
 import { ShieldCheck, Zap, RefreshCcw, Truck } from 'lucide-react';
 
 export function Home() {
@@ -61,6 +62,8 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      <WhyBuyCourtlane />
 
       {/* Trust Bar */}
       <section className="bg-teal-900 text-teal-50 py-6">
