@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getProduct, Product } from '../lib/shopify';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/ui/Button';
+import { ProductDescription } from '../components/product/ProductDescription';
 import { Minus, Plus, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
 import { getSyntheticReviewSummary, getSyntheticReviews } from '../lib/syntheticReviews';
 
@@ -252,8 +253,8 @@ export function ProductDetail() {
           </div>
 
           {/* Description */}
-          <div className="prose prose-sm md:prose-base prose-teal max-w-none text-gray-600">
-            <div dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
+          <div className="max-w-none">
+            <ProductDescription product={product} />
           </div>
 
           {/* Simulated Reviews (Research) */}
