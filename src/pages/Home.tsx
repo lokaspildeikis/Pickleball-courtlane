@@ -40,20 +40,22 @@ export function Home() {
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40">
           <div className="max-w-2xl">
+            {/* Updated hero copy to immediately communicate product, audience, and support benefit. */}
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-tight">
-              Elevate Your <br/><span className="text-teal-500">Court Game.</span>
+              Pickleball Essentials for <span className="text-teal-500">Everyday Players.</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg">
-              Premium, lightweight pickleball accessories designed for players who demand performance and style.
+              Reliable gear for beginners and rec players, backed by straightforward support so you can play with confidence.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/shop">
-                <Button size="lg" className="w-full sm:w-auto">Shop Essentials</Button>
+                <Button size="lg" className="w-full sm:w-auto">Shop Court Essentials</Button>
               </Link>
+              {/* Keep one primary action while offering a lower-emphasis path for bundle shoppers. */}
               <Link to="/shop?filter=bundles">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto border-white text-white hover:bg-white/10 hover:text-white">
-                  View Bundles
-                </Button>
+                <span className="inline-flex items-center h-full text-sm font-semibold uppercase tracking-wide text-gray-200 hover:text-white transition-colors">
+                  Browse Starter Bundles
+                </span>
               </Link>
             </div>
           </div>
