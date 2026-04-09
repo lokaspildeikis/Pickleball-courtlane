@@ -8,7 +8,12 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "optimize": "tsx scripts/optimize-products.ts",
+    "optimize:live": "tsx scripts/optimize-products.ts --live",
+    "descriptions:queue": "tsx scripts/generate-description-queue.ts",
+    "descriptions:apply": "tsx scripts/apply-description-queue.ts",
+    "descriptions:apply:live": "tsx scripts/apply-description-queue.ts --live"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

@@ -84,8 +84,8 @@ const MOCK_PRODUCTS: Product[] = [
     id: "gid://shopify/Product/1",
     handle: "pro-tour-overgrip-3-pack",
     title: "Pro Tour Overgrip (3-Pack)",
-    description: "Maximum tack and sweat absorption for intense rallies. Our premium overgrip keeps your paddle secure in your hand no matter how hot it gets on the court.",
-    descriptionHtml: "<p>Maximum tack and sweat absorption for intense rallies. Our premium overgrip keeps your paddle secure in your hand no matter how hot it gets on the court.</p><ul><li>Ultra-tacky surface</li><li>High sweat absorption</li><li>0.6mm thickness for optimal feel</li></ul>",
+    description: "An easy overgrip refill for players who want a steadier paddle hold during rec games and practice. It is built to improve hand comfort and control when your sessions run long.",
+    descriptionHtml: "<p>An easy overgrip refill for players who want a steadier paddle hold during rec games and practice. It is built to improve hand comfort and control when your sessions run long.</p><ul><li>Includes: 3 overgrips</li><li>Surface feel: tacky, comfort-first wrap</li><li>Use case: everyday rec play and repeat practice sessions</li><li>Fit: wraps over most standard pickleball paddle handles</li></ul><p><strong>Who it's for:</strong> Beginners and casual players who want a simple grip upgrade without changing paddles.</p>",
     priceRange: { minVariantPrice: { amount: "12.00", currencyCode: "USD" } },
     images: {
       edges: [
@@ -104,8 +104,8 @@ const MOCK_PRODUCTS: Product[] = [
     id: "gid://shopify/Product/2",
     handle: "aero-paddle-cover",
     title: "Aero Neoprene Paddle Cover",
-    description: "Protect your investment with our thick, shock-absorbing neoprene cover. Fits all standard and elongated pickleball paddles.",
-    descriptionHtml: "<p>Protect your investment with our thick, shock-absorbing neoprene cover. Fits all standard and elongated pickleball paddles.</p>",
+    description: "A simple paddle cover that helps protect your paddle face between sessions and while traveling to the court. It keeps your setup cleaner and easier to store in bags or lockers.",
+    descriptionHtml: "<p>A simple paddle cover that helps protect your paddle face between sessions and while traveling to the court. It keeps your setup cleaner and easier to store in bags or lockers.</p><ul><li>Material: neoprene-style protective sleeve</li><li>Fit: works with most standard and elongated pickleball paddles</li><li>Use case: storage, travel, and daily court carry</li><li>Closure: quick on-and-off access for routine use</li></ul><p><strong>Who it's for:</strong> Players who want straightforward paddle protection without extra bulk.</p>",
     priceRange: { minVariantPrice: { amount: "24.00", currencyCode: "USD" } },
     compareAtPriceRange: { minVariantPrice: { amount: "30.00", currencyCode: "USD" } },
     images: {
@@ -124,8 +124,8 @@ const MOCK_PRODUCTS: Product[] = [
     id: "gid://shopify/Product/3",
     handle: "cooling-performance-towel",
     title: "Cooling Performance Towel",
-    description: "Instantly cools when wet. Perfect for those long summer tournament days.",
-    descriptionHtml: "<p>Instantly cools when wet. Perfect for those long summer tournament days.</p>",
+    description: "A lightweight court towel made for hot sessions, quick wipe-downs, and easier sweat control during play. Keep it in your bag for practice, rec games, and summer court days.",
+    descriptionHtml: "<p>A lightweight court towel made for hot sessions, quick wipe-downs, and easier sweat control during play. Keep it in your bag for practice, rec games, and summer court days.</p><ul><li>Use case: sweat management during practice and matches</li><li>Portability: easy to fold and carry in pickleball bags</li><li>Comfort: soft feel for quick face and hand wipe-downs</li><li>Best for: warm weather sessions and high-activity games</li></ul><p><strong>Who it's for:</strong> Everyday players who want simple comfort and less distraction from sweat.</p>",
     priceRange: { minVariantPrice: { amount: "18.00", currencyCode: "USD" } },
     images: {
       edges: [
@@ -143,8 +143,8 @@ const MOCK_PRODUCTS: Product[] = [
     id: "gid://shopify/Product/4",
     handle: "starter-bundle",
     title: "The Court Starter Bundle",
-    description: "Everything you need to hit the courts: 3 overgrips, 1 paddle cover, and a cooling towel.",
-    descriptionHtml: "<p>Everything you need to hit the courts: 3 overgrips, 1 paddle cover, and a cooling towel.</p>",
+    description: "A practical starter setup that bundles core pickleball accessories into one easy purchase. It helps new players skip the guesswork and get court-ready faster.",
+    descriptionHtml: "<p>A practical starter setup that bundles core pickleball accessories into one easy purchase. It helps new players skip the guesswork and get court-ready faster.</p><ul><li>Includes: 3 overgrips, 1 paddle cover, 1 cooling towel</li><li>Bundle benefit: coordinated essentials in one order</li><li>Use case: first-time setup, gifting, or simple gear refresh</li><li>Value: lower bundled price vs buying each item separately</li></ul><p><strong>Who it's for:</strong> Beginners and casual players who want an all-in-one essentials kit.</p>",
     priceRange: { minVariantPrice: { amount: "45.00", currencyCode: "USD" } },
     compareAtPriceRange: { minVariantPrice: { amount: "54.00", currencyCode: "USD" } },
     images: {
@@ -163,8 +163,8 @@ const MOCK_PRODUCTS: Product[] = [
     id: "gid://shopify/Product/5",
     handle: "court-pro-backpack",
     title: "Court Pro Backpack",
-    description: "The ultimate tournament bag. Features a dedicated paddle compartment, ventilated shoe garage, and plenty of space for your gear.",
-    descriptionHtml: "<p>The ultimate tournament bag. Features a dedicated paddle compartment, ventilated shoe garage, and plenty of space for your gear.</p><ul><li>Water-resistant fabric</li><li>Padded shoulder straps</li><li>Fits up to 4 paddles</li></ul>",
+    description: "A court-ready backpack designed to keep paddles and day-to-day essentials organized in one place. It is built for players who want cleaner packing before and after games.",
+    descriptionHtml: "<p>A court-ready backpack designed to keep paddles and day-to-day essentials organized in one place. It is built for players who want cleaner packing before and after games.</p><ul><li>Capacity: holds up to 4 paddles</li><li>Storage: dedicated sections for shoes and accessories</li><li>Carry comfort: padded shoulder straps for daily use</li><li>Material: water-resistant fabric for routine court travel</li></ul><p><strong>Who it's for:</strong> Rec players who carry multiple items and want quick, reliable organization.</p>",
     priceRange: { minVariantPrice: { amount: "85.00", currencyCode: "USD" } },
     images: {
       edges: [
