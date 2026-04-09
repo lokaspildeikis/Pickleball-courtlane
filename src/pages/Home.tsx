@@ -42,9 +42,9 @@ export function Home() {
           <div className="max-w-2xl">
             {/* Updated hero copy to immediately communicate product, audience, and support benefit. */}
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-tight">
-              Pickleball Essentials for <span className="text-teal-500">Everyday Players.</span>
+              Pickleball Essentials for <span className="text-teal-400 md:text-teal-500">Everyday Players.</span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg">
+            <p className="text-base md:text-xl text-gray-300 mb-8 max-w-lg">
               Reliable gear for beginners and rec players, backed by straightforward support so you can play with confidence.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -54,7 +54,7 @@ export function Home() {
               {/* Keep one primary action while offering a lower-emphasis path for bundle shoppers. */}
               <Link to="/shop?filter=bundles">
                 <span className="inline-flex items-center h-full text-sm font-semibold uppercase tracking-wide text-gray-200 hover:text-white transition-colors">
-                  Browse Starter Bundles
+                  View Starter Bundles
                 </span>
               </Link>
             </div>
