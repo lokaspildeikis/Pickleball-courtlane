@@ -132,15 +132,52 @@ function buildIntro(product: Product, type: ProductType, cleanedDescription: str
   return `${product.title} is a practical pickleball essential for day-to-day court sessions. It is built for players who want reliable gear and easy use.`;
 }
 
-function buildUseCase(type: ProductType): string {
-  if (type === 'bundle') return 'Best for beginners, gifting, or anyone who wants a ready-to-play setup in one order.';
-  if (type === 'bag') return 'Best for players who carry multiple items and want quicker organization before and after games.';
-  if (type === 'balls') return 'Best for beginners, drills, and everyday rec play where durable repeat-use balls matter.';
-  if (type === 'paddle') return 'Best for beginners and casual players looking for a dependable paddle for regular rec sessions.';
-  if (type === 'towel' || type === 'sweat-accessory')
+function buildUseCase(product: Product, type: ProductType): string {
+  const haystack = `${product.title} ${product.tags.join(' ')}`.toLowerCase();
+  const price = Number(product.priceRange.minVariantPrice.amount || '0');
+  const mentionsAdvanced =
+    haystack.includes('advanced') ||
+    haystack.includes('pro') ||
+    haystack.includes('elite') ||
+    haystack.includes('competition') ||
+    haystack.includes('tournament');
+
+  if (type === 'bag') {
+    if (price >= 70 || mentionsAdvanced) {
+      return 'Best for medium and advanced players who carry more gear and want dedicated storage for regular training and match days.';
+    }
+    return 'Best for beginners and rec players who want a simple way to keep court essentials organized.';
+  }
+
+  if (type === 'paddle') {
+    if (mentionsAdvanced || price >= 90) {
+      return 'Best for medium and advanced players who want a more responsive paddle setup for frequent play.';
+    }
+    return 'Best for beginners and casual players looking for a dependable paddle for regular rec sessions.';
+  }
+
+  if (type === 'balls') {
+    if (mentionsAdvanced) {
+      return 'Best for rec and competitive players who need reliable balls for repeat drills and match-speed rallies.';
+    }
+    return 'Best for beginners, drills, and everyday rec play where durable repeat-use balls matter.';
+  }
+
+  if (type === 'bundle') {
+    if (haystack.includes('gift')) {
+      return 'Best for gifting and for players who want a practical all-in-one pickleball setup in one purchase.';
+    }
+    return 'Best for beginners and rec players who want a ready-to-play setup without piecing items together.';
+  }
+
+  if (type === 'towel' || type === 'sweat-accessory') {
     return 'Best for players who want simple sweat control and comfort during longer court sessions.';
-  if (type === 'grip' || type === 'cover')
+  }
+
+  if (type === 'grip' || type === 'cover') {
     return 'Best for players who want a cleaner, more comfortable day-to-day paddle setup.';
+  }
+
   return 'Best for casual and rec players who value simple, reliable gear for everyday court use.';
 }
 
@@ -164,7 +201,7 @@ export function formatProductDescription(product: Product): StructuredProductDes
   return {
     intro,
     features,
-    useCase: buildUseCase(type),
+    useCase: buildUseCase(product, type),
     note: buildNote(product),
   };
 }
