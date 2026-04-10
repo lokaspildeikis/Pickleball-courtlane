@@ -9,6 +9,7 @@ import { getSyntheticReviewSummary, getSyntheticReviews } from '../lib/synthetic
 import { TRUST_POINTS, POLICY_SNIPPETS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
+import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMethods';
 
 function getRoundedComparePrice(currentPrice: number): number {
   const increased = currentPrice * 1.15;
@@ -255,8 +256,9 @@ export function ProductDetail() {
                 {selectedVariant.availableForSale ? 'Add to Cart' : 'Sold Out'}
               </Button>
             </div>
-            <div className="mt-4 rounded-sm border border-gray-200 bg-gray-50 p-3">
+            <div className="mt-4 rounded-sm border border-gray-200 bg-gray-50 p-3 sm:p-4">
               <TrustPointsRow points={TRUST_POINTS.productCta} />
+              <CheckoutPaymentMethods />
             </div>
           </div>
 
