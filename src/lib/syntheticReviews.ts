@@ -53,7 +53,7 @@ function formatDateFromSeed(seed: number): string {
 
 function detectProductKind(handle: string, title: string): ProductKind {
   const text = `${handle} ${title}`.toLowerCase();
-  if (text.includes("ball")) return "balls";
+  if (/\bballs?\b/.test(text)) return "balls";
   if (text.includes("paddle") || text.includes("racket")) return "paddle";
   if (text.includes("grip") || text.includes("overgrip")) return "grips";
   if (text.includes("bag") || text.includes("backpack") || text.includes("cover")) return "bag";
@@ -64,52 +64,65 @@ function detectProductKind(handle: string, title: string): ProductKind {
 /** Short noun phrase for inline copy (pickleball-specific, not hypey). */
 function itemPhrase(kind: ProductKind): string {
   const map: Record<ProductKind, string> = {
-    balls: "these balls",
+    balls: "these pickleballs",
     paddle: "this paddle",
     grips: "this grip setup",
     bag: "this bag",
     towel: "this towel",
-    accessory: "this gear",
+    accessory: "this product",
+  };
+  return map[kind];
+}
+
+/** Short use-case phrase so reviews feel product-specific. */
+function focusPhrase(kind: ProductKind): string {
+  const map: Record<ProductKind, string> = {
+    balls: "drills and rec matches",
+    paddle: "control and touch shots",
+    grips: "grip comfort during longer sessions",
+    bag: "court-day packing and carry",
+    towel: "sweat control between points",
+    accessory: "everyday court sessions",
   };
   return map[kind];
 }
 
 type Snippet = { title: string; text: string };
 
-function fillItem(template: string, item: string): string {
-  return template.replace(/\{item\}/g, item);
+function fillTemplate(template: string, item: string, focus: string): string {
+  return template.replace(/\{item\}/g, item).replace(/\{focus\}/g, focus);
 }
 
 /** Seeded positive snippets per slot so the three cards read differently and products vary. */
-function positiveSnippetsForSlot(slot: 0 | 1 | 2, item: string): Snippet[] {
+function positiveSnippetsForSlot(slot: 0 | 1 | 2, item: string, focus: string): Snippet[] {
   const raw: Snippet[][] = [
     [
-      { title: "Arrived quickly", text: "Order showed up sooner than I expected. {item} looks right for everyday games and practice." },
-      { title: "Smooth purchase", text: "Checkout and tracking were straightforward. {item} matches the listing and feels fine for rec play." },
-      { title: "Happy with delivery", text: "Packaging was solid and nothing was damaged. {item} is what I wanted for casual court sessions." },
-      { title: "No surprises", text: "Everything lined up with the product page. {item} feels like a sensible pick for regular pickleball." },
+      { title: "Arrived quickly", text: "Order showed up sooner than I expected. {item} looks right for {focus}." },
+      { title: "Smooth purchase", text: "Checkout and tracking were straightforward. {item} matches the listing and feels fine for {focus}." },
+      { title: "Happy with delivery", text: "Packaging was solid and nothing was damaged. {item} is what I wanted for {focus}." },
+      { title: "No surprises", text: "Everything lined up with the product page. {item} feels like a sensible pick for {focus}." },
       { title: "Easy order", text: "Placing the order was simple and updates were clear. {item} arrived in good shape." },
-      { title: "Good first impression", text: "Out of the box, {item} looks ready for the court. Shipping was quick on my order." },
+      { title: "Good first impression", text: "Out of the box, {item} looks ready for the court and for {focus}. Shipping was quick on my order." },
     ],
     [
-      { title: "Works for my routine", text: "I've used {item} in a few sessions now and it fits my usual rec-night setup." },
-      { title: "Solid for the price", text: "For what I paid, {item} does the job. I'd buy here again for basics." },
-      { title: "Does the job", text: "Nothing fancy, but {item} is practical. Good option if you want simple gear without guesswork." },
+      { title: "Works for my routine", text: "I've used {item} in a few sessions now and it fits my usual setup for {focus}." },
+      { title: "Solid for the price", text: "For what I paid, {item} does the job. I'd buy here again for practical gear and {focus}." },
+      { title: "Does the job", text: "Nothing fancy, but {item} works well in practice. Good option if you want simple gear for {focus}." },
       { title: "Pleased so far", text: "{item} feels sturdy enough for weekly play. Communication from the store was normal—no issues." },
-      { title: "Matches my needs", text: "I wanted straightforward pickleball gear and {item} fits that. Delivery was on the quicker side." },
-      { title: "Kept it simple", text: "{item} is easy to use and pack for the court. Support answered a sizing question without delay." },
+      { title: "Matches my needs", text: "I wanted straightforward pickleball gear and {item} fits that, especially for {focus}. Delivery was on the quicker side." },
+      { title: "Kept it simple", text: "{item} is easy to use and pack for the court. It works well for {focus}." },
     ],
     [
       { title: "Would buy again", text: "Overall a clean experience end-to-end. {item} is holding up fine after several sessions." },
-      { title: "Recommend for rec players", text: "If you play casually or a few times a week, {item} is a reasonable choice. Fulfillment felt organized." },
+      { title: "Recommend for rec players", text: "If you play casually or a few times a week, {item} is a reasonable choice for {focus}. Fulfillment felt organized." },
       { title: "All good", text: "No complaints—{item} arrived as described and I've had no problems on court." },
-      { title: "Straightforward quality", text: "{item} feels consistent with what you'd want for practice and pickup games." },
+      { title: "Straightforward quality", text: "{item} feels consistent with what you'd want for regular sessions and {focus}." },
       { title: "Glad I ordered", text: "I'm happy I went with this listing. {item} works and the order process was easy to follow." },
-      { title: "Fine for everyday play", text: "{item} isn't trying to be flashy—just usable gear for normal court days. That worked for me." },
+      { title: "Fine for everyday play", text: "{item} isn't trying to be flashy—just usable gear for normal court days and {focus}. That worked for me." },
     ],
   ];
 
-  return raw[slot].map((s) => ({ title: s.title, text: fillItem(s.text, item) }));
+  return raw[slot].map((s) => ({ title: s.title, text: fillTemplate(s.text, item, focus) }));
 }
 
 /** Composed “mixed” reviews: independent pools × each other → unique wording per product, still deterministic. */
@@ -176,7 +189,7 @@ function composeBalancedSnippet(handle: string, productTitle: string, idx: numbe
 
 function buildReviewCopy(kind: ProductKind, handle: string, productTitle: string, idx: number): Snippet {
   const slot = Math.min(idx, 2) as 0 | 1 | 2;
-  const pool = positiveSnippetsForSlot(slot, itemPhrase(kind));
+  const pool = positiveSnippetsForSlot(slot, itemPhrase(kind), focusPhrase(kind));
   const choice = stableIndex(handle, productTitle, `review:positive:slot${slot}:idx${idx}:kind${kind}:v2`, pool.length);
   return pool[choice];
 }

@@ -93,7 +93,7 @@ function extractListItems(html: string): string[] {
 
 function detectType(product: ShopifyProduct): DescriptionType {
   const haystack = `${product.title} ${product.tags || ""} ${product.product_type || ""} ${product.body_html || ""}`.toLowerCase();
-  if (haystack.includes("ball")) return "balls";
+  if (/\bballs?\b/.test(haystack)) return "balls";
   if (haystack.includes("paddle")) return "paddle";
   if (haystack.includes("bag") || haystack.includes("backpack")) return "bag";
   if (haystack.includes("bundle") || haystack.includes("kit") || haystack.includes("starter")) return "bundle";
