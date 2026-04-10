@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { Product } from '../../lib/shopify';
 import { formatProductDescription } from '../../lib/productDescription';
 
@@ -37,6 +38,18 @@ export function ProductDescription({ product }: ProductDescriptionProps) {
           <p className="text-sm md:text-base">{content.note}</p>
         </div>
       )}
+
+      <p className="text-sm text-gray-500 pt-2 border-t border-gray-100">
+        Shipping, returns, and taxes: see our{' '}
+        <Link to="/shipping" className="text-teal-700 hover:underline font-medium">
+          shipping
+        </Link>{' '}
+        and{' '}
+        <Link to="/returns" className="text-teal-700 hover:underline font-medium">
+          returns
+        </Link>{' '}
+        pages for details.
+      </p>
     </section>
   );
 }

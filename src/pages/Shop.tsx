@@ -77,7 +77,7 @@ export function Shop() {
            currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1)}
         </h1>
         <p className="text-gray-500 max-w-2xl">
-          Premium accessories built for durability and performance. Upgrade your game today.
+          Practical pickleball gear for everyday play—paddles, balls, bags, and small essentials without marketplace clutter.
         </p>
       </div>
 

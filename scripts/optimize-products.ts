@@ -117,22 +117,20 @@ function parseJsonObject<T>(raw: string): T {
 
 async function generateLuxuryContent(product: ShopifyProduct): Promise<AiResult> {
   const prompt = `
-You are a Master E-commerce Copywriter for a premium pickleball brand.
-Rewrite this Shopify listing in high-converting, premium English.
+You rewrite Shopify listings for Courtlane: pickleball essentials for beginners and everyday (rec) players.
 
 Rules:
-1) Keep claims realistic and compliant (no medical or impossible claims).
-2) Title: concise, premium, benefit-forward.
-3) Description: 2 short paragraphs + a "Performance Highlights" HTML bullet list (4-6 bullets).
-4) Include "Quick Specs" as a short list of 4-6 factual bullet points.
-5) Generate SEO fields:
-   - seo_title: max 60 chars
-   - seo_description: 140-160 chars
-6) Do NOT include any images, image links, markdown images, or <img> tags in body_html.
-6) Output ONLY valid JSON:
+1) Realistic claims only—no medical promises, fake warranties, or shipping guarantees not in the source.
+2) Strip supplier noise: never output marketplace fields (Brand Name: NONE, MainKey, Choice: yes, origin dumps, "hot sale", manual measurement disclaimers, etc.).
+3) Title: short, natural, shopper-friendly. No factory codes or keyword chains.
+4) body_html: 2 short paragraphs for normal readers, then <h3>Key details</h3> <ul> with 4–6 bullets (materials, size, quantity, fit, real use case). Then <h3>Specs</h3> <ul> with the same or condensed factual bullets—no ALL CAPS walls.
+5) seo_title ≤ 60 chars; seo_description 140–160 chars; plain language.
+6) No <img>, markdown images, or image URLs in body_html.
+7) Avoid hype words: luxury, ultimate, world-class, best ever, must-have, risk-free.
+8) Output ONLY valid JSON:
 {
   "title": "string",
-  "body_html": "<p>...</p><p>...</p><h3>Performance Highlights</h3><ul><li>...</li></ul><h3>Quick Specs</h3><ul><li>...</li></ul>",
+  "body_html": "<p>...</p><p>...</p><h3>Key details</h3><ul><li>...</li></ul><h3>Specs</h3><ul><li>...</li></ul>",
   "seo_title": "string",
   "seo_description": "string",
   "specs": ["string", "string"]

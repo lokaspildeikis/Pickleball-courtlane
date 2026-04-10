@@ -7,8 +7,8 @@ export function FAQ() {
       answer: "We offer a 30-day return policy on all unused items in their original packaging. If you're not satisfied with your purchase, please contact our support team to initiate a return."
     },
     {
-      question: "Will your paddle covers fit my elongated paddle?",
-      answer: "Yes! Our Aero Neoprene Paddle Covers are designed with a universal fit that accommodates both standard and elongated paddle shapes up to 16.5 inches in length."
+      question: "Will a paddle cover fit an elongated paddle?",
+      answer: "Most sleeves and covers on Courtlane are listed with size or fit notes on the product page. If you are between shapes, check the dimensions in the description or email us with your paddle length—we will point you to the best match."
     },
     {
       question: "How often should I change my overgrip?",

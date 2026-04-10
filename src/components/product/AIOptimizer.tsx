@@ -49,7 +49,7 @@ const AIOptimizer: React.FC<AIOptimizerProps> = ({
         className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-full font-medium transition-all shadow-lg hover:shadow-indigo-500/20 active:scale-95"
       >
         <Sparkles className="w-4 h-4" />
-        <span>Master Copywriter</span>
+        <span>Suggest listing copy</span>
       </button>
     );
   }
@@ -61,7 +61,7 @@ const AIOptimizer: React.FC<AIOptimizerProps> = ({
           <div className="bg-white/90 dark:bg-slate-900/90 p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4">
             <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
             <p className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
-              Consulting the Master Copywriter...
+              Writing suggestions…
             </p>
           </div>
         </div>
@@ -104,7 +104,7 @@ const AIOptimizer: React.FC<AIOptimizerProps> = ({
               {/* Optimized */}
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold uppercase tracking-widest text-indigo-500">Master Version</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-indigo-500">Suggested version</span>
                   <button 
                     onClick={() => setEditMode(!editMode)}
                     className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-indigo-500 transition-colors"
@@ -163,7 +163,7 @@ const AIOptimizer: React.FC<AIOptimizerProps> = ({
                 className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold transition-all shadow-xl shadow-indigo-500/20 flex items-center gap-2"
               >
                 <Check className="w-5 h-5" />
-                Apply Luxury Branding
+                Apply to listing
               </button>
             </div>
           </div>

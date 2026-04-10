@@ -82,7 +82,9 @@ export function CartDrawer() {
                           <X size={16} />
                         </button>
                       </div>
-                      {item.variantTitle && item.variantTitle !== 'Default Title' && (
+                      {item.variantTitle &&
+                        item.variantTitle !== 'Default Title' &&
+                        item.variantTitle !== 'One size' && (
                         <p className="text-xs text-gray-500 mt-1">{item.variantTitle}</p>
                       )}
                       <p className="text-sm font-medium text-gray-900 mt-1">${item.price.toFixed(2)}</p>

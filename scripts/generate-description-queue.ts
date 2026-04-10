@@ -56,9 +56,10 @@ type RewriteRow = {
 const SUPPLIER_NOISE_PATTERNS: RegExp[] = [
   /mainkey\d*\s*:/i,
   /brand name\s*:/i,
-  /choice\s*:/i,
+  /choice\s*:\s*yes/i,
   /high-concerned chemical\s*:/i,
   /^cn\s*:/i,
+  /origin\s*:\s*(mainland china|cn)/i,
 ];
 
 function stripHtml(input: string): string {
@@ -79,7 +80,11 @@ function cleanText(input: string): string {
     .join(" ");
 
   return text
-    .replace(/\b(high quality|premium quality|perfect gift|pro-level|tournament-level)\b/gi, "")
+    .replace(
+      /\b(high quality|premium quality|perfect gift|pro-level|tournament-level|factory direct|hot sale|buy now)\b/gi,
+      "",
+    )
+    .replace(/\b(ultimate|unparalleled|world-class|must-have)\b/gi, "")
     .replace(/\s{2,}/g, " ")
     .trim();
 }
@@ -93,14 +98,14 @@ function extractListItems(html: string): string[] {
 
 function detectType(product: ShopifyProduct): DescriptionType {
   const haystack = `${product.title} ${product.tags || ""} ${product.product_type || ""} ${product.body_html || ""}`.toLowerCase();
-  if (/\bballs?\b/.test(haystack)) return "balls";
-  if (haystack.includes("paddle")) return "paddle";
-  if (haystack.includes("bag") || haystack.includes("backpack")) return "bag";
   if (haystack.includes("bundle") || haystack.includes("kit") || haystack.includes("starter")) return "bundle";
+  if (haystack.includes("cover") || haystack.includes("sleeve")) return "cover";
+  if (haystack.includes("bag") || haystack.includes("backpack")) return "bag";
   if (haystack.includes("towel")) return "towel";
   if (haystack.includes("sweatband") || haystack.includes("headband") || haystack.includes("wristband")) return "sweat-accessory";
-  if (haystack.includes("grip")) return "grip";
-  if (haystack.includes("cover")) return "cover";
+  if (haystack.includes("grip") || haystack.includes("overgrip")) return "grip";
+  if (haystack.includes("paddle") || haystack.includes("racket")) return "paddle";
+  if (/\bballs?\b/.test(haystack)) return "balls";
   return "accessory";
 }
 

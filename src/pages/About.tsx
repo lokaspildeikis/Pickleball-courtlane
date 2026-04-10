@@ -3,38 +3,38 @@ export function About() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-black tracking-tight uppercase italic text-gray-900 mb-6">
-          Our Story
+          Our story
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          We believe the right gear can elevate your game, boost your confidence, and keep you on the court longer.
+          Courtlane exists to make pickleball shopping simpler for people who just want to play—especially beginners and everyday rec players.
         </p>
       </div>
 
       <div className="aspect-video bg-gray-100 rounded-sm overflow-hidden mb-16">
-        <img 
-          src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&q=80&w=1600" 
-          alt="Pickleball net" 
+        <img
+          src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&q=80&w=1600"
+          alt="Pickleball court"
           className="w-full h-full object-cover"
         />
       </div>
 
       <div className="prose prose-lg prose-teal mx-auto text-gray-700">
         <p>
-          Courtlane was born out of a simple frustration: finding premium, durable, and stylish pickleball accessories was harder than it needed to be. As passionate players ourselves, we were tired of settling for generic grips that lost their tack after one session, or bulky covers that didn't protect our paddles.
-        </p>
-        
-        <p>
-          We set out to create a focused line of essentials—gear that looks as good as it performs. We spent months testing materials, refining designs, and gathering feedback from players of all levels, from weekend warriors to tournament pros.
-        </p>
-
-        <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-6">Built for the Modern Player</h2>
-        
-        <p>
-          Our philosophy is simple: quality over quantity. We don't sell everything; we only sell what we believe is the best. Whether it's our ultra-tacky overgrips that keep your hand secure in the summer heat, or our shock-absorbing neoprene covers that protect your investment, every Courtlane product is designed with intention.
+          Pickleball gear can be noisy—long listings, overlapping specs, and copy that reads like it was meant for a wholesale catalog. We wanted the opposite: a tight selection of essentials and descriptions written for real court use.
         </p>
 
         <p>
-          We are proud to be a part of the fastest-growing sport in America, and we are committed to supporting the community that makes pickleball so special. See you on the courts.
+          Courtlane focuses on balls, paddles, covers, bags, grips, towels, and small accessories you actually reach for between sessions. We keep the tone practical, skip hype, and point you to our shipping and returns pages when policies matter more than marketing.
+        </p>
+
+        <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-6">Who we are for</h2>
+
+        <p>
+          If you are new to the sport, play a few times a week, or shop for someone who does, you are the audience we built this for. We are not trying to sound like a luxury trophy shop—we are trying to sound like a helpful local court desk with a clear website.
+        </p>
+
+        <p>
+          Questions before you buy? Email us—we would rather answer plainly than leave you guessing.
         </p>
       </div>
     </div>

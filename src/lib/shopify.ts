@@ -115,7 +115,7 @@ const MOCK_PRODUCTS: Product[] = [
     },
     variants: {
       edges: [
-        { node: { id: "gid://shopify/ProductVariant/3", title: "Default Title", availableForSale: true, price: { amount: "24.00", currencyCode: "USD" }, compareAtPrice: { amount: "30.00", currencyCode: "USD" } } }
+        { node: { id: "gid://shopify/ProductVariant/3", title: "One size", availableForSale: true, price: { amount: "24.00", currencyCode: "USD" }, compareAtPrice: { amount: "30.00", currencyCode: "USD" } } }
       ]
     },
     tags: ["protection", "sale"]
@@ -154,7 +154,7 @@ const MOCK_PRODUCTS: Product[] = [
     },
     variants: {
       edges: [
-        { node: { id: "gid://shopify/ProductVariant/5", title: "Default Title", availableForSale: true, price: { amount: "45.00", currencyCode: "USD" }, compareAtPrice: { amount: "54.00", currencyCode: "USD" } } }
+        { node: { id: "gid://shopify/ProductVariant/5", title: "One size", availableForSale: true, price: { amount: "45.00", currencyCode: "USD" }, compareAtPrice: { amount: "54.00", currencyCode: "USD" } } }
       ]
     },
     tags: ["bundle", "beginner", "best-seller"]

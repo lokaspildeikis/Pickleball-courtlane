@@ -4,7 +4,7 @@ import { getProduct, Product } from '../lib/shopify';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/ui/Button';
 import { ProductDescription } from '../components/product/ProductDescription';
-import { Minus, Plus, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 import { getSyntheticReviewSummary, getSyntheticReviews } from '../lib/syntheticReviews';
 import { TRUST_POINTS, POLICY_SNIPPETS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
@@ -100,7 +100,10 @@ export function ProductDetail() {
   const generatedCompareAtValue = getRoundedComparePrice(currentPriceValue);
   const displayCompareAtValue = Math.max(existingCompareAtValue, generatedCompareAtValue);
   const isSale = displayCompareAtValue > currentPriceValue;
-  const hasMultipleVariants = product.variants.edges.length > 1 && product.variants.edges[0].node.title !== 'Default Title';
+  const meaningfulVariantLabels = product.variants.edges
+    .map((v) => v.node.title.trim().toLowerCase())
+    .filter((t) => t && t !== 'default title');
+  const hasMultipleVariants = meaningfulVariantLabels.length > 1;
   const reviews = getSyntheticReviews(product.handle, product.title);
   const reviewSummary = getSyntheticReviewSummary(product.handle);
   const visibleReviewCount = reviews.length;
@@ -257,23 +260,7 @@ export function ProductDetail() {
             </div>
           </div>
 
-          {/* Trust Badges */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6 border-y border-gray-200 mb-8">
-            <div className="flex items-center gap-3">
-              <Truck size={20} className="text-teal-700" />
-              <span className="text-sm font-medium text-gray-700">Fast Shipping</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <RotateCcw size={20} className="text-teal-700" />
-              <span className="text-sm font-medium text-gray-700">30-Day Returns</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <ShieldCheck size={20} className="text-teal-700" />
-              <span className="text-sm font-medium text-gray-700">Secure Checkout</span>
-            </div>
-          </div>
-
-          {/* Description */}
+          {/* Description — trust row lives above near Add to cart; policy snippets below */}
           <div className="max-w-none">
             <ProductDescription product={product} />
           </div>

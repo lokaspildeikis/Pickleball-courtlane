@@ -16,7 +16,7 @@ export function Footer() {
               />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Premium pickleball accessories designed for players who demand performance, durability, and style on the court.
+              Courtlane is a pickleball essentials shop for beginners and everyday players—clear listings, honest descriptions, and support when you need it.
             </p>
           </div>
 
