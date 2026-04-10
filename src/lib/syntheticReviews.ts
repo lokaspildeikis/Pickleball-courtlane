@@ -9,6 +9,21 @@ export interface SyntheticReview {
   source: "synthetic";
 }
 
+export type ProductReviewType =
+  | "balls"
+  | "paddles"
+  | "paddle-covers"
+  | "bags"
+  | "towels-accessories"
+  | "bundles"
+  | "generic";
+
+type ReviewTemplate = {
+  title: string;
+  text: string;
+  rating: number;
+};
+
 const FIRST_NAMES = [
   "Liam", "Noah", "Mason", "Ethan", "Lucas", "Ava", "Emma", "Mia", "Sofia", "Harper",
   "Elena", "Julia", "Nora", "Leah", "Owen", "Caleb", "Ryan", "Dylan", "Zoe", "Chloe",
@@ -16,7 +31,90 @@ const FIRST_NAMES = [
 
 const LAST_INITIALS = ["A.", "B.", "C.", "D.", "E.", "F.", "G.", "H.", "J.", "K.", "L.", "M."];
 
-type ProductKind = "balls" | "paddle" | "grips" | "bag" | "towel" | "accessory";
+/**
+ * Central review data source:
+ * - byProduct[handle] for exact-product reviews
+ * - byType[type] for category fallback
+ * - safeFallback for neutral store-level reviews
+ */
+const REVIEW_DATA: {
+  byProduct: Record<string, ReviewTemplate[]>;
+  byType: Record<ProductReviewType, ReviewTemplate[]>;
+  safeFallback: ReviewTemplate[];
+} = {
+  byProduct: {
+    "high-quality-spot-price-chloroprene-rubber-pickle-ball-bag-sports-protective-bag": [
+      { title: "Fits my paddle well", text: "Sleeve fits snug without being hard to take off. Good for keeping the face protected in my bag.", rating: 4.6 },
+      { title: "Simple cover", text: "Nothing fancy, but it keeps scratches off during travel to the courts.", rating: 4.4 },
+      { title: "Useful add-on", text: "Material feels decent and the paddle slides in easily.", rating: 4.3 },
+    ],
+    "arronax-high-quality-custom-beach-tennis-bag-with-padel-racquet-backpack-pocket-tennis-sport-pickleball-paddle-backpack": [
+      { title: "Good daily bag", text: "Pockets are laid out well and it is easy to pack before practice.", rating: 4.7 },
+      { title: "Comfortable enough", text: "Straps feel fine for short walks to the court and the main compartment is roomy.", rating: 4.5 },
+      { title: "Does the job", text: "Works for paddle, towel, and balls without overstuffing.", rating: 4.4 },
+    ],
+  },
+  byType: {
+    balls: [
+      { title: "Good for rec games", text: "Bounce feels consistent enough for practice and casual matches.", rating: 4.5 },
+      { title: "Solid value", text: "We used these for drills all week and they held up fine.", rating: 4.4 },
+      { title: "Simple and reliable", text: "Not premium-level hype, just usable balls for normal court sessions.", rating: 4.3 },
+      { title: "Works for weekly play", text: "Pack is convenient when you play a few times a week.", rating: 4.4 },
+      { title: "Happy with them", text: "Flight and bounce are good enough for everyday outdoor games.", rating: 4.5 },
+    ],
+    paddles: [
+      { title: "Comfortable paddle", text: "Grip feels good and I can play longer sessions without hand fatigue.", rating: 4.6 },
+      { title: "Nice control", text: "Touch shots feel predictable and the paddle is easy to handle.", rating: 4.5 },
+      { title: "Good for casual play", text: "Works well for rec games and practice without overthinking specs.", rating: 4.4 },
+      { title: "Feels balanced", text: "Weight distribution feels natural for both dinks and drives.", rating: 4.5 },
+      { title: "No complaints", text: "Straightforward paddle that does what I need for weekly sessions.", rating: 4.4 },
+    ],
+    "paddle-covers": [
+      { title: "Keeps paddle protected", text: "Fits my paddle nicely and gives extra protection in my backpack.", rating: 4.6 },
+      { title: "Good sleeve", text: "Easy to put on and remove, and it helps avoid small scuffs.", rating: 4.4 },
+      { title: "Practical cover", text: "Neoprene feels decent and the paddle stays protected between games.", rating: 4.5 },
+      { title: "Worth adding", text: "Simple item, but useful if you carry your paddle often.", rating: 4.3 },
+      { title: "Does what it should", text: "No issues so far, and it keeps the paddle face cleaner.", rating: 4.4 },
+    ],
+    bags: [
+      { title: "Useful storage", text: "Good for keeping court gear organized with enough room for essentials.", rating: 4.6 },
+      { title: "Nice compartment layout", text: "Pockets make it easy to separate shoes, towel, and accessories.", rating: 4.5 },
+      { title: "Good for court days", text: "Carry is comfortable enough and setup stays organized.", rating: 4.4 },
+      { title: "Simple and practical", text: "Backpack feels sturdy and works for regular sessions.", rating: 4.5 },
+      { title: "Matches what I needed", text: "Storage and carry are the main reason I bought it, and it delivers.", rating: 4.4 },
+    ],
+    "towels-accessories": [
+      { title: "Useful between points", text: "Helps with sweat during longer sessions and dries fairly quickly.", rating: 4.5 },
+      { title: "Comfortable to use", text: "Material feels soft enough and works well for practice days.", rating: 4.4 },
+      { title: "Simple accessory", text: "Does the job and is easy to keep in my bag.", rating: 4.3 },
+      { title: "Good everyday item", text: "Not flashy, just practical for rec play and training.", rating: 4.4 },
+      { title: "Works as expected", text: "Helps keep me comfortable during warm sessions.", rating: 4.4 },
+    ],
+    bundles: [
+      { title: "Good starter set", text: "Useful mix of gear for getting on court without buying items one by one.", rating: 4.6 },
+      { title: "Convenient bundle", text: "Everything included was relevant for casual games and practice.", rating: 4.5 },
+      { title: "Nice value", text: "Solid option if you want a simple kit for regular play.", rating: 4.4 },
+      { title: "Easy choice", text: "I liked having the essentials together in one order.", rating: 4.5 },
+      { title: "Practical setup", text: "Good for beginners or anyone refreshing their basic gear.", rating: 4.4 },
+    ],
+    generic: [],
+  },
+  safeFallback: [
+    { title: "Smooth order", text: "Checkout was simple and shipping updates were clear.", rating: 4.3 },
+    { title: "No issues", text: "Everything arrived as described and packed well.", rating: 4.4 },
+    { title: "Would order again", text: "Store communication was fine and the process felt straightforward.", rating: 4.4 },
+  ],
+};
+
+const TYPE_KEYWORDS: Record<ProductReviewType, string[]> = {
+  balls: ["ball", "balls", "bounce", "indoor", "outdoor", "holes", "pack"],
+  paddles: ["paddle", "face", "grip", "control", "spin", "handle"],
+  "paddle-covers": ["cover", "sleeve", "neoprene", "protection", "zipper", "paddle cover"],
+  bags: ["bag", "backpack", "pockets", "storage", "carry", "compartment"],
+  "towels-accessories": ["towel", "sweat", "sweatband", "headband", "absorbent", "dry"],
+  bundles: ["bundle", "kit", "set", "starter", "included"],
+  generic: [],
+};
 
 function hashString(input: string): number {
   let hash = 0;
@@ -51,147 +149,66 @@ function formatDateFromSeed(seed: number): string {
   return d.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit" });
 }
 
-function detectProductKind(handle: string, title: string): ProductKind {
+function detectProductType(handle: string, title: string): ProductReviewType {
   const text = `${handle} ${title}`.toLowerCase();
+  if (text.includes("bundle") || text.includes("starter") || text.includes("kit") || text.includes("set")) return "bundles";
+  if (text.includes("cover") || text.includes("sleeve")) return "paddle-covers";
+  if (text.includes("bag") || text.includes("backpack")) return "bags";
+  if (text.includes("towel") || text.includes("sweatband") || text.includes("headband") || text.includes("wristband")) return "towels-accessories";
+  if (text.includes("paddle") || text.includes("racket") || text.includes("grip") || text.includes("overgrip")) return "paddles";
   if (/\bballs?\b/.test(text)) return "balls";
-  if (text.includes("paddle") || text.includes("racket")) return "paddle";
-  if (text.includes("grip") || text.includes("overgrip")) return "grips";
-  if (text.includes("bag") || text.includes("backpack") || text.includes("cover")) return "bag";
-  if (text.includes("towel")) return "towel";
-  return "accessory";
+  return "generic";
 }
 
-/** Short noun phrase for inline copy (pickleball-specific, not hypey). */
-function itemPhrase(kind: ProductKind): string {
-  const map: Record<ProductKind, string> = {
-    balls: "these pickleballs",
-    paddle: "this paddle",
-    grips: "this grip setup",
-    bag: "this bag",
-    towel: "this towel",
-    accessory: "this product",
-  };
-  return map[kind];
+function keywordHits(text: string, words: string[]): number {
+  const normalized = text.toLowerCase();
+  return words.reduce((count, word) => (normalized.includes(word.toLowerCase()) ? count + 1 : count), 0);
 }
 
-/** Short use-case phrase so reviews feel product-specific. */
-function focusPhrase(kind: ProductKind): string {
-  const map: Record<ProductKind, string> = {
-    balls: "drills and rec matches",
-    paddle: "control and touch shots",
-    grips: "grip comfort during longer sessions",
-    bag: "court-day packing and carry",
-    towel: "sweat control between points",
-    accessory: "everyday court sessions",
-  };
-  return map[kind];
+function isReviewRelevantForType(reviewText: string, type: ProductReviewType): boolean {
+  const currentHits = keywordHits(reviewText, TYPE_KEYWORDS[type]);
+  let highestOtherHits = 0;
+
+  for (const [candidateType, words] of Object.entries(TYPE_KEYWORDS)) {
+    if (candidateType === type || candidateType === "generic") continue;
+    highestOtherHits = Math.max(highestOtherHits, keywordHits(reviewText, words));
+  }
+
+  // Neutral reviews with no strong product words are allowed as safe fallback.
+  if (currentHits === 0 && highestOtherHits === 0) return true;
+  // Exclude mismatched copy where another type dominates.
+  return currentHits >= highestOtherHits;
 }
 
-type Snippet = { title: string; text: string };
-
-function fillTemplate(template: string, item: string, focus: string): string {
-  return template.replace(/\{item\}/g, item).replace(/\{focus\}/g, focus);
+function pickDeterministicTemplates(
+  templates: ReviewTemplate[],
+  handle: string,
+  title: string,
+  limit: number,
+): ReviewTemplate[] {
+  if (!templates.length) return [];
+  const indexed = templates.map((template, idx) => ({
+    template,
+    score: stableIndex(handle, title, `review-template:${idx}`, 1_000_000),
+  }));
+  indexed.sort((a, b) => a.score - b.score);
+  return indexed.slice(0, Math.min(limit, indexed.length)).map((entry) => entry.template);
 }
 
-/** Seeded positive snippets per slot so the three cards read differently and products vary. */
-function positiveSnippetsForSlot(slot: 0 | 1 | 2, item: string, focus: string): Snippet[] {
-  const raw: Snippet[][] = [
-    [
-      { title: "Arrived quickly", text: "Order showed up sooner than I expected. {item} looks right for {focus}." },
-      { title: "Smooth purchase", text: "Checkout and tracking were straightforward. {item} matches the listing and feels fine for {focus}." },
-      { title: "Happy with delivery", text: "Packaging was solid and nothing was damaged. {item} is what I wanted for {focus}." },
-      { title: "No surprises", text: "Everything lined up with the product page. {item} feels like a sensible pick for {focus}." },
-      { title: "Easy order", text: "Placing the order was simple and updates were clear. {item} arrived in good shape." },
-      { title: "Good first impression", text: "Out of the box, {item} looks ready for the court and for {focus}. Shipping was quick on my order." },
-    ],
-    [
-      { title: "Works for my routine", text: "I've used {item} in a few sessions now and it fits my usual setup for {focus}." },
-      { title: "Solid for the price", text: "For what I paid, {item} does the job. I'd buy here again for practical gear and {focus}." },
-      { title: "Does the job", text: "Nothing fancy, but {item} works well in practice. Good option if you want simple gear for {focus}." },
-      { title: "Pleased so far", text: "{item} feels sturdy enough for weekly play. Communication from the store was normal—no issues." },
-      { title: "Matches my needs", text: "I wanted straightforward pickleball gear and {item} fits that, especially for {focus}. Delivery was on the quicker side." },
-      { title: "Kept it simple", text: "{item} is easy to use and pack for the court. It works well for {focus}." },
-    ],
-    [
-      { title: "Would buy again", text: "Overall a clean experience end-to-end. {item} is holding up fine after several sessions." },
-      { title: "Recommend for rec players", text: "If you play casually or a few times a week, {item} is a reasonable choice for {focus}. Fulfillment felt organized." },
-      { title: "All good", text: "No complaints—{item} arrived as described and I've had no problems on court." },
-      { title: "Straightforward quality", text: "{item} feels consistent with what you'd want for regular sessions and {focus}." },
-      { title: "Glad I ordered", text: "I'm happy I went with this listing. {item} works and the order process was easy to follow." },
-      { title: "Fine for everyday play", text: "{item} isn't trying to be flashy—just usable gear for normal court days and {focus}. That worked for me." },
-    ],
-  ];
+function getAssignedReviewTemplates(handle: string, productTitle: string): { type: ProductReviewType; templates: ReviewTemplate[] } {
+  const type = detectProductType(handle, productTitle);
+  const exact = REVIEW_DATA.byProduct[handle] || [];
+  const typed = REVIEW_DATA.byType[type] || [];
+  const safe = REVIEW_DATA.safeFallback;
 
-  return raw[slot].map((s) => ({ title: s.title, text: fillTemplate(s.text, item, focus) }));
-}
+  const exactRelevant = exact.filter((review) => isReviewRelevantForType(`${review.title} ${review.text}`, type));
+  if (exactRelevant.length) return { type, templates: exactRelevant };
 
-/** Composed “mixed” reviews: independent pools × each other → unique wording per product, still deterministic. */
-const BALANCED_OPENERS = [
-  "It took a little over a week of business days before the package landed—longer than I'm used to.",
-  "Delivery was on the slow side for me, roughly nine or ten working days door to door.",
-  "Tracking stayed quiet for a while and the box needed almost two weeks on business days.",
-  "Shipping wasn't fast; I'd guess about twelve working days from order to doorstep.",
-  "The parcel felt slower than my last few online orders—closer to two weeks on weekdays.",
-  "I wasn't in a rush, but the wait still wound up longer than the estimate I had in mind.",
-  "The label sat in transit longer than expected—I'm thinking nine or eleven business days total.",
-  "Arrival dragged enough that I checked in once; it was not next-day speed by any means.",
-  "From checkout to delivery it was a stretch—I'd call it a slow-but-steady shipment.",
-  "If you need gear tomorrow, budget extra time. Mine needed the better part of two work weeks.",
-];
+  const typedRelevant = typed.filter((review) => isReviewRelevantForType(`${review.title} ${review.text}`, type));
+  if (typedRelevant.length) return { type, templates: typedRelevant };
 
-const BALANCED_MIDDLES = [
-  "When I reached out, someone replied quickly and didn't leave me guessing.",
-  "Support answered my email the same day and was clear about what was going on.",
-  "I used the contact form and got a human response fast—no boilerplate runaround.",
-  "Customer service was on it: short wait, straight answers, and a polite tone.",
-  "The team got back within a day and actually read my note instead of auto-replying.",
-  "I had one question about the shipment; they responded sooner than I expected.",
-  "No drama talking to support—they were prompt and normal to deal with.",
-  "They acknowledged the delay without excuses and kept the message simple.",
-  "Support felt small-shop helpful, not robotic, which I appreciated.",
-  "Quick reply from their side once I nudged them—professional enough for me.",
-];
-
-const BALANCED_CLOSERS = [
-  "They offered a modest discount on a future order, which felt like a fair make-good.",
-  "They sent a code I can use next checkout—small gesture, but it helped.",
-  "Got a store credit note toward my next buy; not huge, but it squared things for me.",
-  "They added a courtesy percentage off my next purchase without me having to push.",
-  "There was a voucher-style credit for round two; made the wait easier to swallow.",
-  "They matched the situation with a next-order discount—reasonable fix on their end.",
-  "A small savings on my follow-up order was enough for me to try buying here again.",
-  "They didn't leave it at 'sorry'—there was a concrete perk for ordering again.",
-  "I got a one-time code for my next cart; simple and I’ll use it.",
-  "They pointed me to a loyalty-style discount for the next go—fine by me.",
-];
-
-const BALANCED_TITLES = [
-  "Good support, slower delivery",
-  "Took longer than expected",
-  "Shipping lagged, help didn't",
-  "Mixed experience",
-  "Slow parcel, fast replies",
-  "Patience helps on shipping",
-  "Okay once it arrived",
-  "Support made up for the wait",
-  "Not the speediest order",
-  "Worth noting the timeline",
-];
-
-function composeBalancedSnippet(handle: string, productTitle: string, idx: number): Snippet {
-  const o = stableIndex(handle, productTitle, `review:balanced:${idx}:opener:v2`, BALANCED_OPENERS.length);
-  const m = stableIndex(handle, productTitle, `review:balanced:${idx}:middle:v2`, BALANCED_MIDDLES.length);
-  const c = stableIndex(handle, productTitle, `review:balanced:${idx}:closer:v2`, BALANCED_CLOSERS.length);
-  const t = stableIndex(handle, productTitle, `review:balanced:${idx}:title:v2`, BALANCED_TITLES.length);
-  const text = `${BALANCED_OPENERS[o]} ${BALANCED_MIDDLES[m]} ${BALANCED_CLOSERS[c]}`;
-  return { title: BALANCED_TITLES[t], text };
-}
-
-function buildReviewCopy(kind: ProductKind, handle: string, productTitle: string, idx: number): Snippet {
-  const slot = Math.min(idx, 2) as 0 | 1 | 2;
-  const pool = positiveSnippetsForSlot(slot, itemPhrase(kind), focusPhrase(kind));
-  const choice = stableIndex(handle, productTitle, `review:positive:slot${slot}:idx${idx}:kind${kind}:v2`, pool.length);
-  return pool[choice];
+  const safeRelevant = safe.filter((review) => isReviewRelevantForType(`${review.title} ${review.text}`, type));
+  return { type, templates: safeRelevant };
 }
 
 export function getSyntheticReviewSummary(handle: string) {
@@ -203,33 +220,23 @@ export function getSyntheticReviewSummary(handle: string) {
 
 export function getSyntheticReviews(handle: string, productTitle: string): SyntheticReview[] {
   const seed = hashString(`${handle}-${productTitle}`);
-  const summary = getSyntheticReviewSummary(handle);
-  const kind = detectProductKind(handle, productTitle);
+  const { templates } = getAssignedReviewTemplates(handle, productTitle);
+  const selected = pickDeterministicTemplates(templates, handle, productTitle, 3);
 
-  return [0, 1, 2].map((idx) => {
+  return selected.map((template, idx) => {
     const fn = stableIndex(handle, productTitle, `review:author-fn:${idx}`, FIRST_NAMES.length);
     const li = stableIndex(handle, productTitle, `review:author-li:${idx}`, LAST_INITIALS.length);
     const author = `${FIRST_NAMES[fn]} ${LAST_INITIALS[li]}`;
-    const rawRating = Math.max(
-      3.9,
-      Math.min(
-        5,
-        summary.rating - (idx === 2 ? 0.3 : 0) + seededFloat(seed + idx * 11) * 0.2,
-      ),
-    );
-    const ratingLabel = rawRating.toFixed(1);
-    const rating = Number(ratingLabel);
-    const copy = buildReviewCopy(kind, handle, productTitle, idx);
-    const score = Number(ratingLabel);
-    const useBalancedThreeNineCopy = ratingLabel === "3.9" || (idx === 2 && score <= 4.1);
-    const balanced = composeBalancedSnippet(handle, productTitle, idx);
+    const ratingJitter = (seededFloat(seed + idx * 11) - 0.5) * 0.2;
+    const rating = Number(Math.max(3.9, Math.min(5, template.rating + ratingJitter)).toFixed(1));
+
     return {
       id: `${handle}-${idx}`,
       author,
       rating,
       date: formatDateFromSeed(seed + idx * 19),
-      title: useBalancedThreeNineCopy ? balanced.title : copy.title,
-      text: useBalancedThreeNineCopy ? balanced.text : copy.text,
+      title: template.title,
+      text: template.text,
       source: "synthetic",
     };
   });

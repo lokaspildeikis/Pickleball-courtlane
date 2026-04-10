@@ -98,8 +98,12 @@ export function ProductDetail() {
   const displayCompareAtValue = Math.max(existingCompareAtValue, generatedCompareAtValue);
   const isSale = displayCompareAtValue > currentPriceValue;
   const hasMultipleVariants = product.variants.edges.length > 1 && product.variants.edges[0].node.title !== 'Default Title';
-  const reviewSummary = getSyntheticReviewSummary(product.handle);
   const reviews = getSyntheticReviews(product.handle, product.title);
+  const reviewSummary = getSyntheticReviewSummary(product.handle);
+  const visibleReviewCount = reviews.length;
+  const visibleAverageRating = visibleReviewCount
+    ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / visibleReviewCount).toFixed(1))
+    : 0;
 
   const handleAddToCart = () => {
     addToCart({
@@ -263,28 +267,34 @@ export function ProductDetail() {
               <h2 className="text-xl font-bold text-gray-900">Customer Reviews</h2>
               <span className="text-xs px-2 py-1 rounded bg-white text-white border border-white font-medium" aria-hidden="true"></span>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
-              {reviewSummary.rating.toFixed(1)} / 5 • {reviewSummary.reviewCount} reviews
-            </p>
-            <div className="space-y-4">
-              {reviews.map((review) => (
-                <div key={review.id} className="border border-gray-200 rounded-sm p-4 bg-white">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="font-semibold text-gray-900">{review.author}</p>
-                    <p className="text-xs text-gray-500">{review.date}</p>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    {renderStars(review.rating)}
-                    <p className="text-sm text-teal-700 font-semibold">{review.rating.toFixed(1)}</p>
-                  </div>
-                  <p className="text-sm font-semibold text-gray-900 mb-1">{review.title}</p>
-                  <p className="text-sm text-gray-600">{review.text}</p>
-                  {review.photoUrl && (
-                    <img src={review.photoUrl} alt="Review attachment" className="mt-3 w-24 h-24 object-cover rounded" />
-                  )}
+            {visibleReviewCount > 0 ? (
+              <>
+                <p className="text-sm text-gray-600 mb-4">
+                  {visibleAverageRating.toFixed(1)} / 5 • {Math.max(reviewSummary.reviewCount, visibleReviewCount)} reviews
+                </p>
+                <div className="space-y-4">
+                  {reviews.map((review) => (
+                    <div key={review.id} className="border border-gray-200 rounded-sm p-4 bg-white">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="font-semibold text-gray-900">{review.author}</p>
+                        <p className="text-xs text-gray-500">{review.date}</p>
+                      </div>
+                      <div className="flex items-center gap-2 mb-1">
+                        {renderStars(review.rating)}
+                        <p className="text-sm text-teal-700 font-semibold">{review.rating.toFixed(1)}</p>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900 mb-1">{review.title}</p>
+                      <p className="text-sm text-gray-600">{review.text}</p>
+                      {review.photoUrl && (
+                        <img src={review.photoUrl} alt="Review attachment" className="mt-3 w-24 h-24 object-cover rounded" />
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              <p className="text-sm text-gray-600">No reviews yet for this product.</p>
+            )}
           </div>
 
         </div>
