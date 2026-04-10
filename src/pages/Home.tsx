@@ -4,6 +4,8 @@ import { getProducts, Product } from '../lib/shopify';
 import { ProductCard } from '../components/product/ProductCard';
 import { Button } from '../components/ui/Button';
 import { WhyBuyCourtlane } from '../components/home/WhyBuyCourtlane';
+import { HomeBrandStory } from '../components/home/HomeBrandStory';
+import { PageMeta } from '../components/seo/PageMeta';
 import { Link2 } from 'lucide-react';
 import { TRUST_POINTS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
@@ -30,6 +32,10 @@ export function Home() {
 
   return (
     <div>
+      <PageMeta
+        title="Courtlane — Pickleball essentials for everyday players"
+        description="Pickleball accessories and essentials for beginners and recreational players. Simple gear, clear listings, secure checkout, and straightforward support."
+      />
       {/* Hero Section */}
       <section className="relative bg-gray-900 text-white overflow-hidden">
         {/* TODO: replace with on-brand Courtlane photography (avoid stock that reads as generic template). */}
@@ -81,6 +87,8 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      <HomeBrandStory />
 
       <WhyBuyCourtlane />
 

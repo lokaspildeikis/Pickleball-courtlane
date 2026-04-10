@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { SUPPORT_EMAIL } from '../../lib/trustContent';
+import { FOOTER_BRAND_BLURB } from '../../lib/brandContent';
 
 export function Footer() {
   return (
@@ -16,7 +17,7 @@ export function Footer() {
               />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Courtlane is a pickleball essentials shop for beginners and everyday players—clear listings, honest descriptions, and support when you need it.
+              {FOOTER_BRAND_BLURB}
             </p>
           </div>
 
@@ -33,6 +34,7 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-gray-200">Support</h3>
             <ul className="space-y-3">
+              <li><Link to="/about" className="text-gray-400 hover:text-white text-sm transition-colors">About Courtlane</Link></li>
               <li><Link to="/faq" className="text-gray-400 hover:text-white text-sm transition-colors">FAQ</Link></li>
               <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-gray-400 hover:text-white text-sm transition-colors">Contact Us</a></li>
             </ul>

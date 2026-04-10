@@ -1,7 +1,13 @@
 import { SUPPORT_EMAIL } from "../lib/trustContent";
+import { PageMeta } from "../components/seo/PageMeta";
 
 export function FAQ() {
   const faqs = [
+    {
+      question: "What is Courtlane?",
+      answer:
+        "Courtlane is an online store focused on pickleball accessories and essentials—think grips, balls, bags, covers, towels, and starter bundles. We cater to beginners and everyday recreational players who want practical gear and clear information, not marketplace guesswork.",
+    },
     {
       question: "What is your return policy?",
       answer: "We offer a 30-day return policy on all unused items in their original packaging. If you're not satisfied with your purchase, please contact our support team to initiate a return."
@@ -18,12 +24,16 @@ export function FAQ() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <PageMeta
+        title="Help & FAQ | Courtlane"
+        description="Answers about Courtlane, pickleball gear, returns, shipping, and how to get support."
+      />
       <div className="text-center mb-16">
         <h1 className="text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
           Frequently Asked Questions
         </h1>
         <p className="text-gray-600">
-          Everything you need to know about our products, shipping, and returns.
+          Orders, gear questions, shipping, and returns—plus who Courtlane is for.
         </p>
       </div>
 

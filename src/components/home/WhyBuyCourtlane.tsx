@@ -30,8 +30,7 @@ export function WhyBuyCourtlane() {
             Why buy from Courtlane?
           </h2>
           <p className="mt-3 text-gray-600 text-base md:text-lg">
-            Courtlane is built for beginners and everyday pickleball players who want reliable gear and clear guidance.
-            You get practical essentials, fair pricing, and support that helps you choose faster.
+            Reliable pickleball essentials, clear product info, and email support when you’re deciding what to buy—without the noise of a giant marketplace.
           </p>
         </div>
 
