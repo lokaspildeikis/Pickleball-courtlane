@@ -116,6 +116,16 @@ const TYPE_KEYWORDS: Record<ProductReviewType, string[]> = {
   generic: [],
 };
 
+const BLOCKED_KEYWORDS_BY_TYPE: Record<ProductReviewType, string[]> = {
+  balls: ["paddle cover", "sleeve", "neoprene", "backpack compartment", "shoulder strap"],
+  paddles: ["pack of", "hole count", "bounce", "indoor ball", "outdoor ball"],
+  "paddle-covers": ["pack of", "hole count", "bounce", "indoor ball", "outdoor ball", "headband", "sweatband"],
+  bags: ["hole count", "bounce", "indoor ball", "outdoor ball", "paddle face", "spin control"],
+  "towels-accessories": ["hole count", "bounce", "indoor ball", "outdoor ball", "paddle face shape"],
+  bundles: [],
+  generic: [],
+};
+
 function hashString(input: string): number {
   let hash = 0;
   for (let i = 0; i < input.length; i += 1) {
@@ -166,6 +176,12 @@ function keywordHits(text: string, words: string[]): number {
 }
 
 function isReviewRelevantForType(reviewText: string, type: ProductReviewType): boolean {
+  const normalized = reviewText.toLowerCase();
+  const blocked = BLOCKED_KEYWORDS_BY_TYPE[type];
+  if (blocked.some((word) => normalized.includes(word.toLowerCase()))) {
+    return false;
+  }
+
   const currentHits = keywordHits(reviewText, TYPE_KEYWORDS[type]);
   let highestOtherHits = 0;
 
