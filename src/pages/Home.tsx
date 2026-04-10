@@ -4,7 +4,9 @@ import { getProducts, Product } from '../lib/shopify';
 import { ProductCard } from '../components/product/ProductCard';
 import { Button } from '../components/ui/Button';
 import { WhyBuyCourtlane } from '../components/home/WhyBuyCourtlane';
-import { ShieldCheck, Zap, RefreshCcw, Truck } from 'lucide-react';
+import { Link2 } from 'lucide-react';
+import { TRUST_POINTS } from '../lib/trustContent';
+import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 
 export function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -63,27 +65,39 @@ export function Home() {
         </div>
       </section>
 
+      <section className="border-b border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <TrustPointsRow points={TRUST_POINTS.homeTop} className="sm:grid-cols-3" />
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
+              <Link to="/shipping" className="inline-flex items-center gap-1 hover:text-teal-700">
+                <Link2 size={14} />
+                Shipping policy
+              </Link>
+              <Link to="/returns" className="hover:text-teal-700">Returns policy</Link>
+              <Link to="/faq" className="hover:text-teal-700">Help & FAQ</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <WhyBuyCourtlane />
 
-      {/* Trust Bar */}
+      {/* Store confidence strip */}
       <section className="bg-teal-900 text-teal-50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-teal-800">
-            <div className="flex items-center justify-center gap-3 pt-4 md:pt-0">
-              <Zap size={20} className="text-teal-400" />
-              <span className="text-sm font-medium uppercase tracking-wide">Pro-Level Performance</span>
+            <div className="pt-4 md:pt-0">
+              <span className="text-sm font-medium uppercase tracking-wide">Secure Checkout</span>
             </div>
-            <div className="flex items-center justify-center gap-3 pt-4 md:pt-0">
-              <ShieldCheck size={20} className="text-teal-400" />
-              <span className="text-sm font-medium uppercase tracking-wide">Premium Materials</span>
+            <div className="pt-4 md:pt-0">
+              <span className="text-sm font-medium uppercase tracking-wide">Worldwide Shipping</span>
             </div>
-            <div className="flex items-center justify-center gap-3 pt-4 md:pt-0">
-              <Truck size={20} className="text-teal-400" />
-              <span className="text-sm font-medium uppercase tracking-wide">Free Shipping</span>
-            </div>
-            <div className="flex items-center justify-center gap-3 pt-4 md:pt-0">
-              <RefreshCcw size={20} className="text-teal-400" />
+            <div className="pt-4 md:pt-0">
               <span className="text-sm font-medium uppercase tracking-wide">30-Day Returns</span>
+            </div>
+            <div className="pt-4 md:pt-0">
+              <span className="text-sm font-medium uppercase tracking-wide">Support by Email</span>
             </div>
           </div>
         </div>

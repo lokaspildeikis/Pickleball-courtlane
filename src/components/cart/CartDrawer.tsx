@@ -2,6 +2,9 @@ import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { Button } from '../ui/Button';
 import { useEffect } from 'react';
+import { TrustPointsRow } from '../trust/TrustPointsRow';
+import { POLICY_SNIPPETS, TRUST_POINTS } from '../../lib/trustContent';
+import { Link } from 'react-router-dom';
 
 export function CartDrawer() {
   const { isCartOpen, closeCart, items, updateQuantity, removeFromCart, cartTotal, createCheckout, isCheckingOut } = useCart();
@@ -115,9 +118,21 @@ export function CartDrawer() {
               <p>${cartTotal.toFixed(2)}</p>
             </div>
             <p className="text-xs text-gray-500 mb-6">Shipping and taxes calculated at checkout.</p>
+            <div className="rounded-sm border border-gray-200 bg-white p-3 mb-4">
+              <TrustPointsRow points={TRUST_POINTS.cartCheckout} />
+            </div>
             <Button size="full" onClick={createCheckout} disabled={isCheckingOut}>
               {isCheckingOut ? 'Redirecting...' : 'Checkout'}
             </Button>
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600">
+              {POLICY_SNIPPETS.cart.map((snippet) =>
+                snippet.href ? (
+                  <Link key={snippet.id} to={snippet.href} className="hover:text-teal-700">
+                    {snippet.title}
+                  </Link>
+                ) : null,
+              )}
+            </div>
           </div>
         )}
       </div>

@@ -6,6 +6,9 @@ import { Button } from '../components/ui/Button';
 import { ProductDescription } from '../components/product/ProductDescription';
 import { Minus, Plus, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
 import { getSyntheticReviewSummary, getSyntheticReviews } from '../lib/syntheticReviews';
+import { TRUST_POINTS, POLICY_SNIPPETS } from '../lib/trustContent';
+import { TrustPointsRow } from '../components/trust/TrustPointsRow';
+import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
 
 function getRoundedComparePrice(currentPrice: number): number {
   const increased = currentPrice * 1.15;
@@ -167,6 +170,14 @@ export function ProductDetail() {
           <h1 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-2">
             {product.title}
           </h1>
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+            {renderStars(visibleAverageRating || reviewSummary.rating)}
+            <span>
+              {(visibleAverageRating || reviewSummary.rating).toFixed(1)} / 5
+            </span>
+            <span aria-hidden="true">•</span>
+            <span>{Math.max(reviewSummary.reviewCount, visibleReviewCount)} reviews</span>
+          </div>
           
           <div className="flex items-center gap-3 mb-6">
             <span className="text-2xl font-bold text-gray-900">
@@ -178,6 +189,9 @@ export function ProductDetail() {
               </span>
             )}
           </div>
+          <p className={`text-sm mb-6 ${selectedVariant.availableForSale ? 'text-emerald-700' : 'text-gray-500'}`}>
+            {selectedVariant.availableForSale ? 'In stock and ready to process.' : 'Currently out of stock.'}
+          </p>
 
           {/* Variants */}
           {hasMultipleVariants && (
@@ -238,6 +252,9 @@ export function ProductDetail() {
                 {selectedVariant.availableForSale ? 'Add to Cart' : 'Sold Out'}
               </Button>
             </div>
+            <div className="mt-4 rounded-sm border border-gray-200 bg-gray-50 p-3">
+              <TrustPointsRow points={TRUST_POINTS.productCta} />
+            </div>
           </div>
 
           {/* Trust Badges */}
@@ -259,6 +276,11 @@ export function ProductDetail() {
           {/* Description */}
           <div className="max-w-none">
             <ProductDescription product={product} />
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-lg font-bold text-gray-900 mb-3">Shipping, returns, and support</h2>
+            <PolicySnippetGrid snippets={POLICY_SNIPPETS.productDetail} />
           </div>
 
           {/* Simulated Reviews (Research) */}

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { SUPPORT_EMAIL } from '../../lib/trustContent';
 
 export function Footer() {
   return (
@@ -33,7 +34,7 @@ export function Footer() {
             <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-gray-200">Support</h3>
             <ul className="space-y-3">
               <li><Link to="/faq" className="text-gray-400 hover:text-white text-sm transition-colors">FAQ</Link></li>
-              <li><a href="mailto:support@courtlane.example.com" className="text-gray-400 hover:text-white text-sm transition-colors">Contact Us</a></li>
+              <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-gray-400 hover:text-white text-sm transition-colors">Contact Us</a></li>
             </ul>
           </div>
 
@@ -48,6 +49,8 @@ export function Footer() {
             <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-gray-200">Returns</h3>
             <ul className="space-y-3">
               <li><Link to="/returns" className="text-gray-400 hover:text-white text-sm transition-colors">Returns Policy</Link></li>
+              <li><Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
 
@@ -72,6 +75,11 @@ export function Footer() {
         </div>
         
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <div className="mb-4 md:mb-0">
+            <p className="text-gray-500 text-xs">
+              Secure checkout, straightforward returns, and support when you need it.
+            </p>
+          </div>
           <p className="text-gray-500 text-xs mb-4 md:mb-0">
             &copy; {new Date().getFullYear()} Courtlane Pickleball. All rights reserved.
           </p>

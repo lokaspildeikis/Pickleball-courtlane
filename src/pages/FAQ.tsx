@@ -1,3 +1,5 @@
+import { SUPPORT_EMAIL } from "../lib/trustContent";
+
 export function FAQ() {
   const faqs = [
     {
@@ -38,7 +40,7 @@ export function FAQ() {
         <h2 className="text-xl font-bold text-gray-900 mb-2">Still have questions?</h2>
         <p className="text-gray-600 mb-6">Our support team is ready to help you out.</p>
         <a 
-          href="mailto:support@courtlane.example.com" 
+          href={`mailto:${SUPPORT_EMAIL}`} 
           className="inline-flex items-center justify-center h-11 px-6 font-medium bg-teal-800 text-white hover:bg-teal-900 rounded-sm transition-colors"
         >
           Contact Support
