@@ -114,6 +114,7 @@ export function ProductDetail() {
     : 0;
 
   useEffect(() => {
+    if (!product || !selectedVariant) return;
     trackViewContent({
       content_ids: [product.id],
       content_name: product.title,
@@ -121,7 +122,7 @@ export function ProductDetail() {
       value: currentPriceValue,
       currency: selectedVariant.price.currencyCode || 'USD',
     });
-  }, [product.id, product.title, currentPriceValue, selectedVariant.price.currencyCode]);
+  }, [product, selectedVariant, currentPriceValue]);
 
   const handleAddToCart = () => {
     addToCart({
