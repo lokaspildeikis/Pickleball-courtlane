@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { MetaPixel } from './components/analytics/MetaPixel';
 import { CartProvider } from './context/CartContext';
 import { Layout } from './components/layout/Layout';
 import { Home } from './pages/Home';
@@ -15,6 +16,7 @@ export default function App() {
   return (
     <CartProvider>
       <Router>
+        <MetaPixel />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />

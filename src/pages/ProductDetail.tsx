@@ -10,6 +10,7 @@ import { TRUST_POINTS, POLICY_SNIPPETS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
 import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMethods';
+import { trackAddToCart, trackViewContent } from '../components/analytics/MetaPixel';
 
 function getRoundedComparePrice(currentPrice: number): number {
   const increased = currentPrice * 1.15;
@@ -112,6 +113,16 @@ export function ProductDetail() {
     ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / visibleReviewCount).toFixed(1))
     : 0;
 
+  useEffect(() => {
+    trackViewContent({
+      content_ids: [product.id],
+      content_name: product.title,
+      content_type: 'product',
+      value: currentPriceValue,
+      currency: selectedVariant.price.currencyCode || 'USD',
+    });
+  }, [product.id, product.title, currentPriceValue, selectedVariant.price.currencyCode]);
+
   const handleAddToCart = () => {
     addToCart({
       variantId: selectedVariant.id,
@@ -121,6 +132,14 @@ export function ProductDetail() {
       price: parseFloat(selectedVariant.price.amount),
       image: activeImage || product.images.edges[0]?.node.url,
       quantity: quantity
+    });
+    trackAddToCart({
+      content_ids: [product.id],
+      content_name: product.title,
+      content_type: 'product',
+      value: currentPriceValue * quantity,
+      currency: selectedVariant.price.currencyCode || 'USD',
+      num_items: quantity,
     });
   };
 
