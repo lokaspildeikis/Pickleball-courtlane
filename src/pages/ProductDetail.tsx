@@ -70,6 +70,18 @@ export function ProductDetail() {
     fetchProduct();
   }, [handle]);
 
+  useEffect(() => {
+    if (!product || !selectedVariant) return;
+    const productValue = parseFloat(selectedVariant.price.amount);
+    trackViewContent({
+      content_ids: [product.id],
+      content_name: product.title,
+      content_type: 'product',
+      value: productValue,
+      currency: selectedVariant.price.currencyCode || 'USD',
+    });
+  }, [product, selectedVariant]);
+
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-pulse">
@@ -112,17 +124,6 @@ export function ProductDetail() {
   const visibleAverageRating = visibleReviewCount
     ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / visibleReviewCount).toFixed(1))
     : 0;
-
-  useEffect(() => {
-    if (!product || !selectedVariant) return;
-    trackViewContent({
-      content_ids: [product.id],
-      content_name: product.title,
-      content_type: 'product',
-      value: currentPriceValue,
-      currency: selectedVariant.price.currencyCode || 'USD',
-    });
-  }, [product, selectedVariant, currentPriceValue]);
 
   const handleAddToCart = () => {
     addToCart({
