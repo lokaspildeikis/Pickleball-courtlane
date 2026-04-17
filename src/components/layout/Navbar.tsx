@@ -36,6 +36,7 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             <Link to="/shop" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Shop All</Link>
+            <Link to="/shop?intent=best-seller" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Best Sellers</Link>
             <Link to="/shop?filter=essentials" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Essentials</Link>
             <Link to="/shop?filter=backpacks" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Backpacks</Link>
             <Link to="/shop?filter=bundles" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Bundles</Link>
@@ -70,6 +71,13 @@ export function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Shop All
+            </Link>
+            <Link 
+              to="/shop?intent=best-seller" 
+              className="block px-3 py-4 text-base font-medium text-gray-900 border-b border-gray-50"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Best Sellers
             </Link>
             <Link 
               to="/shop?filter=essentials" 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProduct, Product } from '../lib/shopify';
 import { useCart } from '../context/CartContext';
@@ -10,7 +10,7 @@ import { TRUST_POINTS, POLICY_SNIPPETS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
 import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMethods';
-import { trackAddToCart, trackViewContent } from '../components/analytics/MetaPixel';
+import { trackAddToCart, trackCustomEvent, trackViewContent } from '../components/analytics/MetaPixel';
 
 function getRoundedComparePrice(currentPrice: number): number {
   const increased = currentPrice * 1.15;
@@ -47,6 +47,9 @@ export function ProductDetail() {
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState<string>('');
+  const primaryCtaRef = useRef<HTMLDivElement | null>(null);
+  const [showStickyMobileAtc, setShowStickyMobileAtc] = useState(false);
+  const hasTrackedStickyShown = useRef(false);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -81,6 +84,36 @@ export function ProductDetail() {
       currency: selectedVariant.price.currencyCode || 'USD',
     });
   }, [product, selectedVariant]);
+
+  useEffect(() => {
+    const target = primaryCtaRef.current;
+    if (!target || typeof window === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowStickyMobileAtc(!entry.isIntersecting);
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(target);
+
+    return () => observer.disconnect();
+  }, [product?.id, selectedVariant?.id]);
+
+  useEffect(() => {
+    hasTrackedStickyShown.current = false;
+    setShowStickyMobileAtc(false);
+  }, [product?.id]);
+
+  useEffect(() => {
+    if (!showStickyMobileAtc || hasTrackedStickyShown.current) return;
+    hasTrackedStickyShown.current = true;
+    trackCustomEvent('StickyAtcShown', {
+      product_id: product?.id,
+      product_handle: product?.handle,
+    });
+  }, [showStickyMobileAtc, product?.handle, product?.id]);
 
   if (loading) {
     return (
@@ -124,6 +157,13 @@ export function ProductDetail() {
   const visibleAverageRating = visibleReviewCount
     ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / visibleReviewCount).toFixed(1))
     : 0;
+  const productTags = product.tags.map((tag) => tag.toLowerCase());
+  const whoItsFor = productTags.some((tag) => ['beginner', 'starter', 'bundle'].includes(tag))
+    ? 'Beginners and rec players who want a simple setup.'
+    : 'Everyday players who want reliable gear without overthinking specs.';
+  const whatsIncluded = productTags.includes('bundle') || productTags.includes('bundles')
+    ? 'Selected essentials bundled together for faster setup.'
+    : 'Core product shown above, ready for regular practice and play.';
 
   const handleAddToCart = () => {
     addToCart({
@@ -145,8 +185,18 @@ export function ProductDetail() {
     });
   };
 
+  const handleStickyAddToCart = () => {
+    trackCustomEvent('StickyAtcClicked', {
+      product_id: product.id,
+      product_handle: product.handle,
+      quantity,
+      value: currentPriceValue * quantity,
+    });
+    handleAddToCart();
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pb-28 md:pb-12">
       
       {/* Breadcrumbs */}
       <nav className="flex text-sm text-gray-500 mb-8">
@@ -214,9 +264,19 @@ export function ProductDetail() {
               </span>
             )}
           </div>
+          <p className="text-sm text-gray-700 mb-3">
+            Orders are usually processed in 1-3 business days.
+          </p>
           <p className={`text-sm mb-6 ${selectedVariant.availableForSale ? 'text-emerald-700' : 'text-gray-500'}`}>
             {selectedVariant.availableForSale ? 'In stock and ready to process.' : 'Currently out of stock.'}
           </p>
+
+          <div className="mb-6 rounded-sm border border-gray-200 bg-gray-50 p-4 space-y-2">
+            <p className="text-xs font-bold uppercase tracking-wide text-gray-700">Who this is for</p>
+            <p className="text-sm text-gray-700">{whoItsFor}</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-gray-700 pt-1">What&apos;s included</p>
+            <p className="text-sm text-gray-700">{whatsIncluded}</p>
+          </div>
 
           {/* Variants */}
           {hasMultipleVariants && (
@@ -250,7 +310,7 @@ export function ProductDetail() {
           )}
 
           {/* Quantity & Add to Cart */}
-          <div className="mb-8">
+          <div className="mb-8" ref={primaryCtaRef}>
             <div className="flex gap-4">
               <div className="flex items-center border border-gray-300 rounded-sm h-14 w-32">
                 <button 
@@ -331,6 +391,35 @@ export function ProductDetail() {
 
         </div>
       </div>
+
+      {showStickyMobileAtc && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur md:hidden">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-gray-500">Ready to checkout</p>
+              <p className="text-sm font-bold text-gray-900">${currentPriceValue.toFixed(2)}</p>
+            </div>
+            <div className="flex items-center border border-gray-300 rounded-sm h-10">
+              <button
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="px-3 h-full text-gray-500 hover:text-gray-900"
+              >
+                <Minus size={14} />
+              </button>
+              <span className="w-8 text-center text-sm font-medium">{quantity}</span>
+              <button
+                onClick={() => setQuantity(quantity + 1)}
+                className="px-3 h-full text-gray-500 hover:text-gray-900"
+              >
+                <Plus size={14} />
+              </button>
+            </div>
+            <Button onClick={handleStickyAddToCart} disabled={!selectedVariant.availableForSale}>
+              {selectedVariant.availableForSale ? 'Add to Cart' : 'Sold Out'}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

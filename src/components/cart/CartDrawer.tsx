@@ -115,17 +115,19 @@ export function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-gray-100 p-6 bg-gray-50">
-            <div className="flex justify-between text-base font-bold text-gray-900 mb-4">
+            <div className="rounded-sm border border-gray-200 bg-white p-3 mb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 mb-2">Checkout confidence</p>
+              <TrustPointsRow points={TRUST_POINTS.cartCheckout} />
+            </div>
+            <div className="flex justify-between text-base font-bold text-gray-900 mb-2">
               <p>Subtotal</p>
               <p>${cartTotal.toFixed(2)}</p>
             </div>
-            <p className="text-xs text-gray-500 mb-6">Shipping and taxes calculated at checkout.</p>
-            <div className="rounded-sm border border-gray-200 bg-white p-3 mb-4">
-              <TrustPointsRow points={TRUST_POINTS.cartCheckout} />
-            </div>
+            <p className="text-xs text-gray-500 mb-4">Shipping and taxes calculated at checkout.</p>
             <Button size="full" onClick={createCheckout} disabled={isCheckingOut}>
               {isCheckingOut ? 'Redirecting...' : 'Checkout'}
             </Button>
+            <p className="text-xs text-emerald-700 mt-3">Secure checkout on Shopify.</p>
             <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600">
               {POLICY_SNIPPETS.cart.map((snippet) =>
                 snippet.href ? (

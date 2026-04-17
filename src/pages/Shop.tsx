@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { getProducts, Product } from '../lib/shopify';
 import { ProductCard } from '../components/product/ProductCard';
 import { SlidersHorizontal } from 'lucide-react';
+import { trackCustomEvent } from '../components/analytics/MetaPixel';
 
 export function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,6 +13,7 @@ export function Shop() {
 
   const currentFilter = searchParams.get('filter') || 'all';
   const currentSort = searchParams.get('sort') || 'featured';
+  const currentIntent = searchParams.get('intent') || 'all';
 
   useEffect(() => {
     async function fetchProducts() {
@@ -38,6 +40,28 @@ export function Shop() {
     );
   }
 
+  // Intent filter logic (quick shopper paths)
+  if (currentIntent !== 'all') {
+    filteredProducts = filteredProducts.filter((p) => {
+      const tags = p.tags.map((tag) => tag.trim().toLowerCase());
+      const minPrice = parseFloat(p.priceRange.minVariantPrice.amount);
+
+      if (currentIntent === 'best-seller') {
+        return tags.includes('best-seller');
+      }
+
+      if (currentIntent === 'beginner') {
+        return tags.some((tag) => ['beginner', 'starter', 'essentials', 'bundle'].includes(tag));
+      }
+
+      if (currentIntent === 'budget') {
+        return minPrice <= 25;
+      }
+
+      return true;
+    });
+  }
+
   // Sort logic
   if (currentSort === 'price-low') {
     filteredProducts.sort((a, b) => parseFloat(a.priceRange.minVariantPrice.amount) - parseFloat(b.priceRange.minVariantPrice.amount));
@@ -50,19 +74,48 @@ export function Shop() {
 
   const handleFilterChange = (filter: string) => {
     setSearchParams(prev => {
-      if (filter === 'all') prev.delete('filter');
-      else prev.set('filter', filter);
-      return prev;
+      const next = new URLSearchParams(prev);
+      if (filter === 'all') next.delete('filter');
+      else next.set('filter', filter);
+      return next;
     });
     setIsFilterOpen(false);
+    trackCustomEvent('ShopFilterChanged', { filter });
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const sort = e.target.value;
     setSearchParams(prev => {
-      prev.set('sort', e.target.value);
-      return prev;
+      const next = new URLSearchParams(prev);
+      next.set('sort', sort);
+      return next;
     });
+    trackCustomEvent('ShopSortChanged', { sort });
   };
+
+  const handleIntentChange = (intent: string) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (intent === 'all') next.delete('intent');
+      else next.set('intent', intent);
+      return next;
+    });
+    trackCustomEvent('ShopIntentSelected', { intent });
+  };
+
+  const handleClearFilters = () => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.delete('filter');
+      next.delete('intent');
+      next.delete('sort');
+      return next;
+    });
+    setIsFilterOpen(false);
+    trackCustomEvent('ShopFiltersCleared');
+  };
+
+  const hasActiveFilters = currentFilter !== 'all' || currentIntent !== 'all';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -141,6 +194,9 @@ export function Shop() {
 
         {/* Sort */}
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <span className="text-xs sm:text-sm text-gray-500 mr-2">
+            {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
+          </span>
           <label htmlFor="sort" className="text-sm text-gray-500 hidden sm:block">Sort by:</label>
           <select 
             id="sort"
@@ -154,6 +210,48 @@ export function Shop() {
             <option value="price-high">Price: High to Low</option>
           </select>
         </div>
+      </div>
+
+      <div className="mb-8 flex flex-wrap items-center gap-2">
+        <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Quick picks:</span>
+        <button
+          onClick={() => handleIntentChange('beginner')}
+          className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition-colors ${
+            currentIntent === 'beginner'
+              ? 'border-teal-700 bg-teal-50 text-teal-800'
+              : 'border-gray-300 text-gray-700 hover:border-gray-400'
+          }`}
+        >
+          Beginner Friendly
+        </button>
+        <button
+          onClick={() => handleIntentChange('best-seller')}
+          className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition-colors ${
+            currentIntent === 'best-seller'
+              ? 'border-teal-700 bg-teal-50 text-teal-800'
+              : 'border-gray-300 text-gray-700 hover:border-gray-400'
+          }`}
+        >
+          Best Seller
+        </button>
+        <button
+          onClick={() => handleIntentChange('budget')}
+          className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition-colors ${
+            currentIntent === 'budget'
+              ? 'border-teal-700 bg-teal-50 text-teal-800'
+              : 'border-gray-300 text-gray-700 hover:border-gray-400'
+          }`}
+        >
+          Budget Picks
+        </button>
+        {hasActiveFilters && (
+          <button
+            onClick={handleClearFilters}
+            className="ml-1 text-xs font-semibold uppercase tracking-wide text-teal-700 hover:underline"
+          >
+            Clear filters
+          </button>
+        )}
       </div>
 
       {/* Product Grid */}

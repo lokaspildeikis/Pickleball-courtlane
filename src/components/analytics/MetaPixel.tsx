@@ -40,6 +40,15 @@ export function trackInitiateCheckout(params: PixelParams): void {
   track('InitiateCheckout', params);
 }
 
+export function trackCustomEvent(eventName: string, params?: PixelParams): void {
+  if (typeof window === 'undefined' || !window.fbq) return;
+  if (params) {
+    window.fbq('trackCustom', eventName, params);
+    return;
+  }
+  window.fbq('trackCustom', eventName);
+}
+
 export function MetaPixel() {
   const location = useLocation();
   const hasTrackedInitialRoute = useRef(false);

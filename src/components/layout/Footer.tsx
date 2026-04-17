@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-950 text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           
           <div className="col-span-1 md:col-span-1">
             <Link to="/" className="inline-flex items-center mb-4" aria-label="Go to homepage">
@@ -34,25 +34,11 @@ export function Footer() {
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-gray-200">Support</h3>
             <ul className="space-y-3">
-              <li><Link to="/about" className="text-gray-400 hover:text-white text-sm transition-colors">About Courtlane</Link></li>
+              <li><Link to="/shipping" className="text-gray-400 hover:text-white text-sm transition-colors">Shipping Policy</Link></li>
+              <li><Link to="/returns" className="text-gray-400 hover:text-white text-sm transition-colors">Returns Policy</Link></li>
               <li><Link to="/faq" className="text-gray-400 hover:text-white text-sm transition-colors">FAQ</Link></li>
               <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-gray-400 hover:text-white text-sm transition-colors">Contact Us</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-gray-200">Shipping</h3>
-            <ul className="space-y-3">
-              <li><Link to="/shipping" className="text-gray-400 hover:text-white text-sm transition-colors">Shipping Policy</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-gray-200">Returns</h3>
-            <ul className="space-y-3">
-              <li><Link to="/returns" className="text-gray-400 hover:text-white text-sm transition-colors">Returns Policy</Link></li>
-              <li><Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</Link></li>
+              <li><Link to="/about" className="text-gray-400 hover:text-white text-sm transition-colors">About Courtlane</Link></li>
             </ul>
           </div>
 
@@ -72,6 +58,10 @@ export function Footer() {
                 Join
               </button>
             </form>
+            <ul className="space-y-3 mt-6">
+              <li><Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</Link></li>
+            </ul>
           </div>
 
         </div>

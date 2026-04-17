@@ -34,6 +34,18 @@ function getRoundedComparePrice(currentPrice: number): number {
   return Number(rounded.toFixed(2));
 }
 
+function getBenefitCopy(product: Product): string {
+  const tags = product.tags.map((tag) => tag.toLowerCase());
+
+  if (tags.includes('best-seller')) return 'Tried-and-true pick from repeat players.';
+  if (tags.includes('bundle') || tags.includes('bundles')) return 'Everything you need in one easy setup.';
+  if (tags.includes('beginner') || tags.includes('starter')) return 'Easy-to-use setup for newer players.';
+  if (tags.includes('grip') || tags.includes('grips')) return 'Quick comfort and control upgrade.';
+  if (tags.includes('backpack') || tags.includes('backpacks')) return 'Carry court essentials without bulk.';
+
+  return 'Practical gear built for everyday rec play.';
+}
+
 export function ProductCard({ product }: ProductCardProps) {
   const firstImage = product.images.edges[0]?.node;
   const price = product.priceRange.minVariantPrice;
@@ -46,6 +58,8 @@ export function ProductCard({ product }: ProductCardProps) {
   const isNew = product.tags.includes('new');
   const isBestSeller = product.tags.includes('best-seller');
   const reviewSummary = getSyntheticReviewSummary(product.handle);
+  const benefitCopy = getBenefitCopy(product);
+  const primaryBadge = isBestSeller ? 'Best Seller' : isNew ? 'New' : isSale ? 'Sale' : null;
 
   return (
     <Link to={`/product/${product.handle}`} className="group block">
@@ -65,19 +79,17 @@ export function ProductCard({ product }: ProductCardProps) {
         
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {isSale && (
-            <span className="bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm">
-              Sale
-            </span>
-          )}
-          {isNew && !isSale && (
-            <span className="bg-teal-800 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm">
-              New
-            </span>
-          )}
-          {isBestSeller && !isSale && !isNew && (
-            <span className="bg-gray-900 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm">
-              Best Seller
+          {primaryBadge && (
+            <span
+              className={`text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm ${
+                primaryBadge === 'Best Seller'
+                  ? 'bg-gray-900'
+                  : primaryBadge === 'New'
+                    ? 'bg-teal-800'
+                    : 'bg-red-600'
+              }`}
+            >
+              {primaryBadge}
             </span>
           )}
         </div>
@@ -91,6 +103,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
           {product.title}
         </h3>
+        <p className="text-xs text-gray-600 mb-2 leading-relaxed">{benefitCopy}</p>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-gray-900">
             ${currentPriceValue.toFixed(2)}
