@@ -6,7 +6,6 @@ import { Button } from '../components/ui/Button';
 import { WhyBuyCourtlane } from '../components/home/WhyBuyCourtlane';
 import { HomeBrandStory } from '../components/home/HomeBrandStory';
 import { PageMeta } from '../components/seo/PageMeta';
-import { Link2 } from 'lucide-react';
 import { TRUST_POINTS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 
@@ -74,17 +73,7 @@ export function Home() {
 
       <section className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
-            <TrustPointsRow points={TRUST_POINTS.homeTop} className="sm:grid-cols-2 lg:grid-cols-3" />
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 lg:justify-end">
-              <Link to="/shipping" className="inline-flex items-center gap-1 hover:text-teal-700">
-                <Link2 size={14} />
-                Shipping policy
-              </Link>
-              <Link to="/returns" className="hover:text-teal-700">Returns policy</Link>
-              <Link to="/faq" className="hover:text-teal-700">Help & FAQ</Link>
-            </div>
-          </div>
+          <TrustPointsRow points={TRUST_POINTS.homeTop} className="sm:grid-cols-2 lg:grid-cols-3" />
         </div>
       </section>
 
