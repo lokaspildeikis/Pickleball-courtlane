@@ -27,6 +27,9 @@ export function Shop() {
 
   // Filter logic
   let filteredProducts = [...products];
+  const hasTagMatch = (tags: string[], candidates: string[]) =>
+    tags.some((tag) => candidates.some((candidate) => tag.includes(candidate)));
+
   if (currentFilter !== 'all') {
     // Flexible tag matching (handles singular/plural and common typos)
     const filterTags = currentFilter === 'bundles' ? ['bundle', 'bundles'] :
@@ -35,8 +38,11 @@ export function Shop() {
                        currentFilter === 'backpacks' ? ['backpack', 'backpacks', 'backpakcs'] :
                        [currentFilter];
     
-    filteredProducts = filteredProducts.filter(p => 
-      p.tags.some(tag => filterTags.some(ft => tag.trim().toLowerCase() === ft.trim().toLowerCase()))
+    filteredProducts = filteredProducts.filter((p) =>
+      hasTagMatch(
+        p.tags.map((tag) => tag.trim().toLowerCase()),
+        filterTags.map((tag) => tag.trim().toLowerCase()),
+      ),
     );
   }
 
@@ -47,7 +53,7 @@ export function Shop() {
       const minPrice = parseFloat(p.priceRange.minVariantPrice.amount);
 
       if (currentIntent === 'best-seller') {
-        return tags.includes('best-seller') || tags.includes('bundle') || tags.includes('bundles');
+        return hasTagMatch(tags, ['best-seller', 'best seller', 'bestseller', 'bundle']);
       }
 
       if (currentIntent === 'beginner') {
