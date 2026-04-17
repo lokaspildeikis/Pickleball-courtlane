@@ -66,6 +66,15 @@ export function Shop() {
 
       return true;
     });
+
+    // Safety fallback for inconsistent Shopify tag formatting:
+    // if best-seller intent yields zero, use title/handle keywords so users still see featured bundles.
+    if (currentIntent === 'best-seller' && filteredProducts.length === 0) {
+      filteredProducts = products.filter((p) => {
+        const haystack = `${p.title} ${p.handle}`.toLowerCase();
+        return ['best', 'bundle', 'starter'].some((keyword) => haystack.includes(keyword));
+      });
+    }
   }
 
   // Sort logic
