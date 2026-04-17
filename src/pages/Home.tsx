@@ -90,8 +90,6 @@ export function Home() {
 
       <HomeBrandStory />
 
-      <WhyBuyCourtlane />
-
       {/* Store confidence strip */}
       <section className="bg-teal-900 text-teal-50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -148,6 +146,8 @@ export function Home() {
           </Link>
         </div>
       </section>
+
+      <WhyBuyCourtlane />
 
       {/* Bundle Feature */}
       <section className="bg-gray-50 py-16 md:py-24">
