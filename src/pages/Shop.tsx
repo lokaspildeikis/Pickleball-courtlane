@@ -47,7 +47,7 @@ export function Shop() {
       const minPrice = parseFloat(p.priceRange.minVariantPrice.amount);
 
       if (currentIntent === 'best-seller') {
-        return tags.includes('best-seller');
+        return tags.includes('best-seller') || tags.includes('bundle') || tags.includes('bundles');
       }
 
       if (currentIntent === 'beginner') {
