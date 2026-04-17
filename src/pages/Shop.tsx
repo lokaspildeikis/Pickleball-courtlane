@@ -48,31 +48,37 @@ export function Shop() {
 
   // Intent filter logic (quick shopper paths)
   if (currentIntent !== 'all') {
-    filteredProducts = filteredProducts.filter((p) => {
-      const tags = p.tags.map((tag) => tag.trim().toLowerCase());
-      const minPrice = parseFloat(p.priceRange.minVariantPrice.amount);
-
-      if (currentIntent === 'best-seller') {
-        return hasTagMatch(tags, ['best-seller', 'best seller', 'bestseller', 'bundle']);
-      }
-
-      if (currentIntent === 'beginner') {
-        return tags.some((tag) => ['beginner', 'starter', 'essentials', 'bundle'].includes(tag));
-      }
-
-      if (currentIntent === 'budget') {
-        return minPrice <= 25;
-      }
-
-      return true;
-    });
-
-    // Safety fallback for inconsistent Shopify tag formatting:
-    // if best-seller intent yields zero, use title/handle keywords so users still see featured bundles.
-    if (currentIntent === 'best-seller' && filteredProducts.length === 0) {
-      filteredProducts = products.filter((p) => {
+    if (currentIntent === 'best-seller') {
+      const bestSellerByTags = products.filter((p) =>
+        hasTagMatch(
+          p.tags.map((tag) => tag.trim().toLowerCase()),
+          ['best-seller', 'best seller', 'bestseller', 'bundle'],
+        ),
+      );
+      const bestSellerByKeywords = products.filter((p) => {
         const haystack = `${p.title} ${p.handle}`.toLowerCase();
-        return ['best', 'bundle', 'starter'].some((keyword) => haystack.includes(keyword));
+        return ['best', 'bundle', 'starter', 'kit'].some((keyword) => haystack.includes(keyword));
+      });
+      filteredProducts =
+        bestSellerByTags.length > 0
+          ? bestSellerByTags
+          : bestSellerByKeywords.length > 0
+            ? bestSellerByKeywords
+            : products.slice(0, 8);
+    } else {
+      filteredProducts = filteredProducts.filter((p) => {
+        const tags = p.tags.map((tag) => tag.trim().toLowerCase());
+        const minPrice = parseFloat(p.priceRange.minVariantPrice.amount);
+
+        if (currentIntent === 'beginner') {
+          return tags.some((tag) => ['beginner', 'starter', 'essentials', 'bundle'].includes(tag));
+        }
+
+        if (currentIntent === 'budget') {
+          return minPrice <= 25;
+        }
+
+        return true;
       });
     }
   }
@@ -285,7 +291,7 @@ export function Shop() {
           <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
           <p className="text-gray-500">Try changing your filters to see more results.</p>
           <button 
-            onClick={() => handleFilterChange('all')}
+            onClick={handleClearFilters}
             className="mt-4 text-teal-700 font-bold uppercase tracking-wide text-sm hover:underline"
           >
             Clear all filters
