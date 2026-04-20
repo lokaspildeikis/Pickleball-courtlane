@@ -28,6 +28,20 @@ export function Home() {
   // If we don't have enough tagged products, just use the first few
   const displayBestSellers = bestSellers.length > 0 ? bestSellers : products.slice(0, 4);
   const displayBundles = bundles.length > 0 ? bundles : products.slice(0, 4);
+  const starterBundleProduct = products.find((product) => {
+    const tags = product.tags.map((tag) => tag.toLowerCase());
+    const haystack = `${product.handle} ${product.title}`.toLowerCase();
+    return (
+      tags.some((tag) => ['starter', 'bundle', 'best-seller'].includes(tag)) &&
+      (haystack.includes('starter') || haystack.includes('bundle') || haystack.includes('essentials'))
+    );
+  });
+  const starterBundleHref = starterBundleProduct ? `/product/${starterBundleProduct.handle}` : '/shop?filter=bundles';
+  const starterBundleImage = starterBundleProduct?.images.edges[0]?.node.url
+    || 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Pickleball_Pros.jpg';
+  const starterBundlePrice = starterBundleProduct
+    ? Number.parseFloat(starterBundleProduct.priceRange.minVariantPrice.amount).toFixed(2)
+    : null;
 
   return (
     <div>
@@ -48,7 +62,8 @@ export function Home() {
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40">
-          <div className="max-w-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-10">
+            <div className="lg:col-span-7 max-w-2xl">
             {/* Updated hero copy to immediately communicate product, audience, and support benefit. */}
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-tight">
               Pickleball Essentials for <span className="text-teal-400 md:text-teal-500">Everyday Players.</span>
@@ -57,14 +72,45 @@ export function Home() {
               Reliable gear for beginners and rec players, backed by straightforward support so you can play with confidence.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/shop">
-                <Button size="lg" className="w-full sm:w-auto">Shop Court Essentials</Button>
+              <Link to={starterBundleHref}>
+                <Button size="lg" className="w-full sm:w-auto">Shop Starter Bundle</Button>
               </Link>
               {/* Keep one primary action while offering a lower-emphasis path for bundle shoppers. */}
               <Link to="/shop?filter=bundles">
                 <span className="inline-flex items-center h-full text-sm font-semibold uppercase tracking-wide text-gray-200 hover:text-white transition-colors">
-                  View Starter Bundles
+                  Compare all bundles
                 </span>
+              </Link>
+            </div>
+            <p className="mt-3 text-xs uppercase tracking-wide text-gray-300">
+              Most popular with first-time players
+            </p>
+            </div>
+
+            <div className="hidden lg:flex lg:col-span-5 justify-end">
+              <Link
+                to={starterBundleHref}
+                className="group block w-full max-w-[320px] rounded-sm border border-white/15 bg-white/5 overflow-hidden hover:bg-white/10 transition-colors"
+                aria-label="Open starter bundle product"
+              >
+                <div className="aspect-[5/4] overflow-hidden">
+                  <img
+                    src={starterBundleImage}
+                    alt={starterBundleProduct?.title || 'Starter bundle'}
+                    className="w-full h-full object-cover opacity-95 group-hover:scale-[1.02] transition-transform duration-300"
+                  />
+                </div>
+                <div className="p-3.5">
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-teal-200/90">Starter bundle</p>
+                  <div className="mt-1 flex items-center justify-between gap-2">
+                    <h3 className="text-sm font-semibold text-white truncate">
+                      {starterBundleProduct?.title || 'Starter Bundle'}
+                    </h3>
+                    <span className="text-sm font-bold text-white whitespace-nowrap">
+                      {starterBundlePrice ? `$${starterBundlePrice}` : 'View'}
+                    </span>
+                  </div>
+                </div>
               </Link>
             </div>
           </div>
@@ -133,6 +179,28 @@ export function Home() {
           <Link to="/shop">
             <Button variant="outline" className="w-full">Shop All</Button>
           </Link>
+        </div>
+      </section>
+
+      <section className="bg-teal-700 text-white py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-100 mb-1">Starter pick</p>
+            <h3 className="text-2xl md:text-3xl font-black uppercase italic">Skip the guesswork. Start with one bundle.</h3>
+            <p className="text-teal-100 mt-2">Your fastest path from browsing to getting court-ready gear.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link to={starterBundleHref}>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto border-white text-white hover:bg-teal-600 hover:text-white">
+                View starter bundle
+              </Button>
+            </Link>
+            <Link to="/shop?filter=bundles">
+              <Button size="lg" className="w-full sm:w-auto bg-teal-900 text-white hover:bg-teal-950">
+                Browse bundles
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
