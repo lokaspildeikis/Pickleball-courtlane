@@ -315,7 +315,7 @@ export async function getProduct(handle: string) {
             }
           }
         }
-        variants(first: 10) {
+        variants(first: 100) {
           edges {
             node {
               id

@@ -181,10 +181,6 @@ export function ProductDetail() {
   const generatedCompareAtValue = getRoundedComparePrice(currentPriceValue);
   const displayCompareAtValue = Math.max(existingCompareAtValue, generatedCompareAtValue);
   const isSale = displayCompareAtValue > currentPriceValue;
-  const meaningfulVariantLabels = product.variants.edges
-    .map((v) => v.node.title.trim().toLowerCase())
-    .filter((t) => t && t !== 'default title');
-  const hasMultipleVariants = meaningfulVariantLabels.length > 1;
   const allVariants: VariantNode[] = product.variants.edges.map((edge) => edge.node);
   const optionNames = Array.from(
     new Set(
@@ -193,6 +189,14 @@ export function ProductDetail() {
         .filter(Boolean),
     ),
   ).slice(0, 3);
+  const hasVariantChoices = optionNames.some((name) => {
+    const values = new Set(
+      allVariants
+        .map((variant) => extractVariantOptions(variant).find((option) => option.name === name)?.value || '')
+        .filter(Boolean),
+    );
+    return values.size > 1;
+  }) || allVariants.length > 1;
   const reviews = getSyntheticReviews(product.handle, product.title);
   const reviewSummary = getSyntheticReviewSummary(product.handle);
   const visibleReviewCount = reviews.length;
@@ -378,7 +382,7 @@ export function ProductDetail() {
           </div>
 
           {/* Variants */}
-          {hasMultipleVariants && (
+          {hasVariantChoices && (
             <div className="mb-6">
               <div className="space-y-4">
                 {optionNames.map((optionName) => (
