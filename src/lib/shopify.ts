@@ -320,7 +320,7 @@ export async function getProduct(handle: string) {
             }
           }
         }
-        variants(first: 100) {
+        variants(first: 250) {
           edges {
             node {
               id

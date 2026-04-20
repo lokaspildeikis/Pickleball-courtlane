@@ -182,7 +182,7 @@ export function ProductDetail() {
   const displayCompareAtValue = Math.max(existingCompareAtValue, generatedCompareAtValue);
   const isSale = displayCompareAtValue > currentPriceValue;
   const allVariants: VariantNode[] = product.variants.edges.map((edge) => edge.node);
-  const optionNames = Array.from(
+  const optionNamesFromVariants = Array.from(
     new Set(
       allVariants
         .flatMap((variant) => extractVariantOptions(variant).map((option) => option.name))
@@ -192,10 +192,14 @@ export function ProductDetail() {
   const productLevelOptions = (product.options || [])
     .filter((option) => option.name.toLowerCase() !== 'title')
     .slice(0, 3);
-  const displayOptionNames = optionNames.length > 0
-    ? optionNames
-    : productLevelOptions.map((option) => option.name);
-  const hasVariantChoices = optionNames.some((name) => {
+  const displayOptionNames = productLevelOptions.length > 0
+    ? productLevelOptions.map((option) => option.name)
+    : optionNamesFromVariants;
+  const hasVariantChoices = displayOptionNames.some((name) => {
+    const productOption = productLevelOptions.find((option) => option.name === name);
+    if (productOption?.values?.length) {
+      return productOption.values.length > 1;
+    }
     const values = new Set(
       allVariants
         .map((variant) => extractVariantOptions(variant).find((option) => option.name === name)?.value || '')
