@@ -99,7 +99,7 @@ export function ProductDetail() {
     if (!selectedVariant) return;
     const options = extractVariantOptions(selectedVariant);
     setSelectedOptionValues((prev) => {
-      const next = { ...prev };
+      const next: Record<string, string> = {};
       options.forEach((option) => {
         next[option.name] = option.value;
       });
@@ -189,6 +189,12 @@ export function ProductDetail() {
         .filter(Boolean),
     ),
   ).slice(0, 3);
+  const productLevelOptions = (product.options || [])
+    .filter((option) => option.name.toLowerCase() !== 'title')
+    .slice(0, 3);
+  const displayOptionNames = optionNames.length > 0
+    ? optionNames
+    : productLevelOptions.map((option) => option.name);
   const hasVariantChoices = optionNames.some((name) => {
     const values = new Set(
       allVariants
@@ -196,7 +202,7 @@ export function ProductDetail() {
         .filter(Boolean),
     );
     return values.size > 1;
-  }) || allVariants.length > 1;
+  }) || allVariants.length > 1 || productLevelOptions.some((option) => option.values.length > 1);
   const reviews = getSyntheticReviews(product.handle, product.title);
   const reviewSummary = getSyntheticReviewSummary(product.handle);
   const visibleReviewCount = reviews.length;
@@ -221,7 +227,7 @@ export function ProductDetail() {
     values: Record<string, string>,
     ignoredOptionName?: string,
   ): boolean => {
-    return optionNames.every((name) => {
+    return displayOptionNames.every((name) => {
       if (name === ignoredOptionName) return true;
       const selectedValue = values[name];
       if (!selectedValue) return true;
@@ -230,6 +236,10 @@ export function ProductDetail() {
   };
 
   const getOptionValues = (optionName: string): string[] => {
+    const productOption = productLevelOptions.find((option) => option.name === optionName);
+    if (productOption?.values?.length) {
+      return productOption.values.filter(Boolean);
+    }
     return Array.from(
       new Set(
         allVariants
@@ -248,7 +258,11 @@ export function ProductDetail() {
 
   const findMatchingVariant = (values: Record<string, string>): VariantNode | null => {
     const exact = allVariants.find((variant) =>
-      optionNames.every((name) => getVariantOptionValue(variant, name) === values[name]),
+      displayOptionNames.every((name) => {
+        const selectedValue = values[name];
+        if (!selectedValue) return true;
+        return getVariantOptionValue(variant, name) === selectedValue;
+      }),
     );
     if (exact) return exact;
 
@@ -385,7 +399,7 @@ export function ProductDetail() {
           {hasVariantChoices && (
             <div className="mb-6">
               <div className="space-y-4">
-                {optionNames.map((optionName) => (
+                {displayOptionNames.map((optionName) => (
                   <div key={optionName}>
                     <label htmlFor={`option-${optionName}`} className="block text-sm font-bold uppercase tracking-wide text-gray-900 mb-2">
                       {optionName}

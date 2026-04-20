@@ -54,6 +54,7 @@ export interface Product {
   title: string;
   description: string;
   descriptionHtml: string;
+  options?: Array<{ name: string; values: string[] }>;
   priceRange: {
     minVariantPrice: { amount: string; currencyCode: string };
   };
@@ -295,6 +296,10 @@ export async function getProduct(handle: string) {
         description
         descriptionHtml
         tags
+        options {
+          name
+          values
+        }
         priceRange {
           minVariantPrice {
             amount
