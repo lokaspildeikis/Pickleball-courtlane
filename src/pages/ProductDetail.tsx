@@ -12,6 +12,27 @@ import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
 import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMethods';
 import { trackAddToCart, trackCustomEvent, trackViewContent } from '../components/analytics/MetaPixel';
 
+type VariantNode = Product['variants']['edges'][number]['node'];
+type VariantOption = { name: string; value: string };
+
+const FALLBACK_OPTION_NAMES = ['Ball color', 'Sweatband color', 'Towel color'];
+
+function extractVariantOptions(variant: VariantNode): VariantOption[] {
+  if (variant.selectedOptions?.length) {
+    return variant.selectedOptions;
+  }
+
+  const titleParts = variant.title
+    .split('/')
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return titleParts.slice(0, 3).map((value, index) => ({
+    name: FALLBACK_OPTION_NAMES[index] || `Option ${index + 1}`,
+    value,
+  }));
+}
+
 function getRoundedComparePrice(currentPrice: number): number {
   const increased = currentPrice * 1.15;
   const base = Math.floor(increased);
@@ -45,6 +66,7 @@ export function ProductDetail() {
   const [loading, setLoading] = useState(true);
   
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
+  const [selectedOptionValues, setSelectedOptionValues] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState<string>('');
   const primaryCtaRef = useRef<HTMLDivElement | null>(null);
@@ -72,6 +94,18 @@ export function ProductDetail() {
     }
     fetchProduct();
   }, [handle]);
+
+  useEffect(() => {
+    if (!selectedVariant) return;
+    const options = extractVariantOptions(selectedVariant);
+    setSelectedOptionValues((prev) => {
+      const next = { ...prev };
+      options.forEach((option) => {
+        next[option.name] = option.value;
+      });
+      return next;
+    });
+  }, [selectedVariant]);
 
   useEffect(() => {
     if (!product || !selectedVariant) return;
@@ -151,6 +185,14 @@ export function ProductDetail() {
     .map((v) => v.node.title.trim().toLowerCase())
     .filter((t) => t && t !== 'default title');
   const hasMultipleVariants = meaningfulVariantLabels.length > 1;
+  const allVariants: VariantNode[] = product.variants.edges.map((edge) => edge.node);
+  const optionNames = Array.from(
+    new Set(
+      allVariants
+        .flatMap((variant) => extractVariantOptions(variant).map((option) => option.name))
+        .filter(Boolean),
+    ),
+  ).slice(0, 3);
   const reviews = getSyntheticReviews(product.handle, product.title);
   const reviewSummary = getSyntheticReviewSummary(product.handle);
   const visibleReviewCount = reviews.length;
@@ -165,7 +207,64 @@ export function ProductDetail() {
     ? 'Selected essentials bundled together for faster setup.'
     : 'Core product shown above, ready for regular practice and play.';
 
+  const getVariantOptionValue = (variant: VariantNode, optionName: string): string => {
+    const option = extractVariantOptions(variant).find((entry) => entry.name === optionName);
+    return option?.value || '';
+  };
+
+  const matchesSelectedValues = (
+    variant: VariantNode,
+    values: Record<string, string>,
+    ignoredOptionName?: string,
+  ): boolean => {
+    return optionNames.every((name) => {
+      if (name === ignoredOptionName) return true;
+      const selectedValue = values[name];
+      if (!selectedValue) return true;
+      return getVariantOptionValue(variant, name) === selectedValue;
+    });
+  };
+
+  const getOptionValues = (optionName: string): string[] => {
+    return Array.from(
+      new Set(
+        allVariants
+          .map((variant) => getVariantOptionValue(variant, optionName))
+          .filter(Boolean),
+      ),
+    );
+  };
+
+  const isOptionValueEnabled = (optionName: string, candidateValue: string): boolean => {
+    return allVariants.some((variant) => {
+      if (getVariantOptionValue(variant, optionName) !== candidateValue) return false;
+      return matchesSelectedValues(variant, selectedOptionValues, optionName);
+    });
+  };
+
+  const findMatchingVariant = (values: Record<string, string>): VariantNode | null => {
+    const exact = allVariants.find((variant) =>
+      optionNames.every((name) => getVariantOptionValue(variant, name) === values[name]),
+    );
+    if (exact) return exact;
+
+    const fallback = allVariants.find((variant) => matchesSelectedValues(variant, values));
+    return fallback || null;
+  };
+
+  const handleOptionSelection = (optionName: string, optionValue: string) => {
+    const nextValues = { ...selectedOptionValues, [optionName]: optionValue };
+    setSelectedOptionValues(nextValues);
+    const matchedVariant = findMatchingVariant(nextValues);
+    if (matchedVariant) {
+      setSelectedVariant(matchedVariant);
+    }
+  };
+
+  const combinationUnavailable = !selectedVariant?.availableForSale;
+
   const handleAddToCart = () => {
+    if (!selectedVariant?.availableForSale) return;
     addToCart({
       variantId: selectedVariant.id,
       productId: product.id,
@@ -281,30 +380,33 @@ export function ProductDetail() {
           {/* Variants */}
           {hasMultipleVariants && (
             <div className="mb-6">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-gray-900 mb-3">
-                Option: <span className="text-gray-500 font-normal">{selectedVariant.title}</span>
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {product.variants.edges.map((v) => {
-                  const variant = v.node;
-                  const isSelected = selectedVariant.id === variant.id;
-                  return (
-                    <button
-                      key={variant.id}
-                      onClick={() => setSelectedVariant(variant)}
-                      disabled={!variant.availableForSale}
-                      className={`px-4 py-2 text-sm font-medium rounded-sm border transition-colors ${
-                        isSelected 
-                          ? 'border-teal-800 bg-teal-50 text-teal-900' 
-                          : !variant.availableForSale 
-                            ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed opacity-50'
-                            : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
-                      }`}
+              <div className="space-y-4">
+                {optionNames.map((optionName) => (
+                  <div key={optionName}>
+                    <label htmlFor={`option-${optionName}`} className="block text-sm font-bold uppercase tracking-wide text-gray-900 mb-2">
+                      {optionName}
+                    </label>
+                    <select
+                      id={`option-${optionName}`}
+                      value={selectedOptionValues[optionName] || ''}
+                      onChange={(event) => handleOptionSelection(optionName, event.target.value)}
+                      className="w-full rounded-sm border border-gray-300 bg-white px-3 py-3 text-sm text-gray-900 focus:border-teal-700 focus:outline-none"
                     >
-                      {variant.title}
-                    </button>
-                  );
-                })}
+                      {getOptionValues(optionName).map((optionValue) => (
+                        <option
+                          key={optionValue}
+                          value={optionValue}
+                          disabled={!isOptionValueEnabled(optionName, optionValue)}
+                        >
+                          {optionValue}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+                {combinationUnavailable && (
+                  <p className="text-sm text-red-700">This combination is unavailable.</p>
+                )}
               </div>
             </div>
           )}
@@ -332,9 +434,9 @@ export function ProductDetail() {
                 size="lg" 
                 className="flex-1"
                 onClick={handleAddToCart}
-                disabled={!selectedVariant.availableForSale}
+                disabled={combinationUnavailable}
               >
-                {selectedVariant.availableForSale ? 'Add to Cart' : 'Sold Out'}
+                {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
               </Button>
             </div>
             <div className="mt-4 rounded-sm border border-gray-200 bg-gray-50 p-3 sm:p-4">
@@ -414,8 +516,8 @@ export function ProductDetail() {
                 <Plus size={14} />
               </button>
             </div>
-            <Button onClick={handleStickyAddToCart} disabled={!selectedVariant.availableForSale}>
-              {selectedVariant.availableForSale ? 'Add to Cart' : 'Sold Out'}
+            <Button onClick={handleStickyAddToCart} disabled={combinationUnavailable}>
+              {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
             </Button>
           </div>
         </div>

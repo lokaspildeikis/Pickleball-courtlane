@@ -69,6 +69,7 @@ export interface Product {
         id: string;
         title: string;
         availableForSale: boolean;
+        selectedOptions?: Array<{ name: string; value: string }>;
         price: { amount: string; currencyCode: string };
         compareAtPrice?: { amount: string; currencyCode: string };
       }
@@ -255,6 +256,10 @@ export async function getProducts() {
                   id
                   title
                   availableForSale
+                  selectedOptions {
+                    name
+                    value
+                  }
                   price {
                     amount
                     currencyCode
@@ -316,6 +321,10 @@ export async function getProduct(handle: string) {
               id
               title
               availableForSale
+                selectedOptions {
+                  name
+                  value
+                }
               price {
                 amount
                 currencyCode
