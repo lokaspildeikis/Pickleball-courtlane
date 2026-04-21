@@ -6,7 +6,7 @@ function json(res: any, status: number, body: Record<string, unknown>) {
 }
 
 function getCouponCode() {
-  return process.env.NEW_CUSTOMER_COUPON_CODE || 'WELCOME10';
+  return process.env.NEW_CUSTOMER_COUPON_CODE || 'WELCOME5';
 }
 
 export default async function handler(req: any, res: any) {
@@ -57,7 +57,7 @@ export default async function handler(req: any, res: any) {
       <h2 style="margin:0 0 12px;">Welcome to Courtlane</h2>
       <p style="margin:0 0 12px;">Thanks for joining. Here is your new customer discount code:</p>
       <p style="font-size:24px;font-weight:700;letter-spacing:1px;margin:0 0 12px;">${couponCode}</p>
-      <p style="margin:0 0 16px;">Use it for <strong>10% off</strong> your next order.</p>
+      <p style="margin:0 0 16px;">Use it for <strong>5% off</strong> your next order.</p>
       <a href="${shopUrl}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 16px;border-radius:4px;">Shop now</a>
       <p style="margin:16px 0 0;color:#4b5563;font-size:12px;">If you did not request this email, you can ignore it.</p>
     </div>
@@ -68,8 +68,8 @@ export default async function handler(req: any, res: any) {
       from: `${fromName} <${fromEmail}>`,
       to: email,
       replyTo: supportEmail || undefined,
-      subject: `Your 10% Courtlane code: ${couponCode}`,
-      text: `Welcome to Courtlane! Your 10% discount code is ${couponCode}. Shop here: ${shopUrl}`,
+      subject: `Your 5% Courtlane code: ${couponCode}`,
+      text: `Welcome to Courtlane! Your 5% discount code is ${couponCode}. Shop here: ${shopUrl}`,
       html,
     });
 

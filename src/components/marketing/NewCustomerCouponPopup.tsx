@@ -17,7 +17,7 @@ export function NewCustomerCouponPopup() {
     [],
   );
   const couponCode = useMemo(
-    () => (import.meta.env.VITE_NEW_CUSTOMER_COUPON_CODE as string | undefined)?.trim() || 'WELCOME10',
+    () => (import.meta.env.VITE_NEW_CUSTOMER_COUPON_CODE as string | undefined)?.trim() || 'WELCOME5',
     [],
   );
 
@@ -113,9 +113,9 @@ export function NewCustomerCouponPopup() {
         {!isSuccess ? (
           <>
             <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">New customer offer</p>
-            <h3 className="mt-1 text-2xl font-bold text-gray-900">Get 10% off your first order</h3>
+            <h3 className="mt-1 text-2xl font-bold text-gray-900">Get 5% off your first order</h3>
             <p className="mt-2 text-sm text-gray-600">
-              Enter your email and we&apos;ll send your 10% discount code right away.
+              Enter your email and we&apos;ll send your 5% discount code right away.
             </p>
 
             <form className="mt-4 space-y-3" onSubmit={onSubmit}>
@@ -133,7 +133,7 @@ export function NewCustomerCouponPopup() {
                 disabled={isSubmitting}
                 className="w-full rounded-sm bg-teal-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-900 disabled:opacity-60"
               >
-                {isSubmitting ? 'Sending...' : 'Send my 10% code'}
+                {isSubmitting ? 'Sending...' : 'Send my 5% code'}
               </button>
             </form>
           </>
@@ -142,7 +142,7 @@ export function NewCustomerCouponPopup() {
             <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">You&apos;re all set</p>
             <h3 className="mt-1 text-xl font-bold text-gray-900">Check your email</h3>
             <p className="mt-2 text-sm text-gray-600">
-              Your 10% code is on the way. If it doesn&apos;t appear in a minute, check spam/promotions.
+              Your 5% code is on the way. If it doesn&apos;t appear in a minute, check spam/promotions.
             </p>
             <button
               type="button"
