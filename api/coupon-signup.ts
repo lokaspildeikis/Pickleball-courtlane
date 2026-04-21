@@ -1,6 +1,9 @@
 import nodemailer from 'nodemailer';
 
 function json(res: any, status: number, body: Record<string, unknown>) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.status(status).setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(body));
 }
@@ -10,6 +13,14 @@ function getCouponCode() {
 }
 
 export default async function handler(req: any, res: any) {
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(204).end();
+    return;
+  }
+
   if (req.method !== 'POST') {
     return json(res, 405, { error: 'Method not allowed' });
   }
@@ -74,8 +85,9 @@ export default async function handler(req: any, res: any) {
     });
 
     return json(res, 200, { ok: true });
-  } catch (error) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('Coupon signup email send failed:', error);
-    return json(res, 500, { error: 'Could not send email' });
+    return json(res, 500, { error: 'Could not send email', detail: message });
   }
 }

@@ -77,7 +77,14 @@ export function NewCustomerCouponPopup() {
       });
 
       if (!response.ok) {
-        throw new Error('Signup endpoint rejected request.');
+        let serverMessage = '';
+        try {
+          const data = (await response.json()) as { error?: string; detail?: string };
+          serverMessage = [data.error, data.detail].filter(Boolean).join(': ');
+        } catch {
+          serverMessage = response.statusText || `HTTP ${response.status}`;
+        }
+        throw new Error(serverMessage || 'Signup endpoint rejected request.');
       }
 
       try {
@@ -88,8 +95,12 @@ export function NewCustomerCouponPopup() {
 
       trackCustomEvent('CouponPopupClaimed', { coupon_code: couponCode });
       setIsSuccess(true);
-    } catch {
-      setError('Could not submit right now. Please try again in a moment.');
+    } catch (submitError) {
+      const msg =
+        submitError instanceof Error && submitError.message
+          ? submitError.message
+          : 'Could not submit right now. Please try again in a moment.';
+      setError(msg.length > 200 ? `${msg.slice(0, 200)}…` : msg);
       trackCustomEvent('CouponPopupSubmitFailed');
     } finally {
       setIsSubmitting(false);
