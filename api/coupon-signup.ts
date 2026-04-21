@@ -20,19 +20,16 @@ function envTrim(key: string): string | undefined {
   return t;
 }
 
-export default async function handler(req: any, res: any) {
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.status(204).end();
-    return;
-  }
-
-  if (req.method !== 'POST') {
-    return json(res, 405, { error: 'Method not allowed' });
-  }
-
+function collectSmtpMissing(): {
+  missing: string[];
+  smtpHost: string | undefined;
+  smtpPort: number;
+  smtpUser: string | undefined;
+  smtpPass: string | undefined;
+  fromEmail: string | undefined;
+  fromName: string;
+  supportEmail: string | undefined;
+} {
   const smtpHost = envTrim('COUPON_SMTP_HOST');
   const smtpPortRaw = envTrim('COUPON_SMTP_PORT');
   const smtpPort = Number(smtpPortRaw || '465');
@@ -48,6 +45,48 @@ export default async function handler(req: any, res: any) {
   if (!smtpUser) missing.push('COUPON_SMTP_USER');
   if (!smtpPass) missing.push('COUPON_SMTP_PASS');
   if (!fromEmail) missing.push('COUPON_FROM_EMAIL (or valid COUPON_SMTP_USER)');
+
+  return { missing, smtpHost, smtpPort, smtpUser, smtpPass, fromEmail, fromName, supportEmail };
+}
+
+export default async function handler(req: any, res: any) {
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(204).end();
+    return;
+  }
+
+  if (req.method === 'GET') {
+    const { missing } = collectSmtpMissing();
+    const present = {
+      COUPON_SMTP_HOST: Boolean(envTrim('COUPON_SMTP_HOST')),
+      COUPON_SMTP_PORT: Boolean(envTrim('COUPON_SMTP_PORT')),
+      COUPON_SMTP_USER: Boolean(envTrim('COUPON_SMTP_USER')),
+      COUPON_SMTP_PASS: Boolean(envTrim('COUPON_SMTP_PASS')),
+      COUPON_FROM_EMAIL: Boolean(envTrim('COUPON_FROM_EMAIL')),
+    };
+    return json(res, 200, {
+      diagnostic: true,
+      smtpReady: missing.length === 0,
+      missing,
+      present,
+      vercelEnv: process.env.VERCEL_ENV || null,
+      vercelUrl: process.env.VERCEL_URL || null,
+      vercelGitRepo: process.env.VERCEL_GIT_REPO_SLUG || null,
+      hint:
+        missing.length > 0
+          ? 'This JSON is from the deployment that handled this URL. If present.* is all false but you set vars in Vercel, you are editing the WRONG project or you did not Redeploy Production after saving.'
+          : 'SMTP env looks OK on this deployment; POST should work unless mail server rejects auth.',
+    });
+  }
+
+  if (req.method !== 'POST') {
+    return json(res, 405, { error: 'Method not allowed' });
+  }
+
+  const { missing, smtpHost, smtpPort, smtpUser, smtpPass, fromEmail, fromName, supportEmail } = collectSmtpMissing();
   if (missing.length > 0) {
     return json(res, 500, {
       error: 'SMTP is not configured',
