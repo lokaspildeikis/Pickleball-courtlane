@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 
 function json(res: any, status: number, body: Record<string, unknown>) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.status(status).setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(body));
@@ -50,15 +50,17 @@ function collectSmtpMissing(): {
 }
 
 export default async function handler(req: any, res: any) {
-  if (req.method === 'OPTIONS') {
+  const method = String(req.method || '').toUpperCase();
+
+  if (method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.status(204).end();
     return;
   }
 
-  if (req.method === 'GET') {
+  if (method === 'GET' || method === 'HEAD') {
     const { missing } = collectSmtpMissing();
     const present = {
       COUPON_SMTP_HOST: Boolean(envTrim('COUPON_SMTP_HOST')),
@@ -67,7 +69,7 @@ export default async function handler(req: any, res: any) {
       COUPON_SMTP_PASS: Boolean(envTrim('COUPON_SMTP_PASS')),
       COUPON_FROM_EMAIL: Boolean(envTrim('COUPON_FROM_EMAIL')),
     };
-    return json(res, 200, {
+    const payload = {
       diagnostic: true,
       smtpReady: missing.length === 0,
       missing,
@@ -75,15 +77,23 @@ export default async function handler(req: any, res: any) {
       vercelEnv: process.env.VERCEL_ENV || null,
       vercelUrl: process.env.VERCEL_URL || null,
       vercelGitRepo: process.env.VERCEL_GIT_REPO_SLUG || null,
+      commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || null,
       hint:
         missing.length > 0
           ? 'This JSON is from the deployment that handled this URL. If present.* is all false but you set vars in Vercel, you are editing the WRONG project or you did not Redeploy Production after saving.'
           : 'SMTP env looks OK on this deployment; POST should work unless mail server rejects auth.',
-    });
+    };
+    if (method === 'HEAD') {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.status(200).setHeader('Content-Type', 'application/json');
+      res.end();
+      return;
+    }
+    return json(res, 200, payload);
   }
 
-  if (req.method !== 'POST') {
-    return json(res, 405, { error: 'Method not allowed' });
+  if (method !== 'POST') {
+    return json(res, 405, { error: 'Method not allowed', method });
   }
 
   const { missing, smtpHost, smtpPort, smtpUser, smtpPass, fromEmail, fromName, supportEmail } = collectSmtpMissing();
