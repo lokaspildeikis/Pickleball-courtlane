@@ -222,7 +222,7 @@ async function mockShopifyFetch({ query, variables }: { query: string, variables
 
 export async function getProducts() {
   const query = `
-    query getProducts {
+    query getProducts @inContext(country: US) {
       products(first: 250) {
         edges {
           node {
@@ -288,7 +288,7 @@ export async function getProducts() {
 
 export async function getProduct(handle: string) {
   const query = `
-    query getProduct($handle: String!) {
+    query getProduct($handle: String!) @inContext(country: US) {
       product(handle: $handle) {
         id
         handle

@@ -12,6 +12,7 @@ import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
 import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMethods';
 import { trackAddToCart, trackCustomEvent, trackViewContent } from '../components/analytics/MetaPixel';
 import { TrustBar } from '../components/TrustBar';
+import { convertEurToUsdRounded99 } from '../lib/pricing';
 
 type VariantNode = Product['variants']['edges'][number]['node'];
 type VariantOption = { name: string; value: string };
@@ -35,15 +36,7 @@ function extractVariantOptions(variant: VariantNode): VariantOption[] {
 }
 
 function getRoundedComparePrice(currentPrice: number): number {
-  const increased = currentPrice * 1.15;
-  const base = Math.floor(increased);
-  let rounded = base + 0.99;
-
-  if (rounded < increased) {
-    rounded = base + 1 + 0.99;
-  }
-
-  return Number(rounded.toFixed(2));
+  return convertEurToUsdRounded99(currentPrice * 1.15);
 }
 
 function renderStars(rating: number) {
@@ -177,9 +170,12 @@ export function ProductDetail() {
     );
   }
 
-  const currentPriceValue = parseFloat(selectedVariant.price.amount);
-  const existingCompareAtValue = selectedVariant.compareAtPrice ? parseFloat(selectedVariant.compareAtPrice.amount) : 0;
-  const generatedCompareAtValue = getRoundedComparePrice(currentPriceValue);
+  const basePriceEur = parseFloat(selectedVariant.price.amount);
+  const currentPriceValue = convertEurToUsdRounded99(basePriceEur);
+  const existingCompareAtValue = selectedVariant.compareAtPrice
+    ? convertEurToUsdRounded99(parseFloat(selectedVariant.compareAtPrice.amount))
+    : 0;
+  const generatedCompareAtValue = getRoundedComparePrice(basePriceEur);
   const displayCompareAtValue = Math.max(existingCompareAtValue, generatedCompareAtValue);
   const isSale = displayCompareAtValue > currentPriceValue;
   const allVariants: VariantNode[] = product.variants.edges.map((edge) => edge.node);
@@ -293,7 +289,7 @@ export function ProductDetail() {
       productId: product.id,
       title: product.title,
       variantTitle: selectedVariant.title,
-      price: parseFloat(selectedVariant.price.amount),
+      price: currentPriceValue,
       image: activeImage || product.images.edges[0]?.node.url,
       quantity: quantity
     });

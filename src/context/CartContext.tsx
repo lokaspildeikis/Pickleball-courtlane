@@ -115,6 +115,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       const variables = {
         input: {
+          buyerIdentity: {
+            countryCode: "US",
+          },
           lines: items.map((item) => ({
             merchandiseId: item.variantId,
             quantity: item.quantity
