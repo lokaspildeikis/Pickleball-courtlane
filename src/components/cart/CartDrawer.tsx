@@ -2,9 +2,9 @@ import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { Button } from '../ui/Button';
 import { useEffect } from 'react';
-import { TrustPointsRow } from '../trust/TrustPointsRow';
-import { POLICY_SNIPPETS, TRUST_POINTS } from '../../lib/trustContent';
+import { POLICY_SNIPPETS } from '../../lib/trustContent';
 import { Link } from 'react-router-dom';
+import { CheckoutConfidence } from '../CheckoutConfidence';
 
 export function CartDrawer() {
   const { isCartOpen, closeCart, items, updateQuantity, removeFromCart, cartTotal, createCheckout, isCheckingOut } = useCart();
@@ -115,10 +115,7 @@ export function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-gray-100 p-6 bg-gray-50">
-            <div className="rounded-sm border border-gray-200 bg-white p-3 mb-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 mb-2">Checkout confidence</p>
-              <TrustPointsRow points={TRUST_POINTS.cartCheckout} />
-            </div>
+            <CheckoutConfidence className="mb-4" />
             <div className="flex justify-between text-base font-bold text-gray-900 mb-2">
               <p>Subtotal</p>
               <p>${cartTotal.toFixed(2)}</p>
@@ -127,7 +124,9 @@ export function CartDrawer() {
             <Button size="full" onClick={createCheckout} disabled={isCheckingOut}>
               {isCheckingOut ? 'Redirecting...' : 'Checkout'}
             </Button>
-            <p className="text-xs text-emerald-700 mt-3">Secure checkout on Shopify.</p>
+            <p className="text-xs text-gray-600 mt-3">
+              You&apos;ll be redirected to our secure Shopify checkout to complete payment.
+            </p>
             <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600">
               {POLICY_SNIPPETS.cart.map((snippet) =>
                 snippet.href ? (

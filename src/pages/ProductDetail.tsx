@@ -11,6 +11,7 @@ import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
 import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMethods';
 import { trackAddToCart, trackCustomEvent, trackViewContent } from '../components/analytics/MetaPixel';
+import { TrustBar } from '../components/TrustBar';
 
 type VariantNode = Product['variants']['edges'][number]['node'];
 type VariantOption = { name: string; value: string };
@@ -391,6 +392,7 @@ export function ProductDetail() {
           <p className={`text-sm mb-6 ${selectedVariant.availableForSale ? 'text-emerald-700' : 'text-gray-500'}`}>
             {selectedVariant.availableForSale ? 'In stock and ready to process.' : 'Currently out of stock.'}
           </p>
+          <TrustBar className="mb-6" />
 
           <div className="mb-6 rounded-sm border border-gray-200 bg-gray-50 p-4 space-y-2">
             <p className="text-xs font-bold uppercase tracking-wide text-gray-700">Who this is for</p>
