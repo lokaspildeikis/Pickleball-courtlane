@@ -12,6 +12,14 @@ function getCouponCode() {
   return process.env.NEW_CUSTOMER_COUPON_CODE || 'WELCOME5';
 }
 
+function envTrim(key: string): string | undefined {
+  const v = process.env[key];
+  if (v == null) return undefined;
+  const t = String(v).trim();
+  if (!t || t === 'YOUR_SECRET_VALUE_GOES_HERE') return undefined;
+  return t;
+}
+
 export default async function handler(req: any, res: any) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,16 +33,26 @@ export default async function handler(req: any, res: any) {
     return json(res, 405, { error: 'Method not allowed' });
   }
 
-  const smtpHost = process.env.COUPON_SMTP_HOST;
-  const smtpPort = Number(process.env.COUPON_SMTP_PORT || 465);
-  const smtpUser = process.env.COUPON_SMTP_USER;
-  const smtpPass = process.env.COUPON_SMTP_PASS;
-  const fromEmail = process.env.COUPON_FROM_EMAIL || smtpUser;
-  const fromName = process.env.COUPON_FROM_NAME || 'Courtlane';
-  const supportEmail = process.env.COUPON_SUPPORT_EMAIL || fromEmail;
+  const smtpHost = envTrim('COUPON_SMTP_HOST');
+  const smtpPortRaw = envTrim('COUPON_SMTP_PORT');
+  const smtpPort = Number(smtpPortRaw || '465');
+  const smtpUser = envTrim('COUPON_SMTP_USER');
+  const smtpPass = envTrim('COUPON_SMTP_PASS');
+  const fromEmailRaw = envTrim('COUPON_FROM_EMAIL');
+  const fromEmail = fromEmailRaw || smtpUser;
+  const fromName = envTrim('COUPON_FROM_NAME') || 'Courtlane';
+  const supportEmail = envTrim('COUPON_SUPPORT_EMAIL') || fromEmail;
 
-  if (!smtpHost || !smtpUser || !smtpPass || !fromEmail) {
-    return json(res, 500, { error: 'SMTP is not configured' });
+  const missing: string[] = [];
+  if (!smtpHost) missing.push('COUPON_SMTP_HOST');
+  if (!smtpUser) missing.push('COUPON_SMTP_USER');
+  if (!smtpPass) missing.push('COUPON_SMTP_PASS');
+  if (!fromEmail) missing.push('COUPON_FROM_EMAIL (or valid COUPON_SMTP_USER)');
+  if (missing.length > 0) {
+    return json(res, 500, {
+      error: 'SMTP is not configured',
+      detail: `Missing or placeholder: ${missing.join(', ')}. Fix in Vercel → Project → Settings → Environment Variables, then Redeploy.`,
+    });
   }
 
   let body: any = {};
