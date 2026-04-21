@@ -8,7 +8,6 @@ import { HomeBrandStory } from '../components/home/HomeBrandStory';
 import { PageMeta } from '../components/seo/PageMeta';
 import { TRUST_POINTS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
-import { convertEurToUsdRounded99 } from '../lib/pricing';
 
 export function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -45,7 +44,7 @@ export function Home() {
       ?? starterBundleProduct.priceRange.minVariantPrice.amount
     : null;
   const starterBundlePrice = starterBundleRawPrice
-    ? convertEurToUsdRounded99(Number.parseFloat(starterBundleRawPrice)).toFixed(2)
+    ? Number.parseFloat(starterBundleRawPrice).toFixed(2)
     : null;
 
   return (

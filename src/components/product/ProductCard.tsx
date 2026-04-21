@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../lib/shopify';
 import { getSyntheticReviewSummary } from '../../lib/syntheticReviews';
-import { convertEurToUsdRounded99 } from '../../lib/pricing';
 
 interface ProductCardProps {
   key?: React.Key;
@@ -23,7 +22,16 @@ function renderStars(rating: number) {
 }
 
 function getRoundedComparePrice(currentPrice: number): number {
-  return convertEurToUsdRounded99(currentPrice * 1.15);
+  const increased = currentPrice * 1.15;
+  const base = Math.floor(increased);
+  let rounded = base + 0.99;
+
+  // Ensure we always round up to the next .99 when needed.
+  if (rounded < increased) {
+    rounded = base + 1 + 0.99;
+  }
+
+  return Number(rounded.toFixed(2));
 }
 
 function getBenefitCopy(product: Product): string {
@@ -42,9 +50,9 @@ export function ProductCard({ product }: ProductCardProps) {
   const firstImage = product.images.edges[0]?.node;
   const price = product.priceRange.minVariantPrice;
   const compareAtPrice = product.compareAtPriceRange?.minVariantPrice;
-  const currentPriceValue = convertEurToUsdRounded99(parseFloat(price.amount));
-  const existingCompareAtValue = compareAtPrice ? convertEurToUsdRounded99(parseFloat(compareAtPrice.amount)) : 0;
-  const generatedCompareAtValue = getRoundedComparePrice(parseFloat(price.amount));
+  const currentPriceValue = parseFloat(price.amount);
+  const existingCompareAtValue = compareAtPrice ? parseFloat(compareAtPrice.amount) : 0;
+  const generatedCompareAtValue = getRoundedComparePrice(currentPriceValue);
   const displayCompareAtValue = Math.max(existingCompareAtValue, generatedCompareAtValue);
   const isSale = displayCompareAtValue > currentPriceValue;
   const isNew = product.tags.includes('new');
