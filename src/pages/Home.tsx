@@ -8,6 +8,7 @@ import { HomeBrandStory } from '../components/home/HomeBrandStory';
 import { PageMeta } from '../components/seo/PageMeta';
 import { TRUST_POINTS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
+import { convertEurToUsdRounded99 } from '../lib/pricing';
 
 export function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -39,8 +40,12 @@ export function Home() {
   const starterBundleHref = starterBundleProduct ? `/product/${starterBundleProduct.handle}` : '/shop?filter=bundles';
   const starterBundleImage = starterBundleProduct?.images.edges[0]?.node.url
     || 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Pickleball_Pros.jpg';
-  const starterBundlePrice = starterBundleProduct
-    ? Number.parseFloat(starterBundleProduct.priceRange.minVariantPrice.amount).toFixed(2)
+  const starterBundleRawPrice = starterBundleProduct
+    ? starterBundleProduct.variants.edges[0]?.node.price.amount
+      ?? starterBundleProduct.priceRange.minVariantPrice.amount
+    : null;
+  const starterBundlePrice = starterBundleRawPrice
+    ? convertEurToUsdRounded99(Number.parseFloat(starterBundleRawPrice)).toFixed(2)
     : null;
 
   return (
@@ -69,7 +74,7 @@ export function Home() {
               Pickleball Essentials for <span className="text-teal-400 md:text-teal-500">Everyday Players.</span>
             </h1>
             <p className="text-base md:text-xl text-gray-300 mb-8 max-w-lg">
-              Reliable gear for beginners and rec players, backed by straightforward support so you can play with confidence.
+              Free shipping on every order.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to={starterBundleHref}>
