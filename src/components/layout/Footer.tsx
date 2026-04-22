@@ -1,8 +1,46 @@
+import { FormEvent, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SUPPORT_EMAIL } from '../../lib/trustContent';
 import { FOOTER_BRAND_BLURB } from '../../lib/brandContent';
+import { isValidEmail, resolveCouponCode, submitCouponSignup } from '../../lib/couponSignup';
 
 export function Footer() {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const couponCode = useMemo(() => resolveCouponCode(), []);
+
+  const handleJoinSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError('');
+    setSuccess(false);
+
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!isValidEmail(normalizedEmail)) {
+      setError('Enter a valid email address.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await submitCouponSignup({
+        email: normalizedEmail,
+        source: 'footer-newsletter',
+      });
+      setSuccess(true);
+      setEmail('');
+    } catch (submitError) {
+      const message =
+        submitError instanceof Error && submitError.message
+          ? submitError.message
+          : 'Signup failed. Please try again.';
+      setError(message.length > 160 ? `${message.slice(0, 160)}...` : message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-gray-950 text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,20 +82,30 @@ export function Footer() {
 
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-gray-200">Join the Club</h3>
-            <p className="text-gray-400 text-sm mb-4">Subscribe for early access to new drops and exclusive court tips.</p>
-            <form className="flex" onSubmit={(e) => e.preventDefault()}>
+            <p className="text-gray-400 text-sm mb-4">Get early access to new drops and receive your first-order coupon.</p>
+            <form className="flex" onSubmit={handleJoinSubmit}>
               <input 
                 type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address" 
+                required
                 className="bg-gray-900 border border-gray-800 text-white px-4 py-2 w-full text-sm focus:outline-none focus:border-teal-500 rounded-l-sm"
               />
               <button 
                 type="submit"
-                className="bg-teal-700 hover:bg-teal-600 px-4 py-2 text-sm font-medium transition-colors rounded-r-sm"
+                disabled={isSubmitting}
+                className="bg-teal-700 hover:bg-teal-600 px-4 py-2 text-sm font-medium transition-colors rounded-r-sm disabled:opacity-60"
               >
-                Join
+                {isSubmitting ? 'Sending...' : 'Join'}
               </button>
             </form>
+            {success && (
+              <p className="mt-2 text-xs text-emerald-400">
+                You&apos;re in. Check your inbox for code <span className="font-semibold">{couponCode}</span>.
+              </p>
+            )}
+            {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
             <ul className="space-y-3 mt-6">
               <li><Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</Link></li>

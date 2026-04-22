@@ -3,6 +3,7 @@ import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { CartDrawer } from '../cart/CartDrawer';
 import { ScrollToTop } from './ScrollToTop';
+import { NewCustomerCouponPopup } from '../marketing/NewCustomerCouponPopup';
 
 export function Layout() {
   return (
@@ -14,6 +15,7 @@ export function Layout() {
       </main>
       <Footer />
       <CartDrawer />
+      <NewCustomerCouponPopup />
     </div>
   );
 }

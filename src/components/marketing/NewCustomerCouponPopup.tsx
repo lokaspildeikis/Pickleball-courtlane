@@ -1,9 +1,11 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { trackCustomEvent } from '../analytics/MetaPixel';
+import { isValidEmail, resolveCouponCode, resolveCouponSignupEndpoint, submitCouponSignup } from '../../lib/couponSignup';
 
 const DISMISS_KEY = 'pb_coupon_popup_dismissed_v1';
 const CLAIMED_KEY = 'pb_coupon_popup_claimed_v1';
 const POPUP_DELAY_MS = 12000;
+const DISMISS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
 export function NewCustomerCouponPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,30 +14,29 @@ export function NewCustomerCouponPopup() {
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const signupEndpoint = useMemo(
-    () => (import.meta.env.VITE_COUPON_SIGNUP_ENDPOINT as string | undefined)?.trim() || '/api/coupon-signup',
-    [],
-  );
-  const couponCode = useMemo(
-    () => (import.meta.env.VITE_NEW_CUSTOMER_COUPON_CODE as string | undefined)?.trim() || 'WELCOME5',
-    [],
-  );
+  const signupEndpoint = useMemo(() => resolveCouponSignupEndpoint(), []);
+  const couponCode = useMemo(() => resolveCouponCode(), []);
 
   useEffect(() => {
     let timer: number | undefined;
+    const forceOpen = typeof window !== 'undefined' && window.location.search.includes('couponPopup=1');
 
     try {
-      const hasDismissed = window.localStorage.getItem(DISMISS_KEY) === '1';
+      const dismissedAt = Number(window.localStorage.getItem(DISMISS_KEY) || '0');
       const hasClaimed = window.localStorage.getItem(CLAIMED_KEY) === '1';
-      if (hasDismissed || hasClaimed) return;
+      const isDismissedRecently = dismissedAt > 0 && Date.now() - dismissedAt < DISMISS_COOLDOWN_MS;
+      if (!forceOpen && (isDismissedRecently || hasClaimed)) return;
     } catch {
       // Continue and still show popup if storage is unavailable.
     }
 
     timer = window.setTimeout(() => {
       setIsOpen(true);
-      trackCustomEvent('CouponPopupShown', { delay_seconds: 12 });
-    }, POPUP_DELAY_MS);
+      trackCustomEvent('CouponPopupShown', {
+        delay_seconds: forceOpen ? 0 : 12,
+        force_open: forceOpen ? 1 : 0,
+      });
+    }, forceOpen ? 0 : POPUP_DELAY_MS);
 
     return () => {
       if (timer) window.clearTimeout(timer);
@@ -45,47 +46,32 @@ export function NewCustomerCouponPopup() {
   const closePopup = () => {
     setIsOpen(false);
     try {
-      window.localStorage.setItem(DISMISS_KEY, '1');
+      // Dismiss only temporarily so returning visitors can see the offer again.
+      window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
     } catch {
       // Ignore storage failures.
     }
     trackCustomEvent('CouponPopupClosed');
   };
 
-  const validateEmail = (value: string) => /\S+@\S+\.\S+/.test(value);
-
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
 
     const normalizedEmail = email.trim().toLowerCase();
-    if (!validateEmail(normalizedEmail)) {
+    if (!isValidEmail(normalizedEmail)) {
       setError('Please enter a valid email address.');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(signupEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: normalizedEmail,
-          couponCode,
-          source: 'new-customer-popup',
-        }),
+      await submitCouponSignup({
+        email: normalizedEmail,
+        source: 'new-customer-popup',
+        endpoint: signupEndpoint,
+        couponCode,
       });
-
-      if (!response.ok) {
-        let serverMessage = '';
-        try {
-          const data = (await response.json()) as { error?: string; detail?: string };
-          serverMessage = [data.error, data.detail].filter(Boolean).join(': ');
-        } catch {
-          serverMessage = response.statusText || `HTTP ${response.status}`;
-        }
-        throw new Error(serverMessage || 'Signup endpoint rejected request.');
-      }
 
       try {
         window.localStorage.setItem(CLAIMED_KEY, '1');
