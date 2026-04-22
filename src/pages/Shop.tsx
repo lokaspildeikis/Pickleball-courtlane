@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getProducts, Product } from '../lib/shopify';
 import { ProductCard } from '../components/product/ProductCard';
-import { SlidersHorizontal } from 'lucide-react';
 import { trackCustomEvent } from '../components/analytics/MetaPixel';
 
 export function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const currentFilter = searchParams.get('filter') || 'all';
   const currentSort = searchParams.get('sort') || 'featured';
@@ -29,6 +27,11 @@ export function Shop() {
   let filteredProducts = [...products];
   const hasTagMatch = (tags: string[], candidates: string[]) =>
     tags.some((tag) => candidates.some((candidate) => tag.includes(candidate)));
+  const isBundleProduct = (product: Product) =>
+    hasTagMatch(
+      product.tags.map((tag) => tag.trim().toLowerCase()),
+      ['bundle', 'bundles'],
+    );
 
   if (currentFilter !== 'all') {
     // Flexible tag matching (handles singular/plural and common typos)
@@ -91,6 +94,9 @@ export function Shop() {
   } else if (currentSort === 'newest') {
     // Mock sort for newest (assuming ID correlates to age for mock)
     filteredProducts.sort((a, b) => b.id.localeCompare(a.id));
+  } else if (currentSort === 'featured' && currentFilter === 'all' && currentIntent === 'all') {
+    // Keep default "featured" feel, but surface bundles first on the main shop view.
+    filteredProducts.sort((a, b) => Number(isBundleProduct(b)) - Number(isBundleProduct(a)));
   }
 
   const handleFilterChange = (filter: string) => {
@@ -100,7 +106,6 @@ export function Shop() {
       else next.set('filter', filter);
       return next;
     });
-    setIsFilterOpen(false);
     trackCustomEvent('ShopFilterChanged', { filter });
   };
 
@@ -132,7 +137,6 @@ export function Shop() {
       next.delete('sort');
       return next;
     });
-    setIsFilterOpen(false);
     trackCustomEvent('ShopFiltersCleared');
   };
 
@@ -157,18 +161,8 @@ export function Shop() {
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 pb-4 border-b border-gray-200 gap-4">
-        
-        {/* Mobile Filter Toggle */}
-        <button 
-          className="sm:hidden flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-gray-900"
-          onClick={() => setIsFilterOpen(!isFilterOpen)}
-        >
-          <SlidersHorizontal size={16} />
-          Filters
-        </button>
-
-        {/* Desktop Filters */}
-        <div className={`flex-col sm:flex-row gap-6 ${isFilterOpen ? 'flex' : 'hidden sm:flex'} w-full sm:w-auto`}>
+        {/* Filters (always visible, including on mobile) */}
+        <div className="flex w-full flex-wrap items-center gap-x-5 gap-y-3 sm:w-auto">
           <button 
             onClick={() => handleFilterChange('all')}
             className={`text-sm font-bold uppercase tracking-wide transition-colors ${currentFilter === 'all' ? 'text-teal-700 border-b-2 border-teal-700 pb-1' : 'text-gray-500 hover:text-gray-900'}`}
