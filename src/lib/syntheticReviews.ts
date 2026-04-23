@@ -24,6 +24,14 @@ type ReviewTemplate = {
   rating: number;
 };
 
+type ReviewIntent = {
+  id: string;
+  titleOptions: string[];
+  lineAOptions: string[];
+  lineBOptions: string[];
+  baseRating: number;
+};
+
 const FIRST_NAMES = [
   "Liam", "Noah", "Mason", "Ethan", "Lucas", "Ava", "Emma", "Mia", "Sofia", "Harper",
   "Elena", "Julia", "Nora", "Leah", "Owen", "Caleb", "Ryan", "Dylan", "Zoe", "Chloe",
@@ -44,58 +52,58 @@ const REVIEW_DATA: {
 } = {
   byProduct: {
     "high-quality-spot-price-chloroprene-rubber-pickle-ball-bag-sports-protective-bag": [
-      { title: "Fits my paddle well", text: "Sleeve fits snug without being hard to take off. Good for keeping the face protected in my bag.", rating: 4.6 },
-      { title: "Simple cover", text: "Nothing fancy, but it keeps scratches off during travel to the courts.", rating: 4.4 },
-      { title: "Useful add-on", text: "Material feels decent and the paddle slides in easily.", rating: 4.3 },
+      { title: "Good quality overall", text: "Feels well made and matches what I expected from the listing.", rating: 4.6 },
+      { title: "Straightforward and useful", text: "Simple product that does the job without any issues so far.", rating: 4.4 },
+      { title: "Happy with this order", text: "Arrived in good condition and has worked well in regular use.", rating: 4.3 },
     ],
     "arronax-high-quality-custom-beach-tennis-bag-with-padel-racquet-backpack-pocket-tennis-sport-pickleball-paddle-backpack": [
-      { title: "Good daily bag", text: "Pockets are laid out well and it is easy to pack before practice.", rating: 4.7 },
-      { title: "Comfortable enough", text: "Straps feel fine for short walks to the court and the main compartment is roomy.", rating: 4.5 },
-      { title: "Does the job", text: "Works for paddle, towel, and balls without overstuffing.", rating: 4.4 },
+      { title: "Works as expected", text: "Everything feels practical and easy to use for everyday sessions.", rating: 4.7 },
+      { title: "Solid purchase", text: "Good value for the price and the quality has been consistent.", rating: 4.5 },
+      { title: "Would buy again", text: "No complaints so far and it has been reliable since it arrived.", rating: 4.4 },
     ],
   },
   byType: {
     balls: [
-      { title: "Good for rec games", text: "Bounce feels consistent enough for practice and casual matches.", rating: 4.5 },
-      { title: "Solid value", text: "We used these for drills all week and they held up fine.", rating: 4.4 },
-      { title: "Simple and reliable", text: "Not premium-level hype, just usable balls for normal court sessions.", rating: 4.3 },
-      { title: "Works for weekly play", text: "Pack is convenient when you play a few times a week.", rating: 4.4 },
-      { title: "Happy with them", text: "Flight and bounce are good enough for everyday outdoor games.", rating: 4.5 },
+      { title: "Good for everyday use", text: "Easy to use and consistent in normal day-to-day sessions.", rating: 4.5 },
+      { title: "Solid value", text: "Quality feels fair for the price and performance is reliable.", rating: 4.4 },
+      { title: "Simple and reliable", text: "Nothing complicated, just a dependable product overall.", rating: 4.3 },
+      { title: "Works well weekly", text: "Has held up nicely with regular use throughout the week.", rating: 4.4 },
+      { title: "Happy with the purchase", text: "Everything has worked as expected and setup was easy.", rating: 4.5 },
     ],
     paddles: [
-      { title: "Comfortable paddle", text: "Grip feels good and I can play longer sessions without hand fatigue.", rating: 4.6 },
-      { title: "Nice control", text: "Touch shots feel predictable and the paddle is easy to handle.", rating: 4.5 },
-      { title: "Good for casual play", text: "Works well for rec games and practice without overthinking specs.", rating: 4.4 },
-      { title: "Feels balanced", text: "Weight distribution feels natural for both dinks and drives.", rating: 4.5 },
-      { title: "No complaints", text: "Straightforward paddle that does what I need for weekly sessions.", rating: 4.4 },
+      { title: "Comfortable to use", text: "Feels good during longer sessions and does what I need.", rating: 4.6 },
+      { title: "Nice overall performance", text: "Consistent results and easy to get used to quickly.", rating: 4.5 },
+      { title: "Great for casual play", text: "Works well for regular games and practice sessions.", rating: 4.4 },
+      { title: "Feels balanced", text: "Comfort and performance both feel solid in normal use.", rating: 4.5 },
+      { title: "No complaints", text: "Straightforward product with dependable quality so far.", rating: 4.4 },
     ],
     "paddle-covers": [
-      { title: "Keeps paddle protected", text: "Fits my paddle nicely and gives extra protection in my backpack.", rating: 4.6 },
-      { title: "Good sleeve", text: "Easy to put on and remove, and it helps avoid small scuffs.", rating: 4.4 },
-      { title: "Practical cover", text: "Neoprene feels decent and the paddle stays protected between games.", rating: 4.5 },
-      { title: "Worth adding", text: "Simple item, but useful if you carry your paddle often.", rating: 4.3 },
-      { title: "Does what it should", text: "No issues so far, and it keeps the paddle face cleaner.", rating: 4.4 },
+      { title: "Great quality", text: "Feels durable and has been reliable with regular use.", rating: 4.6 },
+      { title: "Good item", text: "Simple to use and works exactly as expected.", rating: 4.4 },
+      { title: "Practical choice", text: "Useful addition and easy to keep in rotation each week.", rating: 4.5 },
+      { title: "Worth adding", text: "A straightforward option that has done the job well.", rating: 4.3 },
+      { title: "Does what it should", text: "No issues so far and quality has held up nicely.", rating: 4.4 },
     ],
     bags: [
-      { title: "Useful storage", text: "Good for keeping court gear organized with enough room for essentials.", rating: 4.6 },
-      { title: "Nice compartment layout", text: "Pockets make it easy to separate shoes, towel, and accessories.", rating: 4.5 },
-      { title: "Good for court days", text: "Carry is comfortable enough and setup stays organized.", rating: 4.4 },
-      { title: "Simple and practical", text: "Backpack feels sturdy and works for regular sessions.", rating: 4.5 },
-      { title: "Matches what I needed", text: "Storage and carry are the main reason I bought it, and it delivers.", rating: 4.4 },
+      { title: "Useful and practical", text: "Easy to use and fits well into everyday routines.", rating: 4.6 },
+      { title: "Nice overall design", text: "Thoughtful setup and comfortable enough for regular use.", rating: 4.5 },
+      { title: "Good for busy days", text: "Keeps things simple and organized when heading out.", rating: 4.4 },
+      { title: "Simple and reliable", text: "Feels sturdy and has worked well in weekly use.", rating: 4.5 },
+      { title: "Matches what I needed", text: "Meets expectations and feels like a solid value.", rating: 4.4 },
     ],
     "towels-accessories": [
-      { title: "Useful between points", text: "Helps with sweat during longer sessions and dries fairly quickly.", rating: 4.5 },
-      { title: "Comfortable to use", text: "Material feels soft enough and works well for practice days.", rating: 4.4 },
-      { title: "Simple accessory", text: "Does the job and is easy to keep in my bag.", rating: 4.3 },
-      { title: "Good everyday item", text: "Not flashy, just practical for rec play and training.", rating: 4.4 },
-      { title: "Works as expected", text: "Helps keep me comfortable during warm sessions.", rating: 4.4 },
+      { title: "Useful every session", text: "Convenient and practical for regular day-to-day use.", rating: 4.5 },
+      { title: "Comfortable to use", text: "Feels good and performs consistently over time.", rating: 4.4 },
+      { title: "Simple accessory", text: "No fuss setup and works well for what it is.", rating: 4.3 },
+      { title: "Good everyday item", text: "Practical choice for routine use and easy to maintain.", rating: 4.4 },
+      { title: "Works as expected", text: "Reliable so far and does exactly what I hoped.", rating: 4.4 },
     ],
     bundles: [
-      { title: "Good starter set", text: "Useful mix of gear for getting on court without buying items one by one.", rating: 4.6 },
-      { title: "Convenient bundle", text: "Everything included was relevant for casual games and practice.", rating: 4.5 },
-      { title: "Nice value", text: "Solid option if you want a simple kit for regular play.", rating: 4.4 },
-      { title: "Easy choice", text: "I liked having the essentials together in one order.", rating: 4.5 },
-      { title: "Practical setup", text: "Good for beginners or anyone refreshing their basic gear.", rating: 4.4 },
+      { title: "Good starter set", text: "Everything feels cohesive and convenient in one package.", rating: 4.6 },
+      { title: "Convenient choice", text: "Saved time and made setup simple from the start.", rating: 4.5 },
+      { title: "Nice value", text: "Good quality-to-price balance for a complete option.", rating: 4.4 },
+      { title: "Easy choice", text: "Straightforward purchase and everything arrived as expected.", rating: 4.5 },
+      { title: "Practical setup", text: "Well suited for regular use without overcomplicating things.", rating: 4.4 },
     ],
     generic: [],
   },
@@ -211,6 +219,155 @@ function pickDeterministicTemplates(
   return indexed.slice(0, Math.min(limit, indexed.length)).map((entry) => entry.template);
 }
 
+const REVIEW_INTENTS: ReviewIntent[] = [
+  {
+    id: "quality",
+    titleOptions: ["better then expected", "solid quality tbh", "feels prety decent", "quality is nice"],
+    lineAOptions: [
+      "didnt expect much but it actually feels well made.",
+      "used it a few times now and it still looks good.",
+      "first impression was good and it stayed that way so far.",
+    ],
+    lineBOptions: [
+      "nothing crazy, just proper quality for normal use.",
+      "for this price i cant really complain.",
+      "overall yeah, im happy with it.",
+    ],
+    baseRating: 4.6,
+  },
+  {
+    id: "value",
+    titleOptions: ["worth the price", "good value imo", "price to quality is good", "decent buy"],
+    lineAOptions: [
+      "i compared a couple options and this one made most sense.",
+      "for what i paid, this is honestly a good deal.",
+      "not the cheapest maybe, but value feels fair.",
+    ],
+    lineBOptions: [
+      "does what i needed without extra fuss.",
+      "would probly buy again.",
+      "money well spent in my case.",
+    ],
+    baseRating: 4.5,
+  },
+  {
+    id: "ease",
+    titleOptions: ["super easy to use", "no setup headache", "easy from day one", "quick to get going"],
+    lineAOptions: [
+      "out of the box it was pretty straight forward.",
+      "didnt need to figure out much, just started using it.",
+      "simple product, no weird learning curve.",
+    ],
+    lineBOptions: [
+      "thats kinda what i wanted tbh.",
+      "saved me some time for sure.",
+      "works fine even if youre not technical.",
+    ],
+    baseRating: 4.4,
+  },
+  {
+    id: "consistency",
+    titleOptions: ["still good after weeks", "been consistent so far", "holding up nice", "reliable till now"],
+    lineAOptions: [
+      "been using it weekly and performance stayed stable.",
+      "after several sessions still feels the same in a good way.",
+      "thought it might wear out quick but nope.",
+    ],
+    lineBOptions: [
+      "so yeah, reliability seems legit.",
+      "im still satisfied after regular use.",
+      "no random issues till now.",
+    ],
+    baseRating: 4.5,
+  },
+  {
+    id: "expectation",
+    titleOptions: ["exactly what i expected", "matches the listing", "pretty much as shown", "no bad surprises"],
+    lineAOptions: [
+      "arrived like in photos and description was accurate.",
+      "what i got is basically what they promised.",
+      "the listing looked clear and product matched it.",
+    ],
+    lineBOptions: [
+      "that already puts it above many stores honestly.",
+      "smooth experience overall.",
+      "im good with this purchase.",
+    ],
+    baseRating: 4.4,
+  },
+  {
+    id: "shipping",
+    titleOptions: ["arrived in good shape", "package was fine", "delivery went ok", "came as expected"],
+    lineAOptions: [
+      "package got here in good condition, nothing damaged.",
+      "shipping took a bit but updates were clear enough.",
+      "delivery was normal and item arrived clean.",
+    ],
+    lineBOptions: [
+      "overall process felt smooth.",
+      "no issues on my end.",
+      "would order from here again.",
+    ],
+    baseRating: 4.3,
+  },
+  {
+    id: "repeat",
+    titleOptions: ["would order again", "id buy again", "happy i picked this", "good repeat purchase"],
+    lineAOptions: [
+      "this is one of those products you can just reorder confidently.",
+      "after trying it once i know what to expect now.",
+      "ended up being a better pick than i thought.",
+    ],
+    lineBOptions: [
+      "next time id probably get another one.",
+      "im sticking with this for now.",
+      "easy yes from me.",
+    ],
+    baseRating: 4.6,
+  },
+  {
+    id: "simple",
+    titleOptions: ["simple but good", "no overhype", "just works for me", "clean and practical"],
+    lineAOptions: [
+      "nothing flashy here, just a practical item.",
+      "i like that it keeps things simple.",
+      "doesnt try too hard and still performs well.",
+    ],
+    lineBOptions: [
+      "for everyday use this is enough for me.",
+      "thats exactly the vibe i wanted.",
+      "good pick if you like straightforward stuff.",
+    ],
+    baseRating: 4.4,
+  },
+];
+
+function buildHumanReviewTemplates(handle: string, productTitle: string, limit: number): ReviewTemplate[] {
+  const scoredIntents = REVIEW_INTENTS.map((intent) => ({
+    intent,
+    score: stableIndex(handle, productTitle, `intent:${intent.id}`, 1_000_000),
+  })).sort((a, b) => a.score - b.score);
+
+  return scoredIntents.slice(0, Math.min(limit, scoredIntents.length)).map(({ intent }, idx) => {
+    const title = intent.titleOptions[
+      stableIndex(handle, productTitle, `intent-title:${intent.id}:${idx}`, intent.titleOptions.length)
+    ];
+    const lineA = intent.lineAOptions[
+      stableIndex(handle, productTitle, `intent-lineA:${intent.id}:${idx}`, intent.lineAOptions.length)
+    ];
+    const lineB = intent.lineBOptions[
+      stableIndex(handle, productTitle, `intent-lineB:${intent.id}:${idx}`, intent.lineBOptions.length)
+    ];
+    const ratingJitter = (seededFloat(hashString(`${handle}:${intent.id}:${idx}`)) - 0.5) * 0.18;
+
+    return {
+      title,
+      text: `${lineA} ${lineB}`,
+      rating: Number(Math.max(4.1, Math.min(4.8, intent.baseRating + ratingJitter)).toFixed(1)),
+    };
+  });
+}
+
 function getAssignedReviewTemplates(handle: string, productTitle: string): { type: ProductReviewType; templates: ReviewTemplate[] } {
   const type = detectProductType(handle, productTitle);
   const exact = REVIEW_DATA.byProduct[handle] || [];
@@ -236,8 +393,7 @@ export function getSyntheticReviewSummary(handle: string) {
 
 export function getSyntheticReviews(handle: string, productTitle: string): SyntheticReview[] {
   const seed = hashString(`${handle}-${productTitle}`);
-  const { templates } = getAssignedReviewTemplates(handle, productTitle);
-  const selected = pickDeterministicTemplates(templates, handle, productTitle, 3);
+  const selected = buildHumanReviewTemplates(handle, productTitle, 3);
 
   return selected.map((template, idx) => {
     const fn = stableIndex(handle, productTitle, `review:author-fn:${idx}`, FIRST_NAMES.length);
