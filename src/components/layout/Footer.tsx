@@ -117,7 +117,7 @@ export function Footer() {
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
             <p className="text-gray-500 text-xs">
-              Secure checkout, straightforward returns, and support when you need it.
+              Secure checkout, a 30-day money-back guarantee if you are not satisfied, and support when you need it.
             </p>
           </div>
           <p className="text-gray-500 text-xs mb-4 md:mb-0">

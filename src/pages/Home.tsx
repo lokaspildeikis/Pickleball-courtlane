@@ -73,7 +73,7 @@ export function Home() {
               Pickleball Essentials for <span className="text-teal-400 md:text-teal-500">Everyday Players.</span>
             </h1>
             <p className="text-base md:text-xl text-gray-300 mb-8 max-w-lg">
-              Free shipping on every order.
+              Free shipping on every order, plus a 30-day money-back guarantee if you are not satisfied.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to={starterBundleHref}>
@@ -140,7 +140,7 @@ export function Home() {
               <span className="text-sm font-medium uppercase tracking-wide">Worldwide Shipping</span>
             </div>
             <div className="pt-4 md:pt-0">
-              <span className="text-sm font-medium uppercase tracking-wide">30-Day Returns</span>
+              <span className="text-sm font-medium uppercase tracking-wide">30-Day Money-Back Guarantee</span>
             </div>
             <div className="pt-4 md:pt-0">
               <span className="text-sm font-medium uppercase tracking-wide">Support by Email</span>

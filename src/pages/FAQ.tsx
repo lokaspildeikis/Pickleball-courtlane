@@ -10,7 +10,7 @@ export function FAQ() {
     },
     {
       question: "What is your return policy?",
-      answer: "We offer a 30-day return policy on all unused items in their original packaging. If you're not satisfied with your purchase, please contact our support team to initiate a return."
+      answer: "If you are not satisfied with your purchase, you are covered by our 30-day money-back guarantee on unused items in original packaging. Contact our support team and we will help you start the return."
     },
     {
       question: "Will a paddle cover fit an elongated paddle?",

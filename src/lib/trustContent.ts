@@ -19,7 +19,7 @@ export const SUPPORT_EMAIL = "hello@courtlane.us";
 export const TRUST_POINTS = {
   productCta: [
     { id: "secure-checkout", label: "Secure Checkout" },
-    { id: "returns-30", label: "30-Day Returns" },
+    { id: "returns-30", label: "30-Day Money-Back Guarantee" },
     { id: "processing", label: "1-3 Day Processing" },
     { id: "email-support", label: "Email Support" },
   ] satisfies TrustPoint[],
@@ -31,7 +31,7 @@ export const TRUST_POINTS = {
   homeTop: [
     { id: "pickleball-focused", label: "Pickleball-focused essentials" },
     { id: "processing", label: "Orders processed in 1-3 business days" },
-    { id: "returns-30", label: "30-day return window on unused items" },
+    { id: "returns-30", label: "Not satisfied? 30-day money-back guarantee" },
   ] satisfies TrustPoint[],
 };
 
@@ -46,7 +46,7 @@ export const POLICY_SNIPPETS = {
     {
       id: "returns",
       title: "Returns",
-      text: "Unused items can be returned within 30 days of delivery in original packaging.",
+      text: "If you are not satisfied, you are covered by our 30-day money-back guarantee on eligible unused items in original packaging.",
       href: "/returns",
     },
     {
@@ -71,7 +71,7 @@ export const POLICY_SNIPPETS = {
     {
       id: "returns",
       title: "Returns policy",
-      text: "30-day returns on eligible unused items.",
+      text: "Not satisfied? 30-day money-back guarantee on eligible unused items.",
       href: "/returns",
     },
   ] satisfies TrustPolicySnippet[],
