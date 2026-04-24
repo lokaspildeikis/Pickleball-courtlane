@@ -1,4 +1,4 @@
-import { trackCartEvent } from './cartAbandonment';
+import { trackCartEvent } from '../src/lib/cartAbandonmentServer';
 
 function json(res: any, status: number, body: Record<string, unknown>) {
   res.setHeader('Access-Control-Allow-Origin', '*');
