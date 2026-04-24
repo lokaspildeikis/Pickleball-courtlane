@@ -1,5 +1,4 @@
 import crypto from 'node:crypto';
-import nodemailer from 'nodemailer';
 
 type AbandonedCartItem = {
   productId?: string;
@@ -249,6 +248,8 @@ function emailTemplate(record: AbandonedCartRecord, step: 1 | 2 | 3): { subject:
 }
 
 async function getTransporter() {
+  const nodemailerModule = await import('nodemailer');
+  const nodemailer = nodemailerModule.default;
   const smtpHost = envTrim('COUPON_SMTP_HOST');
   const smtpPort = Number(envTrim('COUPON_SMTP_PORT') || '465');
   const smtpUser = envTrim('COUPON_SMTP_USER');
