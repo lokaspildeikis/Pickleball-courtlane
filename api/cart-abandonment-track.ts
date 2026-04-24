@@ -1,5 +1,3 @@
-import { trackCartEvent } from '../src/lib/cartAbandonmentServer';
-
 function json(res: any, status: number, body: Record<string, unknown>) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -30,11 +28,12 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    const { trackCartEvent } = await import('../src/lib/cartAbandonmentServer');
     const result = await trackCartEvent(body);
     return json(res, 200, { ok: true, ...result });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    return json(res, 500, { error: 'Could not track cart event', detail: message });
+    return json(res, 500, { error: 'Could not track cart event', detail: message, step: 'module-or-track' });
   }
 }
 

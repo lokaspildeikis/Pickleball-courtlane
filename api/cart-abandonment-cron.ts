@@ -1,5 +1,3 @@
-import { runAbandonmentCron } from '../src/lib/cartAbandonmentServer';
-
 function json(res: any, status: number, body: Record<string, unknown>) {
   res.status(status).setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(body));
@@ -21,11 +19,12 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
+    const { runAbandonmentCron } = await import('../src/lib/cartAbandonmentServer');
     const result = await runAbandonmentCron();
     return json(res, 200, { ok: true, ...result });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    return json(res, 500, { error: 'Cron run failed', detail: message });
+    return json(res, 500, { error: 'Cron run failed', detail: message, step: 'module-or-run' });
   }
 }
 
