@@ -1,4 +1,4 @@
-import { runAbandonmentCron } from './_cartAbandonment';
+import { runAbandonmentCron } from './cartAbandonment';
 
 function json(res: any, status: number, body: Record<string, unknown>) {
   res.status(status).setHeader('Content-Type', 'application/json');
