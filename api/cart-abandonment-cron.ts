@@ -89,32 +89,84 @@ function renderItemList(items: any[]): string {
   return (items || []).slice(0, 3).map((item) => `- ${item.title} x${item.quantity}`).join('\n');
 }
 
+function buildTrustHtml(supportEmail: string, shippingLink: string, returnsLink: string): string {
+  return `
+    <div style="margin:16px 0 0;padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#f9fafb;">
+      <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#111827;">Checkout confidence</p>
+      <ul style="margin:0;padding-left:18px;color:#374151;font-size:13px;line-height:1.5;">
+        <li>Orders usually process in 1-3 business days</li>
+        <li>30-day money-back guarantee on eligible unused items</li>
+        <li>Secure encrypted checkout</li>
+        <li>Shipping policy: <a href="${shippingLink}" style="color:#0f766e;">view details</a></li>
+        <li>Returns policy: <a href="${returnsLink}" style="color:#0f766e;">view details</a></li>
+      </ul>
+      <p style="margin:10px 0 0;font-size:12px;color:#4b5563;">Need help? Email us at <a href="mailto:${supportEmail}" style="color:#0f766e;">${supportEmail}</a>.</p>
+    </div>
+  `;
+}
+
 function emailTemplate(record: any, step: 1 | 2 | 3): { subject: string; text: string; html: string } {
   const firstItem = record.items?.[0];
   const subtotalText = formatCurrency(Number(record.subtotal || 0), String(record.currency || 'USD'));
   const perk = envTrim('ABANDONED_CART_FINAL_PERK') || 'Free shipping';
-  const faqLink = `${envTrim('SHOP_PUBLIC_URL') || 'https://courtlane.us'}/faq`;
+  const baseUrl = envTrim('SHOP_PUBLIC_URL') || 'https://courtlane.us';
+  const faqLink = `${baseUrl}/faq`;
+  const shippingLink = `${baseUrl}/shipping`;
+  const returnsLink = `${baseUrl}/returns`;
+  const supportEmail = envTrim('COUPON_SUPPORT_EMAIL') || envTrim('COUPON_FROM_EMAIL') || 'hello@courtlane.us';
+  const trustHtml = buildTrustHtml(supportEmail, shippingLink, returnsLink);
+  const cardStart = `<div style="font-family:Arial,sans-serif;line-height:1.55;color:#111827;background:#f3f4f6;padding:18px;"><div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;padding:18px;">`;
+  const cardEnd = `</div></div>`;
 
   if (step === 1) {
     return {
       subject: 'Still thinking it over?',
-      text: `You left something in your cart.\n\nItems:\n${renderItemList(record.items || [])}\n\nReturn to your cart: ${record.cartUrl}`,
-      html: `<div style="font-family:Arial,sans-serif;line-height:1.5;color:#111827"><h2 style="margin:0 0 12px;">Still thinking it over?</h2><p style="margin:0 0 12px;">Your picks are waiting in your cart.</p>${firstItem?.image ? `<img src="${firstItem.image}" alt="${firstItem.title}" style="max-width:180px;border-radius:6px;display:block;margin-bottom:12px;" />` : ''}<p style="margin:0 0 12px;"><strong>${firstItem?.title || 'Your selected items'}</strong></p><p style="margin:0 0 16px;">Cart subtotal: <strong>${subtotalText}</strong></p><a href="${record.cartUrl}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 16px;border-radius:4px;">Return to cart</a></div>`,
+      text: `Still thinking it over?\n\nYour picks are waiting in your cart.\n\nItems:\n${renderItemList(record.items || [])}\n\nCart subtotal: ${subtotalText}\n\nSafety signals:\n- 1-3 business day processing\n- 30-day money-back guarantee\n- Secure encrypted checkout\n- Shipping policy: ${shippingLink}\n- Returns policy: ${returnsLink}\n- Support: ${supportEmail}\n\nReturn to your cart: ${record.cartUrl}`,
+      html: `${cardStart}
+        <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;color:#0f766e;text-transform:uppercase;">Your cart is saved</p>
+        <h2 style="margin:0 0 12px;font-size:28px;line-height:1.2;">Still thinking it over?</h2>
+        <p style="margin:0 0 14px;color:#374151;">Your picks are waiting in your cart.</p>
+        ${firstItem?.image ? `<img src="${firstItem.image}" alt="${firstItem.title}" style="max-width:220px;border-radius:8px;display:block;margin:0 0 12px;" />` : ''}
+        <p style="margin:0 0 10px;"><strong>${firstItem?.title || 'Your selected items'}</strong></p>
+        <p style="margin:0 0 16px;color:#374151;">Cart subtotal: <strong>${subtotalText}</strong></p>
+        <a href="${record.cartUrl}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:11px 16px;border-radius:6px;font-weight:700;">Return to cart</a>
+        ${trustHtml}
+      ${cardEnd}`,
     };
   }
 
   if (step === 2) {
     return {
       subject: 'Quick answers before you checkout',
-      text: `Need help deciding?\n\n- Trusted by everyday players\n- Secure checkout\n- 30-day money-back guarantee\n\nFAQ: ${faqLink}\nReturn to cart: ${record.cartUrl}`,
-      html: `<div style="font-family:Arial,sans-serif;line-height:1.5;color:#111827"><h2 style="margin:0 0 12px;">Need a quick second opinion?</h2><p style="margin:0 0 10px;">A few reasons shoppers complete this order:</p><ul style="margin:0 0 14px;padding-left:18px;"><li>Simple, clear product listings</li><li>Secure encrypted checkout</li><li>30-day money-back guarantee</li></ul><p style="margin:0 0 12px;">Questions? Our FAQ can help fast.</p><p style="margin:0 0 16px;"><a href="${faqLink}">View FAQ</a></p><a href="${record.cartUrl}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 16px;border-radius:4px;">Take me back to cart</a></div>`,
+      text: `Quick answers before checkout\n\nWhy customers complete this order:\n- Clear product details and practical picks\n- 1-3 business day processing\n- 30-day money-back guarantee\n- Secure encrypted checkout\n\nFAQ: ${faqLink}\nShipping: ${shippingLink}\nReturns: ${returnsLink}\nSupport: ${supportEmail}\n\nReturn to cart: ${record.cartUrl}`,
+      html: `${cardStart}
+        <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;color:#0f766e;text-transform:uppercase;">Need a quick check?</p>
+        <h2 style="margin:0 0 12px;font-size:26px;line-height:1.25;">Quick answers before you checkout</h2>
+        <p style="margin:0 0 10px;color:#374151;">A few reasons shoppers complete this order:</p>
+        <ul style="margin:0 0 14px;padding-left:18px;color:#374151;">
+          <li>Simple, clear product listings</li>
+          <li>1-3 business day order processing</li>
+          <li>30-day money-back guarantee</li>
+          <li>Secure encrypted checkout</li>
+        </ul>
+        <p style="margin:0 0 16px;color:#374151;">Questions? Our FAQ can help fast: <a href="${faqLink}" style="color:#0f766e;">View FAQ</a></p>
+        <a href="${record.cartUrl}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:11px 16px;border-radius:6px;font-weight:700;">Take me back to cart</a>
+        ${trustHtml}
+      ${cardEnd}`,
     };
   }
 
   return {
     subject: 'We are holding your cart a little longer',
-    text: `Your cart is still saved for a little while longer.\n\nIf you want to finish today, here is a small perk: ${perk}.\n\nReturn to cart: ${record.cartUrl}`,
-    html: `<div style="font-family:Arial,sans-serif;line-height:1.5;color:#111827"><h2 style="margin:0 0 12px;">We are holding your cart for a few more hours</h2><p style="margin:0 0 12px;">If now is a good time to finish checkout, we can add a small perk: <strong>${perk}</strong>.</p><p style="margin:0 0 16px;">Your subtotal is currently <strong>${subtotalText}</strong>.</p><a href="${record.cartUrl}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 16px;border-radius:4px;">Complete your order</a></div>`,
+    text: `We are holding your cart for a little longer.\n\nIf you want to finish today, here is a small perk: ${perk}.\nCart subtotal: ${subtotalText}\n\nSafety signals:\n- 1-3 business day processing\n- 30-day money-back guarantee\n- Secure encrypted checkout\n- Shipping policy: ${shippingLink}\n- Returns policy: ${returnsLink}\n- Support: ${supportEmail}\n\nComplete your order: ${record.cartUrl}`,
+    html: `${cardStart}
+      <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.06em;color:#0f766e;text-transform:uppercase;">Last reminder</p>
+      <h2 style="margin:0 0 12px;font-size:26px;line-height:1.25;">We are holding your cart a little longer</h2>
+      <p style="margin:0 0 12px;color:#374151;">If now is a good time to finish checkout, here is a small perk: <strong>${perk}</strong>.</p>
+      <p style="margin:0 0 16px;color:#374151;">Your subtotal is currently <strong>${subtotalText}</strong>.</p>
+      <a href="${record.cartUrl}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:11px 16px;border-radius:6px;font-weight:700;">Complete your order</a>
+      ${trustHtml}
+    ${cardEnd}`,
   };
 }
 
