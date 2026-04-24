@@ -19,7 +19,7 @@ jobs:
           fi
 
           response_code=$(curl -sS -o /tmp/abandoned-cart-cron-response.txt -w "%{http_code}" \
-            -X POST "https://courtlane.us/api/cart-abandonment-cron" \
+            -X POST "https://www.courtlane.us/api/cart-abandonment-cron" \
             -H "Authorization: Bearer $CRON_SECRET" \
             -H "Content-Type: application/json")
 
