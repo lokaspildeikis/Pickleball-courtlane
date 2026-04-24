@@ -6,9 +6,6 @@ function json(res: any, status: number, body: Record<string, unknown>) {
 }
 
 const CART_INDEX_KEY = 'abandonment:carts:index';
-const EMAIL1_DELAY_MS = 30 * 60 * 1000;
-const EMAIL2_DELAY_MS = 4 * 60 * 60 * 1000;
-const EMAIL3_DELAY_MS = 22 * 60 * 60 * 1000;
 
 function envTrim(key: string): string | undefined {
   const raw = process.env[key];
@@ -16,6 +13,17 @@ function envTrim(key: string): string | undefined {
   const value = String(raw).trim();
   if (!value || value === 'YOUR_SECRET_VALUE_GOES_HERE') return undefined;
   return value;
+}
+
+function getDelayMs(envKey: string, fallbackMinutes: number): number {
+  const raw = envTrim(envKey);
+  if (!raw) return fallbackMinutes * 60 * 1000;
+  const minutes = Number(raw);
+  if (!Number.isFinite(minutes) || minutes < 0) {
+    return fallbackMinutes * 60 * 1000;
+  }
+  // Hard cap to avoid accidental huge delays from bad input.
+  return Math.min(minutes, 60 * 24 * 30) * 60 * 1000;
 }
 
 function requireRedisEnv() {
@@ -140,6 +148,10 @@ async function sendStepEmail(record: any, step: 1 | 2 | 3) {
 }
 
 async function runAbandonmentCron() {
+  const email1DelayMs = getDelayMs('ABANDONED_CART_EMAIL1_DELAY_MINUTES', 30);
+  const email2DelayMs = getDelayMs('ABANDONED_CART_EMAIL2_DELAY_MINUTES', 240);
+  const email3DelayMs = getDelayMs('ABANDONED_CART_EMAIL3_DELAY_MINUTES', 22 * 60);
+
   const keysRaw = await redisCommand(['SMEMBERS', CART_INDEX_KEY]);
   const keys = Array.isArray(keysRaw) ? keysRaw.filter((k): k is string => typeof k === 'string') : [];
   if (keys.length === 0) return { scanned: 0, sent: 0 };
@@ -155,9 +167,9 @@ async function runAbandonmentCron() {
 
     const seq = record.sequence || {};
     let stepToSend: 1 | 2 | 3 | null = null;
-    if (!seq.email1SentAt && isDue(record.updatedAt, EMAIL1_DELAY_MS)) stepToSend = 1;
-    else if (seq.email1SentAt && !seq.email2SentAt && isDue(record.updatedAt, EMAIL2_DELAY_MS)) stepToSend = 2;
-    else if (seq.email2SentAt && !seq.email3SentAt && isDue(record.updatedAt, EMAIL3_DELAY_MS)) stepToSend = 3;
+    if (!seq.email1SentAt && isDue(record.updatedAt, email1DelayMs)) stepToSend = 1;
+    else if (seq.email1SentAt && !seq.email2SentAt && isDue(record.updatedAt, email2DelayMs)) stepToSend = 2;
+    else if (seq.email2SentAt && !seq.email3SentAt && isDue(record.updatedAt, email3DelayMs)) stepToSend = 3;
 
     if (!stepToSend) continue;
     try {
