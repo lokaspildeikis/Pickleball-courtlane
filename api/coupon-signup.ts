@@ -12,6 +12,10 @@ function getCouponCode() {
   return process.env.NEW_CUSTOMER_COUPON_CODE || 'WELCOME5';
 }
 
+function getAdminNotifyEmail() {
+  return envTrim('COUPON_ADMIN_NOTIFY_EMAIL');
+}
+
 function envTrim(key: string): string | undefined {
   const v = process.env[key];
   if (v == null) return undefined;
@@ -68,6 +72,7 @@ export default async function handler(req: any, res: any) {
       COUPON_SMTP_USER: Boolean(envTrim('COUPON_SMTP_USER')),
       COUPON_SMTP_PASS: Boolean(envTrim('COUPON_SMTP_PASS')),
       COUPON_FROM_EMAIL: Boolean(envTrim('COUPON_FROM_EMAIL')),
+      COUPON_ADMIN_NOTIFY_EMAIL: Boolean(getAdminNotifyEmail()),
     };
     const payload = {
       diagnostic: true,
@@ -112,6 +117,7 @@ export default async function handler(req: any, res: any) {
   }
 
   const email = String(body?.email || '').trim().toLowerCase();
+  const source = String(body?.source || 'unknown').trim().slice(0, 120);
   const emailIsValid = /\S+@\S+\.\S+/.test(email);
   if (!emailIsValid) {
     return json(res, 400, { error: 'Invalid email address' });
@@ -119,6 +125,7 @@ export default async function handler(req: any, res: any) {
 
   const couponCode = getCouponCode();
   const shopUrl = process.env.SHOP_PUBLIC_URL || 'https://courtlane.us';
+  const adminNotifyEmail = getAdminNotifyEmail();
 
   const transporter = nodemailer.createTransport({
     host: smtpHost,
@@ -150,6 +157,30 @@ export default async function handler(req: any, res: any) {
       text: `Welcome to Courtlane! Your 5% discount code is ${couponCode}. Shop here: ${shopUrl}`,
       html,
     });
+
+    if (adminNotifyEmail) {
+      const timestamp = new Date().toISOString();
+      try {
+        await transporter.sendMail({
+          from: `${fromName} <${fromEmail}>`,
+          to: adminNotifyEmail,
+          replyTo: supportEmail || undefined,
+          subject: `New coupon signup: ${email}`,
+          text: `New 5% signup\nEmail: ${email}\nSource: ${source}\nTimestamp: ${timestamp}\nCoupon code: ${couponCode}`,
+          html: `
+            <div style="font-family:Arial,sans-serif;line-height:1.5;color:#111827">
+              <h2 style="margin:0 0 12px;">New coupon signup</h2>
+              <p style="margin:0 0 8px;"><strong>Email:</strong> ${email}</p>
+              <p style="margin:0 0 8px;"><strong>Source:</strong> ${source}</p>
+              <p style="margin:0 0 8px;"><strong>Timestamp:</strong> ${timestamp}</p>
+              <p style="margin:0;"><strong>Coupon code:</strong> ${couponCode}</p>
+            </div>
+          `,
+        });
+      } catch (adminError: unknown) {
+        console.error('Admin signup notification send failed:', adminError);
+      }
+    }
 
     return json(res, 200, { ok: true });
   } catch (error: unknown) {
