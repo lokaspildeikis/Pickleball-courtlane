@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { SUPPORT_EMAIL } from '../../lib/trustContent';
 import { FOOTER_BRAND_BLURB } from '../../lib/brandContent';
 import { isValidEmail, resolveCouponCode, submitCouponSignup } from '../../lib/couponSignup';
+import { setMarketingEmail } from '../../lib/marketingIdentity';
 
 export function Footer() {
   const [email, setEmail] = useState('');
@@ -28,6 +29,7 @@ export function Footer() {
         email: normalizedEmail,
         source: 'footer-newsletter',
       });
+      setMarketingEmail(normalizedEmail);
       setSuccess(true);
       setEmail('');
     } catch (submitError) {

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { shopifyFetch } from '../lib/shopify';
 import { trackInitiateCheckout } from '../components/analytics/MetaPixel';
+import { getMarketingEmail } from '../lib/marketingIdentity';
 
 export interface CartItem {
   id: string;
@@ -54,6 +55,55 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('pb_cart', JSON.stringify(items));
   }, [items]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('openCart') === '1') {
+      setIsCartOpen(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const email = getMarketingEmail();
+    if (!email || items.length === 0) return;
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => {
+      const payload = {
+        eventType: 'cart_updated',
+        email,
+        source: 'storefront-cart',
+        cartUrl: `${window.location.origin}/?openCart=1`,
+        currency: 'USD',
+        subtotal: Number(items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)),
+        items: items.slice(0, 8).map((item) => ({
+          productId: item.productId,
+          title: item.title,
+          variantTitle: item.variantTitle,
+          image: item.image,
+          quantity: item.quantity,
+          unitPrice: item.price,
+          productUrl: `${window.location.origin}/shop`,
+        })),
+      };
+
+      fetch('/api/cart-abandonment-track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      }).catch(() => {
+        // Best-effort tracking only.
+      });
+    }, 1200);
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [items]);
+
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
@@ -89,6 +139,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!items.length || isCheckingOut) return;
 
     setIsCheckingOut(true);
+    const email = getMarketingEmail();
+    if (email && typeof window !== 'undefined') {
+      fetch('/api/cart-abandonment-track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        keepalive: true,
+        body: JSON.stringify({
+          eventType: 'checkout_started',
+          email,
+          source: 'storefront-cart',
+          cartUrl: `${window.location.origin}/?openCart=1`,
+        }),
+      }).catch(() => {
+        // Best-effort tracking only.
+      });
+    }
     const checkoutValue = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     trackInitiateCheckout({
       content_ids: items.map((item) => item.productId),

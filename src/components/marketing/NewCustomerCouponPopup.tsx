@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { trackCustomEvent } from '../analytics/MetaPixel';
 import { isValidEmail, resolveCouponCode, resolveCouponSignupEndpoint, submitCouponSignup } from '../../lib/couponSignup';
+import { setMarketingEmail } from '../../lib/marketingIdentity';
 
 const DISMISS_KEY = 'pb_coupon_popup_dismissed_v1';
 const CLAIMED_KEY = 'pb_coupon_popup_claimed_v1';
@@ -72,6 +73,7 @@ export function NewCustomerCouponPopup() {
         endpoint: signupEndpoint,
         couponCode,
       });
+      setMarketingEmail(normalizedEmail);
 
       try {
         window.localStorage.setItem(CLAIMED_KEY, '1');

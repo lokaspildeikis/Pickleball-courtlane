@@ -9,5 +9,11 @@
       "source": "/((?!api).*)",
       "destination": "/index.html"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cart-abandonment-cron",
+      "schedule": "*/15 * * * *"
+    }
   ]
 }
