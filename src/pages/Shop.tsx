@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getProducts, Product } from '../lib/shopify';
 import { ProductCard } from '../components/product/ProductCard';
+import { trackCustomEvent } from '../components/analytics/MetaPixel';
 
 export function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -105,7 +106,7 @@ export function Shop() {
       else next.set('filter', filter);
       return next;
     });
-    // Removed custom Meta custom event: ShopFilterChanged.
+    trackCustomEvent('ShopFilterChanged', { filter });
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -115,7 +116,7 @@ export function Shop() {
       next.set('sort', sort);
       return next;
     });
-    // Removed custom Meta custom event: ShopSortChanged.
+    trackCustomEvent('ShopSortChanged', { sort });
   };
 
   const handleIntentChange = (intent: string) => {
@@ -125,7 +126,7 @@ export function Shop() {
       else next.set('intent', intent);
       return next;
     });
-    // Removed custom Meta custom event: ShopIntentSelected.
+    trackCustomEvent('ShopIntentSelected', { intent });
   };
 
   const handleClearFilters = () => {
@@ -136,7 +137,7 @@ export function Shop() {
       next.delete('sort');
       return next;
     });
-    // Removed custom Meta custom event: ShopFiltersCleared.
+    trackCustomEvent('ShopFiltersCleared');
   };
 
   const hasActiveFilters = currentFilter !== 'all' || currentIntent !== 'all';
