@@ -10,7 +10,6 @@ import { TRUST_POINTS, POLICY_SNIPPETS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
 import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMethods';
-import { trackAddToCart, trackCustomEvent, trackViewContent } from '../components/analytics/MetaPixel';
 import { TrustBar } from '../components/TrustBar';
 
 type VariantNode = Product['variants']['edges'][number]['node'];
@@ -110,14 +109,8 @@ export function ProductDetail() {
 
   useEffect(() => {
     if (!product || !selectedVariant) return;
-    const productValue = parseFloat(selectedVariant.price.amount);
-    trackViewContent({
-      content_ids: [product.id],
-      content_name: product.title,
-      content_type: 'product',
-      value: productValue,
-      currency: selectedVariant.price.currencyCode || 'USD',
-    });
+    // Removed custom Meta ViewContent event.
+    // Shopify native integration handles product view tracking.
   }, [product, selectedVariant]);
 
   useEffect(() => {
@@ -144,10 +137,8 @@ export function ProductDetail() {
   useEffect(() => {
     if (!showStickyMobileAtc || hasTrackedStickyShown.current) return;
     hasTrackedStickyShown.current = true;
-    trackCustomEvent('StickyAtcShown', {
-      product_id: product?.id,
-      product_handle: product?.handle,
-    });
+    // Removed custom Meta custom event: StickyAtcShown.
+    // Keeping sticky CTA UI behavior unchanged.
   }, [showStickyMobileAtc, product?.handle, product?.id]);
 
   if (loading) {
@@ -297,23 +288,12 @@ export function ProductDetail() {
       image: activeImage || product.images.edges[0]?.node.url,
       quantity: quantity
     });
-    trackAddToCart({
-      content_ids: [product.id],
-      content_name: product.title,
-      content_type: 'product',
-      value: currentPriceValue * quantity,
-      currency: selectedVariant.price.currencyCode || 'USD',
-      num_items: quantity,
-    });
+    // Removed custom Meta AddToCart event.
+    // Shopify native integration handles cart events.
   };
 
   const handleStickyAddToCart = () => {
-    trackCustomEvent('StickyAtcClicked', {
-      product_id: product.id,
-      product_handle: product.handle,
-      quantity,
-      value: currentPriceValue * quantity,
-    });
+    // Removed custom Meta custom event: StickyAtcClicked.
     handleAddToCart();
   };
 

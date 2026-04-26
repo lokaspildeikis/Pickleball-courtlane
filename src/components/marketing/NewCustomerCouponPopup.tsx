@@ -1,5 +1,4 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { trackCustomEvent } from '../analytics/MetaPixel';
 import { isValidEmail, resolveCouponCode, resolveCouponSignupEndpoint, submitCouponSignup } from '../../lib/couponSignup';
 import { setMarketingEmail } from '../../lib/marketingIdentity';
 
@@ -33,10 +32,7 @@ export function NewCustomerCouponPopup() {
 
     timer = window.setTimeout(() => {
       setIsOpen(true);
-      trackCustomEvent('CouponPopupShown', {
-        delay_seconds: forceOpen ? 0 : 12,
-        force_open: forceOpen ? 1 : 0,
-      });
+      // Removed custom Meta custom event: CouponPopupShown.
     }, forceOpen ? 0 : POPUP_DELAY_MS);
 
     return () => {
@@ -52,7 +48,7 @@ export function NewCustomerCouponPopup() {
     } catch {
       // Ignore storage failures.
     }
-    trackCustomEvent('CouponPopupClosed');
+    // Removed custom Meta custom event: CouponPopupClosed.
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -81,7 +77,7 @@ export function NewCustomerCouponPopup() {
         // Ignore storage failures.
       }
 
-      trackCustomEvent('CouponPopupClaimed', { coupon_code: couponCode });
+      // Removed custom Meta custom event: CouponPopupClaimed.
       setIsSuccess(true);
     } catch (submitError) {
       const msg =
@@ -89,7 +85,7 @@ export function NewCustomerCouponPopup() {
           ? submitError.message
           : 'Could not submit right now. Please try again in a moment.';
       setError(msg.length > 200 ? `${msg.slice(0, 200)}…` : msg);
-      trackCustomEvent('CouponPopupSubmitFailed');
+      // Removed custom Meta custom event: CouponPopupSubmitFailed.
     } finally {
       setIsSubmitting(false);
     }

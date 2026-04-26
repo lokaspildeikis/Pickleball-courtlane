@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { shopifyFetch } from '../lib/shopify';
-import { trackInitiateCheckout } from '../components/analytics/MetaPixel';
 import { getMarketingEmail } from '../lib/marketingIdentity';
 
 export interface CartItem {
@@ -155,14 +154,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         // Best-effort tracking only.
       });
     }
-    const checkoutValue = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    trackInitiateCheckout({
-      content_ids: items.map((item) => item.productId),
-      content_type: 'product',
-      num_items: items.reduce((sum, item) => sum + item.quantity, 0),
-      value: checkoutValue,
-      currency: 'USD',
-    });
+    // Removed custom Meta InitiateCheckout event.
+    // Shopify native "Facebook & Instagram" integration sends checkout events.
     try {
       const mutation = `
         mutation cartCreate($input: CartInput) {
