@@ -12,6 +12,7 @@ import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
 import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMethods';
 import { trackAddToCart, trackCustomEvent, trackViewContent } from '../components/analytics/MetaPixel';
 import { TrustBar } from '../components/TrustBar';
+import { PageMeta } from '../components/seo/PageMeta';
 
 type VariantNode = Product['variants']['edges'][number]['node'];
 type VariantOption = { name: string; value: string };
@@ -221,6 +222,30 @@ export function ProductDetail() {
   const whatsIncluded = productTags.includes('bundle') || productTags.includes('bundles')
     ? 'Selected essentials bundled together for faster setup.'
     : 'Core product shown above, ready for regular practice and play.';
+  const metaTitle = `${product.title} | Courtlane`;
+  const metaDescription = `${product.title} available at Courtlane. ${whoItsFor} ${whatsIncluded}`;
+  const productImage = product.images.edges[0]?.node.url;
+  const productSchema: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    image: productImage ? [productImage] : undefined,
+    description: metaDescription,
+    sku: selectedVariant?.sku || undefined,
+    brand: {
+      "@type": "Brand",
+      name: "Courtlane",
+    },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: selectedVariant.price.currencyCode || "USD",
+      price: currentPriceValue.toFixed(2),
+      availability: selectedVariant.availableForSale
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: `https://courtlane.us/product/${product.handle}`,
+    },
+  };
 
   const getVariantOptionValue = (variant: VariantNode, optionName: string): string => {
     const option = extractVariantOptions(variant).find((entry) => entry.name === optionName);
@@ -319,6 +344,12 @@ export function ProductDetail() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pb-28 md:pb-12">
+      <PageMeta
+        title={metaTitle}
+        description={metaDescription}
+        canonicalPath={`/product/${product.handle}`}
+        structuredData={productSchema}
+      />
       
       {/* Breadcrumbs */}
       <nav className="flex text-sm text-gray-500 mb-8">

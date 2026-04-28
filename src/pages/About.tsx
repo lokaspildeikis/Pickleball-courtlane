@@ -9,7 +9,7 @@ export function About() {
 
   return (
     <>
-      <PageMeta title={meta.title} description={meta.description} />
+      <PageMeta title={meta.title} description={meta.description} canonicalPath="/about" />
 
       <div className="bg-white">
         {/* Section 1 — intro + primary CTAs */}

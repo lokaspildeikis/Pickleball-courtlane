@@ -27,6 +27,19 @@ export function FAQ() {
       <PageMeta
         title="Help & FAQ | Courtlane"
         description="Answers about Courtlane, pickleball gear, returns, shipping, and how to get support."
+        canonicalPath="/faq"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((faq) => ({
+            "@type": "Question",
+            name: faq.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: faq.answer,
+            },
+          })),
+        }}
       />
       <div className="text-center mb-16">
         <h1 className="text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">

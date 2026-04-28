@@ -81,6 +81,7 @@ export function Home() {
       <PageMeta
         title="Courtlane — Low-impact pickleball for active adults"
         description="Pickleball is a low-impact sport that is easy to learn and gentle on joints. Discover beginner-friendly gear and bundles for adults who want a safe, simple way to stay active."
+        canonicalPath="/"
       />
       {/* Hero Section */}
       <section className="relative bg-gray-900 text-white overflow-hidden">

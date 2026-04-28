@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { getProducts, Product } from '../lib/shopify';
 import { ProductCard } from '../components/product/ProductCard';
 import { trackCustomEvent } from '../components/analytics/MetaPixel';
+import { PageMeta } from '../components/seo/PageMeta';
 
 export function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -144,6 +145,11 @@ export function Shop() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <PageMeta
+        title="Shop Pickleball Gear & Starter Bundles | Courtlane"
+        description="Browse Courtlane pickleball gear, beginner starter kits, and bundles. Shop paddles, grips, bags, and court essentials with clear pricing."
+        canonicalPath="/shop"
+      />
       
       {/* Header */}
       <div className="mb-10">

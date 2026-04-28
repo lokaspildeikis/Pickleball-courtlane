@@ -1,6 +1,13 @@
+import { PageMeta } from "../components/seo/PageMeta";
+
 export function Shipping() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <PageMeta
+        title="Shipping Policy | Courtlane"
+        description="Read Courtlane shipping policy, processing timelines, delivery estimates, and order tracking details."
+        canonicalPath="/shipping"
+      />
       <div className="text-center mb-12">
         <h1 className="text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
           Shipping Policy

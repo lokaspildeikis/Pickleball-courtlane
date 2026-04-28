@@ -1,6 +1,13 @@
+import { PageMeta } from "../components/seo/PageMeta";
+
 export function Privacy() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <PageMeta
+        title="Privacy Policy | Courtlane"
+        description="Learn how Courtlane collects and uses personal information for orders, delivery updates, and customer support."
+        canonicalPath="/privacy"
+      />
       <div className="text-center mb-12">
         <h1 className="text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
           Privacy Policy
