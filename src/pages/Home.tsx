@@ -39,14 +39,15 @@ export function Home() {
     );
   });
   const starterBundleHref = starterBundleProduct ? `/product/${starterBundleProduct.handle}` : '/shop?filter=bundles';
-  const starterBundleImage = FEATURED_BUNDLE_IMAGE;
-  const starterBundleRawPrice = starterBundleProduct
-    ? starterBundleProduct.variants.edges[0]?.node.price.amount
-      ?? starterBundleProduct.priceRange.minVariantPrice.amount
-    : null;
-  const starterBundlePrice = starterBundleRawPrice
-    ? Number.parseFloat(starterBundleRawPrice).toFixed(2)
-    : null;
+  const findOfferProduct = (keywords: string[]) => products.find((product) => {
+    const haystack = `${product.handle} ${product.title} ${product.tags.join(' ')}`.toLowerCase();
+    return keywords.every((keyword) => haystack.includes(keyword));
+  });
+  const heroOffers = [
+    { label: 'Starter Kit', fallbackHref: starterBundleHref, product: findOfferProduct(['starter', 'kit']) },
+    { label: 'Starter Bundle No2', fallbackHref: '/shop?filter=bundles', product: findOfferProduct(['starter', 'bundle']) },
+    { label: 'Gift Bundle', fallbackHref: '/shop?filter=bundles', product: findOfferProduct(['gift', 'bundle']) },
+  ];
 
   return (
     <div>
@@ -108,33 +109,83 @@ export function Home() {
             <p className="mt-3 text-xs uppercase tracking-wide text-gray-300">
               Beginner-friendly, low-impact, and easy to start
             </p>
+            <div className="mt-6 lg:hidden">
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {heroOffers.map((offer) => {
+                  const href = offer.product ? `/product/${offer.product.handle}` : offer.fallbackHref;
+                  const image = offer.product?.images.edges[0]?.node.url || FEATURED_BUNDLE_IMAGE;
+                  const rawPrice = offer.product
+                    ? offer.product.variants.edges[0]?.node.price.amount
+                      ?? offer.product.priceRange.minVariantPrice.amount
+                    : null;
+                  const price = rawPrice ? `$${Number.parseFloat(rawPrice).toFixed(2)}` : null;
+
+                  return (
+                    <Link
+                      key={`mobile-${offer.label}`}
+                      to={href}
+                      className="group min-w-[220px] flex-1 rounded-sm border border-white/15 bg-white/5 p-3 hover:bg-white/10 transition-colors"
+                      aria-label={`Open ${offer.label} product`}
+                    >
+                      <img
+                        src={image}
+                        alt={offer.product?.title || offer.label}
+                        className="h-28 w-full rounded-sm object-cover opacity-95"
+                      />
+                      <div className="min-w-0 mt-2">
+                        <p className="text-[11px] uppercase tracking-[0.14em] text-teal-200/90">On sale</p>
+                        <h3 className="text-sm font-semibold text-white truncate">
+                          {offer.product?.title || offer.label}
+                        </h3>
+                      </div>
+                      <span className="mt-1 block text-sm font-bold text-white whitespace-nowrap">
+                        {price || 'View'}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
             </div>
 
             <div className="hidden lg:flex lg:col-span-5 justify-end">
-              <Link
-                to={starterBundleHref}
-                className="group block w-full max-w-[320px] rounded-sm border border-white/15 bg-white/5 overflow-hidden hover:bg-white/10 transition-colors"
-                aria-label="Open starter bundle product"
-              >
-                <div className="aspect-[5/4] overflow-hidden">
-                  <img
-                    src={starterBundleImage}
-                    alt={starterBundleProduct?.title || 'Starter bundle'}
-                    className="w-full h-full object-cover opacity-95 group-hover:scale-[1.02] transition-transform duration-300"
-                  />
+              <div className="w-full max-w-[560px]">
+                <div className="grid grid-cols-3 gap-3">
+                {heroOffers.map((offer) => {
+                  const href = offer.product ? `/product/${offer.product.handle}` : offer.fallbackHref;
+                  const image = offer.product?.images.edges[0]?.node.url || FEATURED_BUNDLE_IMAGE;
+                  const rawPrice = offer.product
+                    ? offer.product.variants.edges[0]?.node.price.amount
+                      ?? offer.product.priceRange.minVariantPrice.amount
+                    : null;
+                  const price = rawPrice ? `$${Number.parseFloat(rawPrice).toFixed(2)}` : null;
+
+                  return (
+                    <Link
+                      key={offer.label}
+                      to={href}
+                      className="group rounded-sm border border-white/15 bg-white/5 p-3 hover:bg-white/10 transition-colors"
+                      aria-label={`Open ${offer.label} product`}
+                    >
+                      <img
+                        src={image}
+                        alt={offer.product?.title || offer.label}
+                        className="h-28 w-full rounded-sm object-cover opacity-95"
+                      />
+                      <div className="min-w-0 mt-2">
+                        <p className="text-[11px] uppercase tracking-[0.14em] text-teal-200/90">On sale</p>
+                        <h3 className="text-sm font-semibold text-white truncate">
+                          {offer.product?.title || offer.label}
+                        </h3>
+                      </div>
+                      <span className="mt-1 block text-sm font-bold text-white whitespace-nowrap">
+                        {price || 'View'}
+                      </span>
+                    </Link>
+                  );
+                })}
                 </div>
-                <div className="p-3.5">
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-teal-200/90">On sale bundle</p>
-                  <div className="mt-1 flex items-center justify-between gap-2">
-                    <h3 className="text-sm font-semibold text-white truncate">
-                      {starterBundleProduct?.title || '2-Paddle Starter Set'}
-                    </h3>
-                    <span className="text-sm font-bold text-white whitespace-nowrap">
-                      {starterBundlePrice ? `$${starterBundlePrice}` : 'View'}
-                    </span>
-                  </div>
-                </div>
-              </Link>
+              </div>
             </div>
           </div>
         </div>
