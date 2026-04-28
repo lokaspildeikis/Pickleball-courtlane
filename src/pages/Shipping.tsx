@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { PageMeta } from "../components/seo/PageMeta";
 
 export function Shipping() {
@@ -85,6 +86,9 @@ export function Shipping() {
           <h2 className="text-lg font-bold text-gray-900 mb-2">Contact Us</h2>
           <p className="text-gray-600 leading-relaxed">
             If you have any questions about shipping, delivery times, or your order status, please contact us and we will be happy to assist you.
+          </p>
+          <p className="text-sm text-gray-600 mt-3">
+            Ready to order? <Link to="/shop?filter=bundles" className="text-teal-700 font-semibold hover:underline">Browse starter bundles</Link>.
           </p>
         </section>
       </div>

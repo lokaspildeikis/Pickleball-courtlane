@@ -163,6 +163,11 @@ export function Shop() {
         <p className="text-gray-500 max-w-2xl">
           Practical pickleball gear for everyday play—paddles, balls, bags, and small essentials without marketplace clutter.
         </p>
+        {currentFilter === 'all' && (
+          <p className="text-gray-600 max-w-3xl mt-4 leading-relaxed">
+            Looking for the best pickleball starter kit or a beginner pickleball set that is simple to choose? Our pickleball bundle collection is built for first-time and recreational players who want a quick setup without guesswork. Compare starter kits, essential accessories, and ready-to-play bundle options in one place, then pick the set that fits your game, budget, and playing frequency.
+          </p>
+        )}
       </div>
 
       {/* Controls */}

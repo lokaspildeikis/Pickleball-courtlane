@@ -100,7 +100,7 @@ export function Home() {
             <div className="lg:col-span-7 max-w-2xl">
             {/* Hero copy for ad traffic focused on low-impact activity for adults 45+. */}
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-tight">
-              Stay Active Without <span className="text-teal-400 md:text-teal-500">Beating Up Your Joints.</span>
+              Pickleball Starter Kits &amp; Bundles for <span className="text-teal-400 md:text-teal-500">Active Adults.</span>
             </h1>
             <p className="text-base md:text-xl text-gray-300 mb-8 max-w-lg">
               Pickleball is a low-impact game that is easy to learn, fun to play, and a safe way for adults 45+ to keep moving.

@@ -19,7 +19,19 @@ export function FAQ() {
     {
       question: "How often should I change my overgrip?",
       answer: "This depends on how often you play and how much you sweat. For casual players (1-2 times a week), we recommend changing it every month. For competitive players, you may want to change it every 1-2 weeks to maintain optimal tackiness."
-    }
+    },
+    {
+      question: "What is the best pickleball starter kit for beginners?",
+      answer: "The best starter kit is one that includes core essentials together, such as paddles, balls, and basic accessories. Most new players choose a simple beginner pickleball set or bundle so they can start playing right away without buying each item separately.",
+    },
+    {
+      question: "Is pickleball a low-impact sport for older adults?",
+      answer: "Yes. Pickleball is widely considered a low-impact sport because it is played on a smaller court with less running than many other racket sports. Many adults choose it as a safer way to stay active while being easier on knees and hips.",
+    },
+    {
+      question: "What comes in a pickleball bundle?",
+      answer: "It depends on the specific product, but most pickleball bundles include a starter combination of paddles, balls, and useful accessories. Check each product page for exact bundle contents and options before checkout.",
+    },
   ];
 
   return (
@@ -62,6 +74,9 @@ export function FAQ() {
       <div className="mt-16 text-center bg-gray-50 p-8 rounded-sm">
         <h2 className="text-xl font-bold text-gray-900 mb-2">Still have questions?</h2>
         <p className="text-gray-600 mb-6">Our support team is ready to help you out.</p>
+        <p className="text-sm text-gray-600 mb-4">
+          Want to start quickly? <a href="/shop?filter=bundles" className="text-teal-700 font-semibold hover:underline">Shop starter kits &amp; bundles</a>.
+        </p>
         <a 
           href={`mailto:${SUPPORT_EMAIL}`} 
           className="inline-flex items-center justify-center h-11 px-6 font-medium bg-teal-800 text-white hover:bg-teal-900 rounded-sm transition-colors"

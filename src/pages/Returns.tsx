@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { PageMeta } from "../components/seo/PageMeta";
 
 export function Returns() {
@@ -36,6 +37,9 @@ export function Returns() {
           <h2 className="text-lg font-bold text-gray-900 mb-2">How To Start a Return</h2>
           <p className="text-gray-600 leading-relaxed">
             Contact support with your order number and a short reason for return, and we will share the next steps. If an item arrives damaged, incorrect, or defective, include a photo so we can resolve it quickly.
+          </p>
+          <p className="text-sm text-gray-600 mt-3">
+            Looking for your first setup? <Link to="/shop?filter=bundles" className="text-teal-700 font-semibold hover:underline">Shop starter kits and bundles</Link>.
           </p>
         </section>
       </div>
