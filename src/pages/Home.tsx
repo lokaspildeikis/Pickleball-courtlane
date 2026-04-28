@@ -40,6 +40,7 @@ export function Home() {
     );
   });
   const starterBundleHref = starterBundleProduct ? `/product/${starterBundleProduct.handle}` : '/shop?filter=bundles';
+  const starterBundleShopifyImage = starterBundleProduct?.images.edges[0]?.node.url || FEATURED_BUNDLE_IMAGE;
   const findOfferProduct = (keywords: string[]) => products.find((product) => {
     const haystack = `${product.handle} ${product.title} ${product.tags.join(' ')}`.toLowerCase();
     return keywords.every((keyword) => haystack.includes(keyword));
@@ -347,7 +348,7 @@ export function Home() {
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="w-full md:w-1/2">
               <img 
-                src={FEATURED_BUNDLE_IMAGE}
+                src={starterBundleShopifyImage}
                 alt="Pickleball gear bundle" 
                 className="w-full h-auto rounded-sm shadow-xl"
               />

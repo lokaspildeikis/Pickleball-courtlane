@@ -38,6 +38,11 @@ export const TRUST_POINTS = {
 export const POLICY_SNIPPETS = {
   productDetail: [
     {
+      id: "payments",
+      title: "Payments",
+      text: "Checkout is encrypted and processed securely.",
+    },
+    {
       id: "shipping",
       title: "Shipping",
       text: "Orders are usually processed in 1-3 business days. Delivery is typically 10-14 business days after dispatch.",
@@ -48,11 +53,6 @@ export const POLICY_SNIPPETS = {
       title: "Returns",
       text: "If you are not satisfied, you are covered by our 30-day money-back guarantee on eligible unused items in original packaging.",
       href: "/returns",
-    },
-    {
-      id: "payments",
-      title: "Payments",
-      text: "Checkout is encrypted and processed securely.",
     },
     {
       id: "support",
