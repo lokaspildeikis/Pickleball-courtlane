@@ -216,6 +216,11 @@ export function Home() {
             </div>
           </div>
         </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 md:pb-10">
+          <p className="inline-flex items-center rounded-sm border border-amber-300/40 bg-amber-300/15 px-3 py-1.5 text-xs md:text-sm font-bold uppercase tracking-wide text-amber-200">
+            Free express shipping on all orders
+          </p>
+        </div>
       </section>
 
       <section className="border-b border-gray-200 bg-white">
