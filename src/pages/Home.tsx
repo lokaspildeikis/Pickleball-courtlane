@@ -104,7 +104,7 @@ export function Home() {
               Pickleball is a low-impact game that is easy to learn, fun to play, and a safe way for adults 45+ to keep moving.
             </p>
             <a
-              href="https://usapickleball.org/docs/USA-Pickleball-Official-Rulebook.pdf"
+              href="https://usapickleball.org/docs/rules/USAP-Official-Rulebook.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center text-sm font-semibold uppercase tracking-wide text-teal-300 hover:text-teal-200 transition-colors mb-6"
