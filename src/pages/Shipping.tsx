@@ -12,9 +12,9 @@ export function Shipping() {
 
       <div className="space-y-8">
         <section className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Worldwide Shipping</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Free express shipping</h2>
           <p className="text-gray-600 leading-relaxed">
-            We ship worldwide and offer free shipping on all orders.
+            We offer free express shipping on all orders.
           </p>
         </section>
 

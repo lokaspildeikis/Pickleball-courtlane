@@ -6,7 +6,7 @@ export function Returns() {
           Returns Policy
         </h1>
         <p className="text-gray-600">
-          Simple return guidelines so customers can shop with confidence.
+          Flexible return guidelines so you can shop with confidence.
         </p>
       </div>
 
@@ -14,21 +14,21 @@ export function Returns() {
         <section className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-2">Return Window</h2>
           <p className="text-gray-600 leading-relaxed">
-            Unused products can be returned within 30 days of delivery in original packaging.
+            Most orders can be returned within 30 days of delivery. If you are slightly outside that window, contact us and we will do our best to help.
           </p>
         </section>
 
         <section className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-2">Eligible Condition</h2>
           <p className="text-gray-600 leading-relaxed">
-            Items must be clean, unused, and in resellable condition. Returns that show signs of use may be declined.
+            We accept returns for items in good condition. Opened items may still be eligible depending on condition, and we review every request fairly on a case-by-case basis.
           </p>
         </section>
 
         <section className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-2">How To Start a Return</h2>
           <p className="text-gray-600 leading-relaxed">
-            Contact support with your order number and reason for return. We will provide the next steps and return instructions.
+            Contact support with your order number and a short reason for return, and we will share the next steps. If an item arrives damaged, incorrect, or defective, include a photo so we can resolve it quickly.
           </p>
         </section>
       </div>
