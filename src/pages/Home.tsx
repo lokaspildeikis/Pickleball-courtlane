@@ -44,9 +44,16 @@ export function Home() {
     const haystack = `${product.handle} ${product.title} ${product.tags.join(' ')}`.toLowerCase();
     return keywords.every((keyword) => haystack.includes(keyword));
   });
+  const findDifferentOfferProduct = (keywords: string[], excludedId?: string) => products.find((product) => {
+    if (excludedId && product.id === excludedId) return false;
+    const haystack = `${product.handle} ${product.title} ${product.tags.join(' ')}`.toLowerCase();
+    return keywords.every((keyword) => haystack.includes(keyword));
+  });
   const starterKitProduct = findOfferProduct(['raw', 'carbon', 'fiber'])
     || findOfferProduct(['usapa', 'graphite', 'paddle']);
-  const starterBundleNo2Product = starterBundleProduct || findOfferProduct(['starter', 'bundle']);
+  const starterBundleNo2Product = findDifferentOfferProduct(['starter', 'bundle'], starterKitProduct?.id)
+    || findDifferentOfferProduct(['bundle'], starterKitProduct?.id)
+    || (starterBundleProduct?.id === starterKitProduct?.id ? undefined : starterBundleProduct);
   const heroOffers = [
     {
       label: 'Starter Kit',
