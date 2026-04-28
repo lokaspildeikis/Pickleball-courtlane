@@ -10,6 +10,7 @@ import { TRUST_POINTS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 
 const FEATURED_BUNDLE_IMAGE = '/images/featured-bundle-sale.png';
+const STARTER_KIT_IMAGE = '/images/offer-starter-kit.png';
 
 export function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -43,10 +44,28 @@ export function Home() {
     const haystack = `${product.handle} ${product.title} ${product.tags.join(' ')}`.toLowerCase();
     return keywords.every((keyword) => haystack.includes(keyword));
   });
+  const starterKitProduct = findOfferProduct(['raw', 'carbon', 'fiber'])
+    || findOfferProduct(['usapa', 'graphite', 'paddle']);
+  const starterBundleNo2Product = starterBundleProduct || findOfferProduct(['starter', 'bundle']);
   const heroOffers = [
-    { label: 'Starter Kit', fallbackHref: starterBundleHref, product: findOfferProduct(['starter', 'kit']) },
-    { label: 'Starter Bundle No2', fallbackHref: '/shop?filter=bundles', product: findOfferProduct(['starter', 'bundle']) },
-    { label: 'Gift Bundle', fallbackHref: '/shop?filter=bundles', product: findOfferProduct(['gift', 'bundle']) },
+    {
+      label: 'Starter Kit',
+      fallbackHref: '/shop?filter=bundles',
+      fallbackImage: STARTER_KIT_IMAGE,
+      product: starterKitProduct,
+    },
+    {
+      label: 'Starter Bundle No2',
+      fallbackHref: starterBundleHref,
+      fallbackImage: FEATURED_BUNDLE_IMAGE,
+      product: starterBundleNo2Product,
+    },
+    {
+      label: 'Gift Bundle',
+      fallbackHref: '/shop?filter=bundles',
+      fallbackImage: FEATURED_BUNDLE_IMAGE,
+      product: findOfferProduct(['gift', 'bundle']),
+    },
   ];
 
   return (
@@ -113,7 +132,7 @@ export function Home() {
               <div className="flex gap-3 overflow-x-auto pb-2">
                 {heroOffers.map((offer) => {
                   const href = offer.product ? `/product/${offer.product.handle}` : offer.fallbackHref;
-                  const image = offer.product?.images.edges[0]?.node.url || FEATURED_BUNDLE_IMAGE;
+                  const image = offer.product?.images.edges[0]?.node.url || offer.fallbackImage;
                   const rawPrice = offer.product
                     ? offer.product.variants.edges[0]?.node.price.amount
                       ?? offer.product.priceRange.minVariantPrice.amount
@@ -153,7 +172,7 @@ export function Home() {
                 <div className="grid grid-cols-3 gap-3">
                 {heroOffers.map((offer) => {
                   const href = offer.product ? `/product/${offer.product.handle}` : offer.fallbackHref;
-                  const image = offer.product?.images.edges[0]?.node.url || FEATURED_BUNDLE_IMAGE;
+                  const image = offer.product?.images.edges[0]?.node.url || offer.fallbackImage;
                   const rawPrice = offer.product
                     ? offer.product.variants.edges[0]?.node.price.amount
                       ?? offer.product.priceRange.minVariantPrice.amount
