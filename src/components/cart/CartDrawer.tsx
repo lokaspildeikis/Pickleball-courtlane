@@ -1,13 +1,29 @@
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { Button } from '../ui/Button';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { POLICY_SNIPPETS } from '../../lib/trustContent';
 import { Link } from 'react-router-dom';
 import { CheckoutConfidence } from '../CheckoutConfidence';
 
+const URGENCY_TIMER_KEY = 'courtlane_urgency_offer_ends_at';
+const HEADLINE_VARIANT_KEY = 'pb_cart_urgency_headline_variant';
+const HEADLINE_STATS_KEY = 'pb_cart_urgency_headline_stats';
+
+type HeadlineVariant = 'stacked' | 'deadline';
+
+function formatMs(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return [hours, minutes, seconds].map((part) => String(part).padStart(2, '0')).join(':');
+}
+
 export function CartDrawer() {
   const { isCartOpen, closeCart, items, updateQuantity, removeFromCart, cartTotal, createCheckout, isCheckingOut } = useCart();
+  const [cutoffEndsAt, setCutoffEndsAt] = useState(0);
+  const [cutoffRemainingMs, setCutoffRemainingMs] = useState(0);
 
   // Prevent body scroll when cart is open
   useEffect(() => {
@@ -20,6 +36,101 @@ export function CartDrawer() {
       document.body.style.overflow = 'unset';
     };
   }, [isCartOpen]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = Number(window.localStorage.getItem(URGENCY_TIMER_KEY) || '0');
+    const base = stored > Date.now() ? stored : Date.now() + 2 * 60 * 60 * 1000;
+    setCutoffEndsAt(base);
+    setCutoffRemainingMs(Math.max(0, base - Date.now()));
+  }, []);
+
+  useEffect(() => {
+    if (!cutoffEndsAt) return;
+    const interval = window.setInterval(() => {
+      const diff = cutoffEndsAt - Date.now();
+      if (diff <= 0) {
+        const next = Date.now() + 2 * 60 * 60 * 1000;
+        window.localStorage.setItem(URGENCY_TIMER_KEY, String(next));
+        setCutoffEndsAt(next);
+        setCutoffRemainingMs(next - Date.now());
+        return;
+      }
+      setCutoffRemainingMs(diff);
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [cutoffEndsAt]);
+
+  const headlineVariant: HeadlineVariant = useMemo(() => {
+    if (typeof window === 'undefined') return 'stacked';
+    const existing = window.localStorage.getItem(HEADLINE_VARIANT_KEY) as HeadlineVariant | null;
+    if (existing === 'stacked' || existing === 'deadline') return existing;
+
+    const statsRaw = window.localStorage.getItem(HEADLINE_STATS_KEY);
+    if (statsRaw) {
+      try {
+        const stats = JSON.parse(statsRaw) as Record<string, { views: number; clicks: number }>;
+        const stackedRate = (stats.stacked?.clicks || 0) / Math.max(1, stats.stacked?.views || 0);
+        const deadlineRate = (stats.deadline?.clicks || 0) / Math.max(1, stats.deadline?.views || 0);
+        const winner: HeadlineVariant = deadlineRate > stackedRate ? 'deadline' : 'stacked';
+        window.localStorage.setItem(HEADLINE_VARIANT_KEY, winner);
+        return winner;
+      } catch {
+        // Ignore and randomize below.
+      }
+    }
+
+    const assigned: HeadlineVariant = Math.random() < 0.5 ? 'stacked' : 'deadline';
+    window.localStorage.setItem(HEADLINE_VARIANT_KEY, assigned);
+    return assigned;
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const statsRaw = window.localStorage.getItem(HEADLINE_STATS_KEY);
+    let stats: Record<string, { views: number; clicks: number }> = {
+      stacked: { views: 0, clicks: 0 },
+      deadline: { views: 0, clicks: 0 },
+    };
+    if (statsRaw) {
+      try {
+        stats = { ...stats, ...JSON.parse(statsRaw) };
+      } catch {
+        // Keep defaults.
+      }
+    }
+    stats[headlineVariant].views += 1;
+    window.localStorage.setItem(HEADLINE_STATS_KEY, JSON.stringify(stats));
+  }, [headlineVariant]);
+
+  const handleCheckout = async () => {
+    if (typeof window !== 'undefined') {
+      const statsRaw = window.localStorage.getItem(HEADLINE_STATS_KEY);
+      let stats: Record<string, { views: number; clicks: number }> = {
+        stacked: { views: 0, clicks: 0 },
+        deadline: { views: 0, clicks: 0 },
+      };
+      if (statsRaw) {
+        try {
+          stats = { ...stats, ...JSON.parse(statsRaw) };
+        } catch {
+          // Keep defaults.
+        }
+      }
+      stats[headlineVariant].clicks += 1;
+      window.localStorage.setItem(HEADLINE_STATS_KEY, JSON.stringify(stats));
+    }
+    await createCheckout();
+  };
+
+  const urgencyHeadline = headlineVariant === 'deadline'
+    ? 'Last call: keep your stacked savings'
+    : 'Maximize your savings before checkout';
+
+  const urgencyBody = headlineVariant === 'deadline'
+    ? `Checkout before ${formatMs(cutoffRemainingMs)} to keep up to 30% total off.`
+    : 'Use eligible offers at checkout for up to 30% total discounts.';
 
   if (!isCartOpen) return null;
 
@@ -46,7 +157,7 @@ export function CartDrawer() {
         </div>
 
         {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 pb-28 md:pb-6">
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
               <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
@@ -114,18 +225,32 @@ export function CartDrawer() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-gray-100 p-6 bg-gray-50">
+          <div className="border-t border-gray-100 p-6 pb-24 md:pb-6 bg-gray-50">
             <CheckoutConfidence className="mb-4" />
+            <div className="mb-4 rounded-sm border border-amber-300/70 bg-amber-50 p-3">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-amber-900">
+                {urgencyHeadline}
+              </p>
+              <p className="mt-1 text-xs text-amber-900">
+                {urgencyBody}
+              </p>
+            </div>
             <div className="flex justify-between text-base font-bold text-gray-900 mb-2">
               <p>Subtotal</p>
               <p>${cartTotal.toFixed(2)}</p>
             </div>
             <p className="text-xs text-gray-500 mb-4">Shipping and taxes calculated at checkout.</p>
-            <Button size="full" onClick={createCheckout} disabled={isCheckingOut}>
+            <p className="text-xs font-semibold text-teal-800 mb-3">
+              Order cutoff timer: <span className="tabular-nums">{formatMs(cutoffRemainingMs)}</span>
+            </p>
+            <Button size="full" onClick={handleCheckout} disabled={isCheckingOut} className="hidden md:flex">
               {isCheckingOut ? 'Redirecting...' : 'Checkout'}
             </Button>
             <p className="text-xs text-gray-600 mt-3">
               You&apos;ll be redirected to our secure Shopify checkout to complete payment.
+            </p>
+            <p className="text-[11px] text-gray-600 mt-2">
+              Trusted by customers • encrypted checkout • 30-day guarantee.
             </p>
             <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600">
               {POLICY_SNIPPETS.cart.map((snippet) =>
@@ -136,6 +261,17 @@ export function CartDrawer() {
                 ) : null,
               )}
             </div>
+          </div>
+        )}
+        {items.length > 0 && (
+          <div className="absolute inset-x-0 bottom-0 border-t border-gray-200 bg-white p-3 md:hidden">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-gray-500">Quick checkout</p>
+              <p className="text-sm font-bold text-gray-900">${cartTotal.toFixed(2)}</p>
+            </div>
+            <Button size="full" onClick={handleCheckout} disabled={isCheckingOut}>
+              {isCheckingOut ? 'Redirecting...' : 'Checkout now'}
+            </Button>
           </div>
         )}
       </div>

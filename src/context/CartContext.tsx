@@ -118,6 +118,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, { ...newItem, id: Math.random().toString(36).substring(7) }];
     });
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('courtlane:add-to-cart', {
+        detail: {
+          title: newItem.title,
+          quantity: newItem.quantity,
+        },
+      }));
+    }
     openCart();
   };
 

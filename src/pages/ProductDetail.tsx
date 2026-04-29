@@ -20,6 +20,16 @@ type VariantOption = { name: string; value: string };
 const FALLBACK_OPTION_NAMES = ['Ball color', 'Sweatband color', 'Towel color'];
 const URGENCY_TIMER_KEY = 'courtlane_urgency_offer_ends_at';
 const URGENCY_DURATION_MS = 2 * 60 * 60 * 1000;
+const VIEWING_NOW_KEY_PREFIX = 'courtlane_viewing_now_';
+const VIEWING_MIN = 1;
+const VIEWING_MAX = 20;
+const VIEWING_REFRESH_MIN_MS = 15 * 60 * 1000;
+const VIEWING_REFRESH_MAX_MS = 30 * 60 * 1000;
+
+type ViewingNowState = {
+  value: number;
+  nextUpdateAt: number;
+};
 
 function extractVariantOptions(variant: VariantNode): VariantOption[] {
   if (variant.selectedOptions?.length) {
@@ -75,6 +85,47 @@ function formatRemaining(ms: number): string {
     .join(':');
 }
 
+function getRandomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function buildViewingNowState(now: number): ViewingNowState {
+  return {
+    value: getRandomInt(VIEWING_MIN, VIEWING_MAX),
+    nextUpdateAt: now + getRandomInt(VIEWING_REFRESH_MIN_MS, VIEWING_REFRESH_MAX_MS),
+  };
+}
+
+function getViewingNowState(handle: string): ViewingNowState {
+  const fallback = buildViewingNowState(Date.now());
+  if (typeof window === 'undefined') return fallback;
+
+  const key = `${VIEWING_NOW_KEY_PREFIX}${handle}`;
+  const stored = window.localStorage.getItem(key);
+  if (!stored) {
+    window.localStorage.setItem(key, JSON.stringify(fallback));
+    return fallback;
+  }
+
+  try {
+    const parsed = JSON.parse(stored) as Partial<ViewingNowState>;
+    if (
+      typeof parsed.value === 'number' &&
+      typeof parsed.nextUpdateAt === 'number' &&
+      parsed.value >= VIEWING_MIN &&
+      parsed.value <= VIEWING_MAX &&
+      parsed.nextUpdateAt > Date.now()
+    ) {
+      return { value: parsed.value, nextUpdateAt: parsed.nextUpdateAt };
+    }
+  } catch {
+    // Ignore invalid localStorage payload and regenerate below.
+  }
+
+  window.localStorage.setItem(key, JSON.stringify(fallback));
+  return fallback;
+}
+
 function renderStars(rating: number) {
   const fullStars = Math.round(rating);
   return (
@@ -104,6 +155,8 @@ export function ProductDetail() {
   const hasTrackedStickyShown = useRef(false);
   const [offerEndsAt, setOfferEndsAt] = useState(() => getOfferEndTime());
   const [remainingMs, setRemainingMs] = useState(() => Math.max(0, offerEndsAt - Date.now()));
+  const [viewingNow, setViewingNow] = useState(7);
+  const [viewingNowRefreshAt, setViewingNowRefreshAt] = useState(() => Date.now() + VIEWING_REFRESH_MIN_MS);
 
   useEffect(() => {
     async function fetchProduct() {
@@ -196,6 +249,31 @@ export function ProductDetail() {
 
     return () => window.clearInterval(interval);
   }, [offerEndsAt]);
+
+  useEffect(() => {
+    if (!product?.handle || typeof window === 'undefined') return;
+
+    const state = getViewingNowState(product.handle);
+    setViewingNow(state.value);
+    setViewingNowRefreshAt(state.nextUpdateAt);
+  }, [product?.handle]);
+
+  useEffect(() => {
+    if (!product?.handle || typeof window === 'undefined') return;
+
+    const key = `${VIEWING_NOW_KEY_PREFIX}${product.handle}`;
+    const interval = window.setInterval(() => {
+      const now = Date.now();
+      if (now < viewingNowRefreshAt) return;
+
+      const next = buildViewingNowState(now);
+      window.localStorage.setItem(key, JSON.stringify(next));
+      setViewingNow(next.value);
+      setViewingNowRefreshAt(next.nextUpdateAt);
+    }, 60 * 1000);
+
+    return () => window.clearInterval(interval);
+  }, [product?.handle, viewingNowRefreshAt]);
 
   if (loading) {
     return (
@@ -452,6 +530,9 @@ export function ProductDetail() {
             <span aria-hidden="true">•</span>
             <span>{Math.max(reviewSummary.reviewCount, visibleReviewCount)} reviews</span>
           </div>
+          <p className="text-sm font-semibold text-amber-700 mb-4">
+            {viewingNow} people are viewing this right now
+          </p>
           
           <div className="flex items-center gap-3 mb-6">
             <span className="text-2xl font-bold text-gray-900">
@@ -521,6 +602,14 @@ export function ProductDetail() {
               <p className="mt-1 text-sm text-amber-900">
                 Limited-time offer - ends in{' '}
                 <span className="font-extrabold tabular-nums">{formatRemaining(remainingMs)}</span>
+              </p>
+            </div>
+            <div className="mb-4 rounded-sm border border-teal-200 bg-teal-50 p-3 sm:p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-teal-900">
+                Up to 30% discounts available
+              </p>
+              <p className="mt-1 text-sm text-teal-900">
+                Stack eligible offers for up to 30% total savings at checkout.
               </p>
             </div>
             <div className="flex gap-4">

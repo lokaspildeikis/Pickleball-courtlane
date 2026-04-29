@@ -275,7 +275,7 @@ export function Home() {
               <span className="text-sm font-medium uppercase tracking-wide">Secure Checkout</span>
             </div>
             <div className="pt-4 md:pt-0">
-              <span className="text-sm font-medium uppercase tracking-wide">Free express shipping</span>
+              <span className="text-sm font-medium uppercase tracking-wide">Limited-time express shipping</span>
             </div>
             <div className="pt-4 md:pt-0">
               <span className="text-sm font-medium uppercase tracking-wide">30-Day Money-Back Guarantee</span>

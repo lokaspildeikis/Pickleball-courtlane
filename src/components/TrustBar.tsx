@@ -4,7 +4,7 @@ type TrustBarProps = {
 
 const trustItems = [
   { id: "money-back", icon: "↺", text: "30-Day Money-Back Guarantee" },
-  { id: "free-shipping", icon: "🚚", text: "Free express shipping" },
+  { id: "free-shipping", icon: "🚚", text: "Limited-time express shipping" },
   { id: "secure-checkout", icon: "🔒", text: "Secure checkout - Encrypted payments" },
 ];
 

@@ -4,6 +4,8 @@ import { Footer } from './Footer';
 import { CartDrawer } from '../cart/CartDrawer';
 import { ScrollToTop } from './ScrollToTop';
 import { NewCustomerCouponPopup } from '../marketing/NewCustomerCouponPopup';
+import { SocialProofToast } from '../marketing/SocialProofToast';
+import { ExitIntentOfferPopup } from '../marketing/ExitIntentOfferPopup';
 
 export function Layout() {
   return (
@@ -16,6 +18,8 @@ export function Layout() {
       <Footer />
       <CartDrawer />
       <NewCustomerCouponPopup />
+      <SocialProofToast />
+      <ExitIntentOfferPopup />
     </div>
   );
 }
