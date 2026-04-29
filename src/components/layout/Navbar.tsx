@@ -1,14 +1,75 @@
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const URGENCY_TIMER_KEY = 'courtlane_urgency_offer_ends_at';
+const URGENCY_DURATION_MS = 2 * 60 * 60 * 1000;
+
+function getOfferEndTime(): number {
+  if (typeof window === 'undefined') return Date.now() + URGENCY_DURATION_MS;
+
+  const stored = window.localStorage.getItem(URGENCY_TIMER_KEY);
+  const parsed = stored ? Number.parseInt(stored, 10) : NaN;
+
+  if (Number.isFinite(parsed) && parsed > Date.now()) {
+    return parsed;
+  }
+
+  const nextEnd = Date.now() + URGENCY_DURATION_MS;
+  window.localStorage.setItem(URGENCY_TIMER_KEY, String(nextEnd));
+  return nextEnd;
+}
+
+function formatRemaining(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [hours, minutes, seconds]
+    .map((value) => String(value).padStart(2, '0'))
+    .join(':');
+}
 
 export function Navbar() {
   const { openCart, cartCount } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [offerEndsAt, setOfferEndsAt] = useState(() => getOfferEndTime());
+  const [remainingMs, setRemainingMs] = useState(() => Math.max(0, offerEndsAt - Date.now()));
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      const diff = offerEndsAt - Date.now();
+      if (diff <= 0) {
+        const nextEnd = Date.now() + URGENCY_DURATION_MS;
+        window.localStorage.setItem(URGENCY_TIMER_KEY, String(nextEnd));
+        setOfferEndsAt(nextEnd);
+        setRemainingMs(URGENCY_DURATION_MS);
+        return;
+      }
+      setRemainingMs(diff);
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [offerEndsAt]);
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-100">
+      <div className="bg-teal-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-3">
+          <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wide">
+            Save 15% + free express shipping - ends in{' '}
+            <span className="text-amber-300 tabular-nums">{formatRemaining(remainingMs)}</span>
+          </p>
+          <Link
+            to="/shop"
+            className="text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-amber-200 hover:text-amber-100 transition-colors whitespace-nowrap"
+          >
+            Shop now
+          </Link>
+        </div>
+      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           

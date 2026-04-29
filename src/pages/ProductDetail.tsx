@@ -18,6 +18,8 @@ type VariantNode = Product['variants']['edges'][number]['node'];
 type VariantOption = { name: string; value: string };
 
 const FALLBACK_OPTION_NAMES = ['Ball color', 'Sweatband color', 'Towel color'];
+const URGENCY_TIMER_KEY = 'courtlane_urgency_offer_ends_at';
+const URGENCY_DURATION_MS = 2 * 60 * 60 * 1000;
 
 function extractVariantOptions(variant: VariantNode): VariantOption[] {
   if (variant.selectedOptions?.length) {
@@ -47,6 +49,32 @@ function getRoundedComparePrice(currentPrice: number): number {
   return Number(rounded.toFixed(2));
 }
 
+function getOfferEndTime(): number {
+  if (typeof window === 'undefined') return Date.now() + URGENCY_DURATION_MS;
+
+  const stored = window.localStorage.getItem(URGENCY_TIMER_KEY);
+  const parsed = stored ? Number.parseInt(stored, 10) : NaN;
+
+  if (Number.isFinite(parsed) && parsed > Date.now()) {
+    return parsed;
+  }
+
+  const nextEnd = Date.now() + URGENCY_DURATION_MS;
+  window.localStorage.setItem(URGENCY_TIMER_KEY, String(nextEnd));
+  return nextEnd;
+}
+
+function formatRemaining(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return [hours, minutes, seconds]
+    .map((value) => String(value).padStart(2, '0'))
+    .join(':');
+}
+
 function renderStars(rating: number) {
   const fullStars = Math.round(rating);
   return (
@@ -74,6 +102,8 @@ export function ProductDetail() {
   const primaryCtaRef = useRef<HTMLDivElement | null>(null);
   const [showStickyMobileAtc, setShowStickyMobileAtc] = useState(false);
   const hasTrackedStickyShown = useRef(false);
+  const [offerEndsAt, setOfferEndsAt] = useState(() => getOfferEndTime());
+  const [remainingMs, setRemainingMs] = useState(() => Math.max(0, offerEndsAt - Date.now()));
 
   useEffect(() => {
     async function fetchProduct() {
@@ -150,6 +180,22 @@ export function ProductDetail() {
       product_handle: product?.handle,
     });
   }, [showStickyMobileAtc, product?.handle, product?.id]);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      const diff = offerEndsAt - Date.now();
+      if (diff <= 0) {
+        const nextEnd = Date.now() + URGENCY_DURATION_MS;
+        window.localStorage.setItem(URGENCY_TIMER_KEY, String(nextEnd));
+        setOfferEndsAt(nextEnd);
+        setRemainingMs(URGENCY_DURATION_MS);
+        return;
+      }
+      setRemainingMs(diff);
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [offerEndsAt]);
 
   if (loading) {
     return (
@@ -468,6 +514,15 @@ export function ProductDetail() {
 
           {/* Quantity & Add to Cart */}
           <div className="mb-8" ref={primaryCtaRef}>
+            <div className="mb-4 rounded-sm border border-amber-300/70 bg-amber-50 p-3 sm:p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-amber-900">
+                Save 15% + free express shipping
+              </p>
+              <p className="mt-1 text-sm text-amber-900">
+                Limited-time offer - ends in{' '}
+                <span className="font-extrabold tabular-nums">{formatRemaining(remainingMs)}</span>
+              </p>
+            </div>
             <div className="flex gap-4">
               <div className="flex items-center border border-gray-300 rounded-sm h-14 w-32">
                 <button 
