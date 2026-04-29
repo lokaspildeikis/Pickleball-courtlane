@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getProduct, Product } from '../lib/shopify';
+import { getProduct, getProducts, Product } from '../lib/shopify';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/ui/Button';
 import { ProductDescription } from '../components/product/ProductDescription';
@@ -13,6 +13,8 @@ import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMe
 import { trackAddToCart, trackCustomEvent, trackViewContent } from '../components/analytics/MetaPixel';
 import { TrustBar } from '../components/TrustBar';
 import { PageMeta } from '../components/seo/PageMeta';
+import { isValidEmail, resolveCouponCode, resolveCouponSignupEndpoint, submitCouponSignup } from '../lib/couponSignup';
+import { setMarketingEmail } from '../lib/marketingIdentity';
 
 type VariantNode = Product['variants']['edges'][number]['node'];
 type VariantOption = { name: string; value: string };
@@ -25,6 +27,7 @@ const VIEWING_MIN = 1;
 const VIEWING_MAX = 20;
 const VIEWING_REFRESH_MIN_MS = 15 * 60 * 1000;
 const VIEWING_REFRESH_MAX_MS = 30 * 60 * 1000;
+const PRODUCT_POPUP_DISMISS_TTL_MS = 12 * 60 * 60 * 1000;
 
 type ViewingNowState = {
   value: number;
@@ -126,6 +129,17 @@ function getViewingNowState(handle: string): ViewingNowState {
   return fallback;
 }
 
+function shouldShowPostAddCouponPopup(productHandle: string): boolean {
+  if (typeof window === 'undefined') return false;
+  const claimed = window.localStorage.getItem('pb_coupon_popup_claimed_v1') === '1';
+  if (claimed) return false;
+
+  const dismissKey = `pb_product_coupon_popup_dismissed_${productHandle}`;
+  const dismissedAt = Number(window.localStorage.getItem(dismissKey) || '0');
+  const recentlyDismissed = dismissedAt > 0 && Date.now() - dismissedAt < PRODUCT_POPUP_DISMISS_TTL_MS;
+  return !recentlyDismissed;
+}
+
 function renderStars(rating: number) {
   const fullStars = Math.round(rating);
   return (
@@ -157,6 +171,14 @@ export function ProductDetail() {
   const [remainingMs, setRemainingMs] = useState(() => Math.max(0, offerEndsAt - Date.now()));
   const [viewingNow, setViewingNow] = useState(7);
   const [viewingNowRefreshAt, setViewingNowRefreshAt] = useState(() => Date.now() + VIEWING_REFRESH_MIN_MS);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [showProductCouponPopup, setShowProductCouponPopup] = useState(false);
+  const [couponEmail, setCouponEmail] = useState('');
+  const [couponError, setCouponError] = useState('');
+  const [couponSubmitting, setCouponSubmitting] = useState(false);
+  const [couponSuccess, setCouponSuccess] = useState(false);
+  const couponSignupEndpoint = resolveCouponSignupEndpoint();
+  const couponCode = resolveCouponCode();
 
   useEffect(() => {
     async function fetchProduct() {
@@ -179,6 +201,19 @@ export function ProductDetail() {
     }
     fetchProduct();
   }, [handle]);
+
+  useEffect(() => {
+    let active = true;
+    async function fetchAllProducts() {
+      const data = await getProducts();
+      if (!active) return;
+      setAllProducts(data);
+    }
+    fetchAllProducts();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!selectedVariant) return;
@@ -340,6 +375,10 @@ export function ProductDetail() {
     ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / visibleReviewCount).toFixed(1))
     : 0;
   const productTags = product.tags.map((tag) => tag.toLowerCase());
+  const relatedUpsellProducts = allProducts
+    .filter((candidate) => candidate.id !== product.id)
+    .filter((candidate) => candidate.tags.some((tag) => productTags.includes(tag.toLowerCase())))
+    .slice(0, 3);
   const whoItsFor = productTags.some((tag) => ['beginner', 'starter', 'bundle'].includes(tag))
     ? 'Beginners and rec players who want a simple setup.'
     : 'Everyday players who want reliable gear without overthinking specs.';
@@ -454,6 +493,13 @@ export function ProductDetail() {
       currency: selectedVariant.price.currencyCode || 'USD',
       num_items: quantity,
     });
+    if (product?.handle && shouldShowPostAddCouponPopup(product.handle)) {
+      setShowProductCouponPopup(true);
+      trackCustomEvent('ProductCouponPopupShown', {
+        product_handle: product.handle,
+        trigger: 'post_add_to_cart',
+      });
+    }
   };
 
   const handleStickyAddToCart = () => {
@@ -464,6 +510,44 @@ export function ProductDetail() {
       value: currentPriceValue * quantity,
     });
     handleAddToCart();
+  };
+
+  const closeProductCouponPopup = () => {
+    if (typeof window !== 'undefined' && product?.handle) {
+      const dismissKey = `pb_product_coupon_popup_dismissed_${product.handle}`;
+      window.localStorage.setItem(dismissKey, String(Date.now()));
+    }
+    setShowProductCouponPopup(false);
+  };
+
+  const onProductCouponSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const normalized = couponEmail.trim().toLowerCase();
+    setCouponError('');
+    if (!isValidEmail(normalized)) {
+      setCouponError('Please enter a valid email address.');
+      return;
+    }
+
+    setCouponSubmitting(true);
+    try {
+      await submitCouponSignup({
+        email: normalized,
+        source: 'new-customer-popup',
+        endpoint: couponSignupEndpoint,
+        couponCode,
+      });
+      setMarketingEmail(normalized);
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('pb_coupon_popup_claimed_v1', '1');
+      }
+      setCouponSuccess(true);
+      trackCustomEvent('ProductCouponPopupClaimed', { product_handle: product.handle, coupon_code: couponCode });
+    } catch (error) {
+      setCouponError(error instanceof Error ? error.message : 'Could not submit right now.');
+    } finally {
+      setCouponSubmitting(false);
+    }
   };
 
   return (
@@ -558,6 +642,35 @@ export function ProductDetail() {
             <p className="text-xs font-bold uppercase tracking-wide text-gray-700 pt-1">What&apos;s included</p>
             <p className="text-sm text-gray-700">{whatsIncluded}</p>
           </div>
+
+          {relatedUpsellProducts.length > 0 && (
+            <div className="mb-6 rounded-sm border border-gray-200 bg-white p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-teal-800">Complete your kit</p>
+              <p className="mt-1 text-sm text-gray-700">Customers often add these before checkout.</p>
+              <div className="mt-3 space-y-2">
+                {relatedUpsellProducts.map((related) => {
+                  const relatedPrice = related.variants.edges[0]?.node.price.amount || related.priceRange.minVariantPrice.amount;
+                  const relatedImage = related.images.edges[0]?.node.url;
+                  return (
+                    <Link
+                      key={related.id}
+                      to={`/product/${related.handle}`}
+                      className="flex items-center gap-3 rounded-sm border border-gray-100 p-2 hover:border-teal-200 hover:bg-teal-50/40 transition-colors"
+                    >
+                      {relatedImage && (
+                        <img src={relatedImage} alt={related.title} className="h-12 w-12 rounded-sm object-cover" />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-gray-900 truncate">{related.title}</p>
+                        <p className="text-xs text-gray-600">${Number.parseFloat(relatedPrice).toFixed(2)}</p>
+                      </div>
+                      <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">View</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Variants */}
           {hasVariantChoices && (
@@ -718,6 +831,62 @@ export function ProductDetail() {
             <Button onClick={handleStickyAddToCart} disabled={combinationUnavailable}>
               {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
             </Button>
+          </div>
+        </div>
+      )}
+      {showProductCouponPopup && (
+        <div className="fixed inset-0 z-[72] flex items-center justify-center bg-black/55 p-4">
+          <div className="w-full max-w-md rounded-sm bg-white p-5 shadow-2xl sm:p-6">
+            <button
+              type="button"
+              onClick={closeProductCouponPopup}
+              aria-label="Close discount popup"
+              className="ml-auto block text-gray-500 hover:text-gray-900"
+            >
+              ✕
+            </button>
+            {!couponSuccess ? (
+              <>
+                <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Product exclusive offer</p>
+                <h3 className="mt-1 text-2xl font-bold text-gray-900">Get 5% off this order</h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  Enter your email and we&apos;ll send your 5% code now.
+                </p>
+                <form className="mt-4 space-y-3" onSubmit={onProductCouponSubmit}>
+                  <input
+                    type="email"
+                    value={couponEmail}
+                    onChange={(e) => setCouponEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full rounded-sm border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-teal-700 focus:outline-none"
+                    required
+                  />
+                  {couponError && <p className="text-xs text-red-600">{couponError}</p>}
+                  <button
+                    type="submit"
+                    disabled={couponSubmitting}
+                    className="w-full rounded-sm bg-teal-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-900 disabled:opacity-60"
+                  >
+                    {couponSubmitting ? 'Sending...' : 'Send my 5% code'}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="py-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">You&apos;re all set</p>
+                <h3 className="mt-1 text-xl font-bold text-gray-900">Check your email</h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  Your 5% code is on the way. Use it at checkout.
+                </p>
+                <button
+                  type="button"
+                  onClick={closeProductCouponPopup}
+                  className="mt-4 w-full rounded-sm border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                >
+                  Continue shopping
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
