@@ -2,9 +2,10 @@ import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { Button } from '../ui/Button';
 import { useEffect, useMemo, useState } from 'react';
-import { POLICY_SNIPPETS } from '../../lib/trustContent';
+import { POLICY_SNIPPETS, SUPPORT_EMAIL } from '../../lib/trustContent';
 import { Link } from 'react-router-dom';
 import { CheckoutConfidence } from '../CheckoutConfidence';
+import { CheckoutPaymentMethods } from '../payments/CheckoutPaymentMethods';
 
 const URGENCY_TIMER_KEY = 'courtlane_urgency_offer_ends_at';
 const HEADLINE_VARIANT_KEY = 'pb_cart_urgency_headline_variant';
@@ -24,6 +25,7 @@ export function CartDrawer() {
   const { isCartOpen, closeCart, items, updateQuantity, removeFromCart, cartTotal, createCheckout, isCheckingOut } = useCart();
   const [cutoffEndsAt, setCutoffEndsAt] = useState(0);
   const [cutoffRemainingMs, setCutoffRemainingMs] = useState(0);
+  const [openFaqId, setOpenFaqId] = useState<string | null>(null);
 
   // Prevent body scroll when cart is open
   useEffect(() => {
@@ -132,6 +134,40 @@ export function CartDrawer() {
     ? `Checkout before ${formatMs(cutoffRemainingMs)} to keep up to 30% total off.`
     : 'Use eligible offers at checkout for up to 30% total discounts.';
 
+  const faqItems = [
+    {
+      id: 'shipping',
+      question: 'When will my order ship?',
+      answer: (
+        <>
+          Orders are usually processed in <b>1-3 business days</b>. After dispatch, delivery is typically{' '}
+          <b>10-14 business days</b> depending on your location.
+        </>
+      ),
+      href: '/shipping',
+    },
+    {
+      id: 'returns',
+      question: 'Can I return if I change my mind?',
+      answer: (
+        <>
+          Yes. You can request a return within <b>30 days</b> for eligible unused items in original packaging.
+        </>
+      ),
+      href: '/returns',
+    },
+    {
+      id: 'support',
+      question: 'Do you have real support?',
+      answer: (
+        <>
+          We handle support by email. Contact us at <b>{SUPPORT_EMAIL}</b>.
+        </>
+      ),
+      href: `mailto:${SUPPORT_EMAIL}`,
+    },
+  ] as const;
+
   if (!isCartOpen) return null;
 
   return (
@@ -235,6 +271,51 @@ export function CartDrawer() {
                 {urgencyBody}
               </p>
             </div>
+
+            {/* Bottom-funnel reassurance near checkout */}
+            <div className="mb-4 rounded-sm border border-gray-200 bg-white p-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-900">Why buy now</p>
+              <div className="mt-2 space-y-1.5 text-xs text-gray-700">
+                <p>• <b>Limited-time express shipping</b></p>
+                <p>• <b>30-day guarantee</b></p>
+                <p>• <b>Email support</b> when you have questions</p>
+              </div>
+            </div>
+
+            <CheckoutPaymentMethods />
+
+            <div className="mt-3 mb-4 rounded-sm border border-gray-200 bg-white p-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-900">Quick answers</p>
+              <div className="mt-2 space-y-2">
+                {faqItems.map((item) => {
+                  const isOpen = openFaqId === item.id;
+                  return (
+                    <div key={item.id} className="border border-gray-100 rounded-sm">
+                      <button
+                        type="button"
+                        className="w-full px-3 py-2 flex items-center justify-between gap-3 text-left"
+                        onClick={() => setOpenFaqId(isOpen ? null : item.id)}
+                        aria-expanded={isOpen}
+                      >
+                        <span className="text-sm font-semibold text-gray-900">{item.question}</span>
+                        <span className="text-gray-400 shrink-0">{isOpen ? '—' : '+'}</span>
+                      </button>
+                      {isOpen && (
+                        <div className="px-3 pb-2 text-sm text-gray-700">
+                          <div className="leading-relaxed">{item.answer}</div>
+                          <div className="mt-1 text-xs">
+                            <Link to={item.href} className="text-teal-700 font-semibold hover:underline">
+                              Learn more
+                            </Link>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="flex justify-between text-base font-bold text-gray-900 mb-2">
               <p>Subtotal</p>
               <p>${cartTotal.toFixed(2)}</p>
