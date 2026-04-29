@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button';
 import { ProductDescription } from '../components/product/ProductDescription';
 import { Minus, Plus } from 'lucide-react';
 import { getSyntheticReviewSummary, getSyntheticReviews } from '../lib/syntheticReviews';
-import { TRUST_POINTS, POLICY_SNIPPETS } from '../lib/trustContent';
+import { TRUST_POINTS, POLICY_SNIPPETS, SUPPORT_EMAIL } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 import { PolicySnippetGrid } from '../components/trust/PolicySnippetGrid';
 import { CheckoutPaymentMethods } from '../components/payments/CheckoutPaymentMethods';
@@ -765,6 +765,20 @@ export function ProductDetail() {
           <div className="mt-8">
             <h2 className="text-lg font-bold text-gray-900 mb-3">Shipping, returns, and support</h2>
             <PolicySnippetGrid snippets={POLICY_SNIPPETS.productDetail} />
+          </div>
+
+          <div className="mt-6 rounded-sm border border-gray-200 bg-gray-50 p-4 sm:p-5">
+            <p className="text-xs font-bold uppercase tracking-wide text-teal-800">Proof before purchase</p>
+            <h3 className="mt-1 text-lg font-bold text-gray-900">Everything important is visible before checkout</h3>
+            <p className="mt-2 text-sm text-gray-700">
+              Shipping timelines, return eligibility, and support contact are public pages, not hidden in checkout screens.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold uppercase tracking-wide text-teal-700">
+              <Link to="/shipping" className="hover:underline">Shipping policy</Link>
+              <Link to="/returns" className="hover:underline">Returns policy</Link>
+              <Link to="/faq" className="hover:underline">FAQ</Link>
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:underline">Email support</a>
+            </div>
           </div>
 
           {/* Simulated Reviews (Research) */}

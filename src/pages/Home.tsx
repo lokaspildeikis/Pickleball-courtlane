@@ -6,7 +6,7 @@ import { Button } from '../components/ui/Button';
 import { WhyBuyCourtlane } from '../components/home/WhyBuyCourtlane';
 import { HomeBrandStory } from '../components/home/HomeBrandStory';
 import { PageMeta } from '../components/seo/PageMeta';
-import { TRUST_POINTS } from '../lib/trustContent';
+import { SUPPORT_EMAIL, TRUST_POINTS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
 
 const FEATURED_BUNDLE_IMAGE = '/images/featured-bundle-sale.png';
@@ -384,6 +384,43 @@ export function Home() {
               <Link to="/shop?filter=bundles">
                 <Button size="lg">Shop bundles</Button>
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-12 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-teal-700">Shop with confidence</p>
+            <h2 className="mt-2 text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900">
+              Real support and clear policies before you checkout
+            </h2>
+            <p className="mt-3 text-gray-600">
+              No marketplace mystery sellers. Every order goes through secure checkout with clear shipping and return pages you can read before placing an order.
+            </p>
+          </div>
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="rounded-sm border border-gray-200 bg-gray-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-900">Shipping expectations</p>
+              <p className="mt-2 text-sm text-gray-700">Orders are usually processed in 1-3 business days, with timelines explained in full before checkout.</p>
+              <Link to="/shipping" className="mt-3 inline-block text-xs font-semibold uppercase tracking-wide text-teal-700 hover:underline">
+                View shipping policy
+              </Link>
+            </div>
+            <div className="rounded-sm border border-gray-200 bg-gray-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-900">Returns and guarantee</p>
+              <p className="mt-2 text-sm text-gray-700">Not satisfied? Eligible unused items are covered by our 30-day money-back guarantee.</p>
+              <Link to="/returns" className="mt-3 inline-block text-xs font-semibold uppercase tracking-wide text-teal-700 hover:underline">
+                View returns policy
+              </Link>
+            </div>
+            <div className="rounded-sm border border-gray-200 bg-gray-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-gray-900">Need product help first?</p>
+              <p className="mt-2 text-sm text-gray-700">Questions about fit, bundles, or what to buy first? Reach out before placing your order.</p>
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="mt-3 inline-block text-xs font-semibold uppercase tracking-wide text-teal-700 hover:underline">
+                Email {SUPPORT_EMAIL}
+              </a>
             </div>
           </div>
         </div>
