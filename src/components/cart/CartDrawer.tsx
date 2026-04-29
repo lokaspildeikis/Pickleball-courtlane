@@ -148,10 +148,10 @@ export function CartDrawer() {
     },
     {
       id: 'returns',
-      question: 'Can I return if I change my mind?',
+      question: 'Not happy in 30 days?',
       answer: (
         <>
-          Yes. You can request a return within <b>30 days</b> for eligible unused items in original packaging.
+          You are covered by our <b>money-back guarantee</b> within <b>30 days</b> for eligible unused items.
         </>
       ),
       href: '/returns',
@@ -277,7 +277,7 @@ export function CartDrawer() {
               <p className="text-xs font-bold uppercase tracking-wide text-gray-900">Why buy now</p>
               <div className="mt-2 space-y-1.5 text-xs text-gray-700">
                 <p>• <b>Limited-time express shipping</b></p>
-                <p>• <b>30-day guarantee</b></p>
+                <p>• <b>Not happy in 30 days? Money-back guarantee</b></p>
                 <p>• <b>Email support</b> when you have questions</p>
               </div>
             </div>
@@ -331,7 +331,7 @@ export function CartDrawer() {
               You&apos;ll be redirected to our secure Shopify checkout to complete payment.
             </p>
             <p className="text-[11px] text-gray-600 mt-2">
-              Trusted by customers • encrypted checkout • 30-day guarantee.
+              Trusted by customers • encrypted checkout • 30-day money-back guarantee.
             </p>
             <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600">
               {POLICY_SNIPPETS.cart.map((snippet) =>
