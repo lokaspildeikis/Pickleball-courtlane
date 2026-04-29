@@ -37,6 +37,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const storefrontDomain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN as string | undefined;
+  const checkoutDomainOverride = import.meta.env.VITE_SHOPIFY_CHECKOUT_DOMAIN as string | undefined;
 
   // Load cart from local storage on mount
   useEffect(() => {
@@ -205,17 +206,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
 
       let redirectUrl = webUrl;
-      // If Shopify returns checkout on custom domain (mapped to Vercel),
-      // force redirect to myshopify domain so checkout path resolves correctly.
-      if (storefrontDomain) {
+      // Preserve Shopify-provided checkout URL by default.
+      // If needed, allow explicit hostname override via env:
+      // VITE_SHOPIFY_CHECKOUT_DOMAIN=checkout.yourdomain.com
+      if (checkoutDomainOverride) {
         try {
-          const parsed = new URL(webUrl, `https://${storefrontDomain}`);
-          parsed.hostname = storefrontDomain;
+          const parsed = new URL(webUrl);
+          parsed.hostname = checkoutDomainOverride;
           parsed.protocol = 'https:';
           redirectUrl = parsed.toString();
         } catch {
           // Keep original URL if parsing fails.
-          redirectUrl = `https://${storefrontDomain}${webUrl.startsWith('/') ? '' : '/'}${webUrl}`;
         }
       }
 
