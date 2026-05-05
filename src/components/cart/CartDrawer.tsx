@@ -185,7 +185,7 @@ export function CartDrawer() {
       />
 
       {/* Drawer */}
-      <div className="relative h-full w-full bg-white shadow-2xl animate-in slide-in-from-right duration-300 sm:max-w-xl lg:max-w-2xl flex flex-col">
+      <div className="relative h-full w-full bg-white shadow-2xl animate-in slide-in-from-right duration-300 sm:w-[560px] sm:max-w-none lg:w-[720px] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
