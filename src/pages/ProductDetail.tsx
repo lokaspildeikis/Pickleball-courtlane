@@ -479,6 +479,7 @@ export function ProductDetail() {
     addToCart({
       variantId: selectedVariant.id,
       productId: product.id,
+      productHandle: product.handle,
       title: product.title,
       variantTitle: selectedVariant.title,
       price: currentPriceValue,

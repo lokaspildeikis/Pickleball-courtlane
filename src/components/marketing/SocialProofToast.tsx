@@ -7,8 +7,8 @@ type AddToCartEvent = {
   };
 };
 
-const PEOPLE = ['Anna', 'Matas', 'Emilia', 'Jonas', 'Lina', 'Paulius', 'Greta', 'Lukas'];
-const CITIES = ['Vilnius', 'Kaunas', 'Klaipeda', 'Siauliai', 'Panevezys'];
+const PEOPLE = ['Michael', 'Emily', 'David', 'Ashley', 'James', 'Jessica', 'Chris', 'Sarah'];
+const CITIES = ['Austin', 'Miami', 'Phoenix', 'Denver', 'Seattle', 'Dallas', 'Atlanta', 'San Diego'];
 
 function randomFrom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];

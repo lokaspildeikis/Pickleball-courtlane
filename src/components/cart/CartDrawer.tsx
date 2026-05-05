@@ -6,6 +6,7 @@ import { POLICY_SNIPPETS, SUPPORT_EMAIL } from '../../lib/trustContent';
 import { Link } from 'react-router-dom';
 import { CheckoutConfidence } from '../CheckoutConfidence';
 import { CheckoutPaymentMethods } from '../payments/CheckoutPaymentMethods';
+import { getSyntheticReviewSummary } from '../../lib/syntheticReviews';
 
 const URGENCY_TIMER_KEY = 'courtlane_urgency_offer_ends_at';
 const HEADLINE_VARIANT_KEY = 'pb_cart_urgency_headline_variant';
@@ -19,6 +20,19 @@ function formatMs(ms: number): string {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   return [hours, minutes, seconds].map((part) => String(part).padStart(2, '0')).join(':');
+}
+
+function renderStars(rating: number) {
+  const fullStars = Math.round(rating);
+  return (
+    <div className="flex items-center gap-0.5" aria-hidden="true">
+      {Array.from({ length: 5 }).map((_, idx) => (
+        <span key={idx} className={idx < fullStars ? 'text-amber-500' : 'text-gray-300'}>
+          ★
+        </span>
+      ))}
+    </div>
+  );
 }
 
 export function CartDrawer() {
@@ -185,7 +199,7 @@ export function CartDrawer() {
       />
 
       {/* Drawer */}
-      <div className="relative h-full w-full bg-white shadow-2xl animate-in slide-in-from-right duration-300 sm:w-[560px] sm:max-w-none lg:w-[720px] flex flex-col">
+      <div className="relative h-full w-full bg-white shadow-2xl animate-in slide-in-from-right duration-300 sm:w-[85vw] lg:w-[70vw] xl:w-[60vw] max-w-[1200px] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
@@ -217,6 +231,12 @@ export function CartDrawer() {
             <ul className="space-y-6">
               {items.map((item) => (
                 <li key={item.id} className="flex gap-4">
+                  {(() => {
+                    const reviewSummary = item.productHandle
+                      ? getSyntheticReviewSummary(item.productHandle)
+                      : null;
+                    return (
+                      <>
                   <div className="w-20 h-20 bg-gray-50 rounded-sm overflow-hidden flex-shrink-0">
                     <img 
                       src={item.image} 
@@ -235,6 +255,14 @@ export function CartDrawer() {
                           <X size={16} />
                         </button>
                       </div>
+                      {reviewSummary && (
+                        <div className="mt-1 flex items-center gap-1.5 text-[11px] text-gray-600">
+                          {renderStars(reviewSummary.rating)}
+                          <span>
+                            {reviewSummary.rating.toFixed(1)} ({reviewSummary.reviewCount})
+                          </span>
+                        </div>
+                      )}
                       {item.variantTitle &&
                         item.variantTitle !== 'Default Title' &&
                         item.variantTitle !== 'One size' && (
@@ -259,6 +287,9 @@ export function CartDrawer() {
                       </button>
                     </div>
                   </div>
+                      </>
+                    );
+                  })()}
                 </li>
               ))}
             </ul>
@@ -268,8 +299,8 @@ export function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-gray-100 p-6 pb-24 md:pb-6 bg-gray-50">
-            <CheckoutConfidence className="mb-4" />
-            <div className="mb-4 rounded-sm border border-amber-300/70 bg-amber-50 p-3">
+            <CheckoutConfidence className="mb-3" />
+            <div className="mb-4 rounded-sm border border-amber-300/70 bg-amber-50 p-3 hidden">
               <p className="text-[11px] font-bold uppercase tracking-wide text-amber-900">
                 {urgencyHeadline}
               </p>
@@ -279,7 +310,7 @@ export function CartDrawer() {
             </div>
 
             {/* Bottom-funnel reassurance near checkout */}
-            <div className="mb-4 rounded-sm border border-gray-200 bg-white p-3">
+            <div className="mb-4 rounded-sm border border-gray-200 bg-white p-3 hidden">
               <p className="text-xs font-bold uppercase tracking-wide text-gray-900">Why buy now</p>
               <div className="mt-2 space-y-1.5 text-xs text-gray-700">
                 <p>• <b>Limited-time express shipping</b></p>
@@ -290,7 +321,7 @@ export function CartDrawer() {
 
             <CheckoutPaymentMethods />
 
-            <div className="mt-3 mb-4 rounded-sm border border-gray-200 bg-white p-3">
+            <div className="mt-3 mb-4 rounded-sm border border-gray-200 bg-white p-3 hidden">
               <p className="text-xs font-bold uppercase tracking-wide text-gray-900">Quick answers</p>
               <div className="mt-2 space-y-2">
                 {faqItems.map((item) => {
@@ -342,19 +373,19 @@ export function CartDrawer() {
               </p>
             )}
             <p className="text-xs text-gray-500 mb-4">Shipping and taxes calculated at checkout.</p>
-            <p className="text-xs font-semibold text-teal-800 mb-3">
+            <p className="text-xs font-semibold text-teal-800 mb-2">
               Order cutoff timer: <span className="tabular-nums">{formatMs(cutoffRemainingMs)}</span>
             </p>
             <Button size="full" onClick={handleCheckout} disabled={isCheckingOut} className="hidden md:flex">
               {isCheckingOut ? 'Redirecting...' : 'Checkout'}
             </Button>
-            <p className="text-xs text-gray-600 mt-3">
+            <p className="text-xs text-gray-600 mt-2">
               You&apos;ll be redirected to our secure Shopify checkout to complete payment.
             </p>
-            <p className="text-[11px] text-gray-600 mt-2">
+            <p className="text-[11px] text-gray-600 mt-1.5">
               Trusted by customers • encrypted checkout • 30-day money-back guarantee.
             </p>
-            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600">
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600 hidden">
               {POLICY_SNIPPETS.cart.map((snippet) =>
                 snippet.href ? (
                   <Link key={snippet.id} to={snippet.href} className="hover:text-teal-700">
