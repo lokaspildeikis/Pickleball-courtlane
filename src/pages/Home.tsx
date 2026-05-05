@@ -79,8 +79,8 @@ export function Home() {
   return (
     <div>
       <PageMeta
-        title="Courtlane — Low-impact pickleball for active adults"
-        description="Pickleball is a low-impact sport that is easy to learn and gentle on joints. Discover beginner-friendly gear and bundles for adults who want a safe, simple way to stay active."
+        title="Courtlane — Pickleball gear & starter bundles for every player"
+        description="Pickleball is a low-impact sport that is easy to learn and gentle on joints. Discover beginner-friendly gear and bundles for anyone who wants simple, quality equipment and a fun way to stay active."
         canonicalPath="/"
       />
       {/* Hero Section */}
@@ -98,12 +98,12 @@ export function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40">
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-10">
             <div className="lg:col-span-7 max-w-2xl">
-            {/* Hero copy for ad traffic focused on low-impact activity for adults 45+. */}
+            {/* Hero copy: inclusive, low-impact benefit for all ages and skill levels */}
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-tight">
-              Pickleball Starter Kits &amp; Bundles for <span className="text-teal-400 md:text-teal-500">Active Adults.</span>
+              Pickleball Starter Kits &amp; Bundles for <span className="text-teal-400 md:text-teal-500">Every Player.</span>
             </h1>
             <p className="text-base md:text-xl text-gray-300 mb-8 max-w-lg">
-              Pickleball is a low-impact game that is easy to learn, fun to play, and a safe way for adults 45+ to keep moving.
+              Pickleball is low-impact, easy to learn, and a fun way for anyone to stay active—beginners, families, and seasoned players alike.
             </p>
             <a
               href="https://usapickleball.org/docs/rules/USAP-Official-Rulebook.pdf"
@@ -244,12 +244,12 @@ export function Home() {
             </div>
             <div>
               <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
-                Why adults 45+ love it
+                Why people love it
               </h2>
               <ul className="space-y-3 text-gray-700">
                 <li className="flex items-center">
                   <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3" />
-                  Easy to learn, even if you have not played sports in years
+                  Easy to pick up whether you are brand new or crossing over from another sport
                 </li>
                 <li className="flex items-center">
                   <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3" />

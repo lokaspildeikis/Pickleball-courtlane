@@ -7,8 +7,7 @@ type AddToCartEvent = {
   };
 };
 
-const PEOPLE = ['Michael', 'Emily', 'David', 'Ashley', 'James', 'Jessica', 'Chris', 'Sarah'];
-const CITIES = ['Austin', 'Miami', 'Phoenix', 'Denver', 'Seattle', 'Dallas', 'Atlanta', 'San Diego'];
+const SHOPPERS = ['A shopper', 'Another customer', 'A customer'];
 
 function randomFrom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -23,12 +22,11 @@ export function SocialProofToast() {
       const custom = event as CustomEvent<AddToCartEvent['detail']>;
       const productTitle = custom.detail?.title || 'this item';
       const quantity = custom.detail?.quantity || 1;
-      const buyer = randomFrom(PEOPLE);
-      const city = randomFrom(CITIES);
+      const buyer = randomFrom(SHOPPERS);
       const minutesAgo = Math.floor(Math.random() * 8) + 1;
       const itemLabel = quantity > 1 ? `${quantity}x ${productTitle}` : productTitle;
 
-      setMessage(`${buyer} from ${city} added ${itemLabel} ${minutesAgo} min ago`);
+      setMessage(`${buyer} added ${itemLabel} ${minutesAgo} min ago`);
       setIsVisible(true);
     };
 
