@@ -636,6 +636,9 @@ export function ProductDetail() {
           <p className={`text-sm mb-6 ${selectedVariant.availableForSale ? 'text-emerald-700' : 'text-gray-500'}`}>
             {selectedVariant.availableForSale ? 'In stock and ready to process.' : 'Currently out of stock.'}
           </p>
+          <p className="mb-4 inline-flex items-center rounded-sm border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wide text-emerald-800">
+            Over 500+ fullfilled orders
+          </p>
           <TrustBar className="mb-6" />
 
           <div className="mb-6 rounded-sm border border-gray-200 bg-gray-50 p-4 space-y-2">

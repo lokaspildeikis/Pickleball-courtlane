@@ -372,6 +372,9 @@ export function CartDrawer() {
                 You save ${savingsAmount.toFixed(2)}!
               </p>
             )}
+            <p className="mb-3 inline-flex items-center rounded-sm border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wide text-emerald-800">
+              Over 500+ fullfilled orders
+            </p>
             <p className="text-xs text-gray-500 mb-4">Shipping and taxes calculated at checkout.</p>
             <p className="text-xs font-semibold text-teal-800 mb-2">
               Order cutoff timer: <span className="tabular-nums">{formatMs(cutoffRemainingMs)}</span>
