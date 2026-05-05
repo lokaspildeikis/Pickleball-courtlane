@@ -5,7 +5,6 @@ import { setMarketingEmail } from '../../lib/marketingIdentity';
 
 const DISMISS_KEY = 'pb_coupon_popup_dismissed_v1';
 const CLAIMED_KEY = 'pb_coupon_popup_claimed_v1';
-const POPUP_DELAY_MS = 12000;
 const DISMISS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
 export function NewCustomerCouponPopup() {
@@ -19,29 +18,34 @@ export function NewCustomerCouponPopup() {
   const couponCode = useMemo(() => resolveCouponCode(), []);
 
   useEffect(() => {
-    let timer: number | undefined;
     const forceOpen = typeof window !== 'undefined' && window.location.search.includes('couponPopup=1');
 
-    try {
-      const dismissedAt = Number(window.localStorage.getItem(DISMISS_KEY) || '0');
-      const hasClaimed = window.localStorage.getItem(CLAIMED_KEY) === '1';
-      const isDismissedRecently = dismissedAt > 0 && Date.now() - dismissedAt < DISMISS_COOLDOWN_MS;
-      if (!forceOpen && (isDismissedRecently || hasClaimed)) return;
-    } catch {
-      // Continue and still show popup if storage is unavailable.
+    const canOpenPopup = () => {
+      try {
+        const dismissedAt = Number(window.localStorage.getItem(DISMISS_KEY) || '0');
+        const hasClaimed = window.localStorage.getItem(CLAIMED_KEY) === '1';
+        const isDismissedRecently = dismissedAt > 0 && Date.now() - dismissedAt < DISMISS_COOLDOWN_MS;
+        if (!forceOpen && (isDismissedRecently || hasClaimed)) return false;
+      } catch {
+        // Continue and still show popup if storage is unavailable.
+      }
+      return true;
+    };
+
+    if (forceOpen && canOpenPopup()) {
+      setIsOpen(true);
+      trackCustomEvent('CouponPopupShown', { trigger: 'force_open', force_open: 1 });
+      return;
     }
 
-    timer = window.setTimeout(() => {
+    const onAddedToCart = () => {
+      if (!canOpenPopup()) return;
       setIsOpen(true);
-      trackCustomEvent('CouponPopupShown', {
-        delay_seconds: forceOpen ? 0 : 12,
-        force_open: forceOpen ? 1 : 0,
-      });
-    }, forceOpen ? 0 : POPUP_DELAY_MS);
-
-    return () => {
-      if (timer) window.clearTimeout(timer);
+      trackCustomEvent('CouponPopupShown', { trigger: 'add_to_cart', force_open: 0 });
     };
+
+    window.addEventListener('courtlane:add-to-cart', onAddedToCart);
+    return () => window.removeEventListener('courtlane:add-to-cart', onAddedToCart);
   }, []);
 
   const closePopup = () => {
