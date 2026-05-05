@@ -33,6 +33,30 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 const GOOGLE_ADS_CHECKOUT_SEND_TO = 'AW-18113764186/PXb4CP_xkaQcENq2qL1D';
 
+function getRoundedComparePrice(currentPrice: number): number {
+  const increased = currentPrice * 1.15;
+  const base = Math.floor(increased);
+  let rounded = base + 0.99;
+
+  if (rounded < increased) {
+    rounded = base + 1 + 0.99;
+  }
+
+  return Number(rounded.toFixed(2));
+}
+
+function hydrateLegacyCompareAtPrice(items: CartItem[]): CartItem[] {
+  return items.map((item) => {
+    if (typeof item.compareAtPrice === 'number' && item.compareAtPrice > item.price) {
+      return item;
+    }
+    return {
+      ...item,
+      compareAtPrice: getRoundedComparePrice(item.price),
+    };
+  });
+}
+
 function trackGoogleAdsCheckoutConversion(checkoutValue: number): void {
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
   window.gtag('event', 'conversion', {
@@ -56,7 +80,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const savedCart = localStorage.getItem('pb_cart');
     if (savedCart) {
       try {
-        setItems(JSON.parse(savedCart));
+        const parsedItems = JSON.parse(savedCart) as CartItem[];
+        setItems(hydrateLegacyCompareAtPrice(parsedItems));
       } catch (e) {
         console.error("Failed to parse cart", e);
       }
