@@ -482,6 +482,7 @@ export function ProductDetail() {
       title: product.title,
       variantTitle: selectedVariant.title,
       price: currentPriceValue,
+      compareAtPrice: isSale ? displayCompareAtValue : undefined,
       image: activeImage || product.images.edges[0]?.node.url,
       quantity: quantity
     });

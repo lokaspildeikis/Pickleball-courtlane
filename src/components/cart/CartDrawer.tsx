@@ -133,6 +133,12 @@ export function CartDrawer() {
   const urgencyBody = headlineVariant === 'deadline'
     ? `Checkout before ${formatMs(cutoffRemainingMs)} to keep up to 30% total off.`
     : 'Use eligible offers at checkout for up to 30% total discounts.';
+  const compareTotal = items.reduce((sum, item) => {
+    const compareAt = typeof item.compareAtPrice === 'number' ? item.compareAtPrice : 0;
+    return sum + compareAt * item.quantity;
+  }, 0);
+  const savingsAmount = compareTotal - cartTotal;
+  const showSavings = compareTotal > cartTotal;
 
   const faqItems = [
     {
@@ -318,8 +324,23 @@ export function CartDrawer() {
 
             <div className="flex justify-between text-base font-bold text-gray-900 mb-2">
               <p>Subtotal</p>
-              <p>${cartTotal.toFixed(2)}</p>
+              <div className="text-right">
+                {showSavings && (
+                  <p
+                    className="text-sm leading-tight"
+                    style={{ color: '#9ca3af', textDecoration: 'line-through' }}
+                  >
+                    ${compareTotal.toFixed(2)}
+                  </p>
+                )}
+                <p className="font-bold text-gray-900">${cartTotal.toFixed(2)}</p>
+              </div>
             </div>
+            {showSavings && (
+              <p className="mb-2 text-right text-[13px] font-semibold" style={{ color: '#1a7a4a' }}>
+                You save ${savingsAmount.toFixed(2)}!
+              </p>
+            )}
             <p className="text-xs text-gray-500 mb-4">Shipping and taxes calculated at checkout.</p>
             <p className="text-xs font-semibold text-teal-800 mb-3">
               Order cutoff timer: <span className="tabular-nums">{formatMs(cutoffRemainingMs)}</span>

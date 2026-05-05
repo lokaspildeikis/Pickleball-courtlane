@@ -10,6 +10,7 @@ export interface CartItem {
   title: string;
   variantTitle: string;
   price: number;
+  compareAtPrice?: number;
   image: string;
   quantity: number;
 }
@@ -30,6 +31,17 @@ interface CartContextType {
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+const GOOGLE_ADS_CHECKOUT_SEND_TO = 'AW-18113764186/PXb4CP_xkaQcENq2qL1D';
+
+function trackGoogleAdsCheckoutConversion(checkoutValue: number): void {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+  window.gtag('event', 'conversion', {
+    send_to: GOOGLE_ADS_CHECKOUT_SEND_TO,
+    value: Number(checkoutValue.toFixed(2)),
+    currency: 'EUR',
+    transaction_id: '',
+  });
+}
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -172,6 +184,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       value: checkoutValue,
       currency: 'USD',
     });
+    trackGoogleAdsCheckoutConversion(checkoutValue);
     try {
       const mutation = `
         mutation cartCreate($input: CartInput) {
