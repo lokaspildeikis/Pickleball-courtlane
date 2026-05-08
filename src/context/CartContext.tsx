@@ -208,7 +208,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       content_type: 'product',
       num_items: items.reduce((sum, item) => sum + item.quantity, 0),
       value: checkoutValue,
-      currency: 'USD',
+      currency: 'EUR',
     });
     trackGoogleAdsCheckoutConversion(checkoutValue);
     try {

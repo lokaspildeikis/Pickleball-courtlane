@@ -19,6 +19,7 @@ type MetaPixelFbq = {
 
 type PixelParams = Record<string, unknown>;
 const VISITOR_STATE_KEY = 'pb_visitor_state_v1';
+const PURCHASE_TRACKED_PREFIX = 'pb_purchase_tracked_';
 
 type VisitorState = {
   firstSeenAt: string;
@@ -54,6 +55,56 @@ export function trackCustomEvent(eventName: string, params?: PixelParams): void 
     return;
   }
   window.fbq('trackCustom', eventName);
+}
+
+export function trackPurchase(params: PixelParams): void {
+  track('Purchase', params);
+}
+
+function extractPurchaseValue(searchParams: URLSearchParams): number | null {
+  const valueCandidates = ['value', 'amount', 'total', 'order_total', 'total_price'];
+  for (const key of valueCandidates) {
+    const raw = searchParams.get(key);
+    if (!raw) continue;
+    const normalized = Number.parseFloat(raw.replace(',', '.'));
+    if (Number.isFinite(normalized) && normalized > 0) {
+      return normalized;
+    }
+  }
+  return null;
+}
+
+function maybeTrackPurchase(pathname: string, search: string): void {
+  if (typeof window === 'undefined' || !window.fbq) return;
+
+  const normalizedPath = pathname.toLowerCase();
+  const isThankYouRoute =
+    normalizedPath.includes('thank-you') ||
+    normalizedPath.includes('thank_you') ||
+    normalizedPath.includes('order-confirmation') ||
+    normalizedPath.includes('order_confirmation') ||
+    normalizedPath.includes('order-received') ||
+    normalizedPath.includes('order_received');
+
+  if (!isThankYouRoute) return;
+
+  const searchParams = new URLSearchParams(search);
+  const orderId =
+    searchParams.get('order_id') ||
+    searchParams.get('orderId') ||
+    searchParams.get('order') ||
+    searchParams.get('checkout_id') ||
+    `${pathname}${search}`;
+  const trackerKey = `${PURCHASE_TRACKED_PREFIX}${orderId}`;
+
+  if (window.sessionStorage.getItem(trackerKey) === '1') return;
+
+  const value = extractPurchaseValue(searchParams);
+  trackPurchase({
+    value: value ?? 0,
+    currency: 'EUR',
+  });
+  window.sessionStorage.setItem(trackerKey, '1');
 }
 
 function trackVisitorType(): void {
@@ -107,9 +158,11 @@ export function MetaPixel() {
     if (!window.fbq) return;
     if (!hasTrackedInitialRoute.current) {
       hasTrackedInitialRoute.current = true;
+      maybeTrackPurchase(location.pathname, location.search);
       return;
     }
     track('PageView');
+    maybeTrackPurchase(location.pathname, location.search);
   }, [location.pathname, location.search]);
 
   return null;

@@ -132,14 +132,10 @@ function getViewingNowState(handle: string): ViewingNowState {
 }
 
 function shouldShowPostAddCouponPopup(productHandle: string): boolean {
-  if (typeof window === 'undefined') return false;
-  const claimed = window.localStorage.getItem('pb_coupon_popup_claimed_v1') === '1';
-  if (claimed) return false;
-
-  const dismissKey = `pb_product_coupon_popup_dismissed_${productHandle}`;
-  const dismissedAt = Number(window.localStorage.getItem(dismissKey) || '0');
-  const recentlyDismissed = dismissedAt > 0 && Date.now() - dismissedAt < PRODUCT_POPUP_DISMISS_TTL_MS;
-  return !recentlyDismissed;
+  // Disabled to prevent duplicate add-to-cart popups.
+  // The global NewCustomerCouponPopup already handles add-to-cart events.
+  void productHandle;
+  return false;
 }
 
 function renderStars(rating: number) {
@@ -511,7 +507,7 @@ export function ProductDetail() {
       content_name: product.title,
       content_type: 'product',
       value: currentPriceValue * quantity,
-      currency: selectedVariant.price.currencyCode || 'USD',
+      currency: 'EUR',
       num_items: quantity,
     });
     if (product?.handle && shouldShowPostAddCouponPopup(product.handle)) {
