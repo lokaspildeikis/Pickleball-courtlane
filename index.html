@@ -41,9 +41,17 @@
     />
     <!-- Meta Pixel Code -->
     <script>
+      var fallbackMetaPixelId = '4195644437414374';
       var metaPixelId = '%VITE_META_PIXEL_ID%';
-      if (!metaPixelId || metaPixelId === '%VITE_META_PIXEL_ID%') {
-        metaPixelId = '4195644437414374';
+      if (typeof metaPixelId !== 'string') {
+        metaPixelId = fallbackMetaPixelId;
+      } else {
+        metaPixelId = metaPixelId.trim();
+        var unresolvedToken = metaPixelId === '%VITE_META_PIXEL_ID%';
+        var looksInvalid = !/^\d{10,20}$/.test(metaPixelId);
+        if (unresolvedToken || looksInvalid) {
+          metaPixelId = fallbackMetaPixelId;
+        }
       }
       !function(f,b,e,v,n,t,s)
       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
