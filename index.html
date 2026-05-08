@@ -41,6 +41,10 @@
     />
     <!-- Meta Pixel Code -->
     <script>
+      var metaPixelId = '%VITE_META_PIXEL_ID%';
+      if (!metaPixelId || metaPixelId === '%VITE_META_PIXEL_ID%') {
+        metaPixelId = '4195644437414374';
+      }
       !function(f,b,e,v,n,t,s)
       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -49,7 +53,7 @@
       t.src=v;s=b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t,s)}(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '4195644437414374');
+      fbq('init', metaPixelId);
       fbq('track', 'PageView');
     </script>
     <!-- End Meta Pixel Code -->
