@@ -338,6 +338,12 @@ export function ProductDetail() {
     );
   }
 
+  const displayTitle =
+    product.title ===
+    'COURTLANE RAW CARBON FIBER PICKLEBALL PADDLE SET – USAPA APPROVED, LIGHTWEIGHT GRAPHITE RACKETS FOR INDOOR & OUTDOOR PLAY'
+      ? 'Courtlane Carbon Fiber Paddle Set'
+      : product.title;
+
   const currentPriceValue = parseFloat(selectedVariant.price.amount);
   const existingCompareAtValue = selectedVariant.compareAtPrice ? parseFloat(selectedVariant.compareAtPrice.amount) : 0;
   const generatedCompareAtValue = getRoundedComparePrice(currentPriceValue);
@@ -381,18 +387,18 @@ export function ProductDetail() {
     .filter((candidate) => candidate.tags.some((tag) => productTags.includes(tag.toLowerCase())))
     .slice(0, 3);
   const whoItsFor = productTags.some((tag) => ['beginner', 'starter', 'bundle'].includes(tag))
-    ? 'Beginners and rec players who want a simple setup.'
+    ? 'For recreational to competitive players who want performance gear at an honest price.'
     : 'Everyday players who want reliable gear without overthinking specs.';
   const whatsIncluded = productTags.includes('bundle') || productTags.includes('bundles')
-    ? 'Selected essentials bundled together for faster setup.'
+    ? '2 raw carbon fiber paddles, 2 outdoor pickleballs, and a premium sling backpack — everything you need to play today.'
     : 'Core product shown above, ready for regular practice and play.';
-  const metaTitle = `${product.title} | Courtlane`;
-  const metaDescription = `${product.title} available at Courtlane. ${whoItsFor} ${whatsIncluded}`;
+  const metaTitle = `${displayTitle} | Courtlane`;
+  const metaDescription = `${displayTitle} available at Courtlane. ${whoItsFor} ${whatsIncluded}`;
   const productImage = product.images.edges[0]?.node.url;
   const productSchema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.title,
+    name: displayTitle,
     image: productImage ? [productImage] : undefined,
     description: metaDescription,
     sku: selectedVariant?.sku || undefined,
@@ -608,7 +614,7 @@ export function ProductDetail() {
         {/* Product Info */}
         <div className="w-full md:w-1/2 flex flex-col">
           <h1 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-2">
-            {product.title}
+            {displayTitle}
           </h1>
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
             {renderStars(visibleAverageRating || reviewSummary.rating)}
@@ -758,7 +764,7 @@ export function ProductDetail() {
                 onClick={handleAddToCart}
                 disabled={combinationUnavailable}
               >
-                {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
+                {combinationUnavailable ? 'Sold Out' : 'Add to Cart — Ships in 1-3 Days'}
               </Button>
             </div>
             <div className="mt-4 rounded-sm border border-gray-200 bg-gray-50 p-3 sm:p-4">
@@ -853,7 +859,7 @@ export function ProductDetail() {
               </button>
             </div>
             <Button onClick={handleStickyAddToCart} disabled={combinationUnavailable}>
-              {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
+              {combinationUnavailable ? 'Sold Out' : 'Add to Cart — Ships in 1-3 Days'}
             </Button>
           </div>
         </div>

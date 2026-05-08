@@ -147,7 +147,7 @@ export function Shop() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <PageMeta
         title="Shop Pickleball Gear & Starter Bundles | Courtlane"
-        description="Browse Courtlane pickleball gear, beginner starter kits, and bundles. Shop paddles, grips, bags, and court essentials with clear pricing."
+        description="Browse Courtlane pickleball gear, performance kits, and bundles. Shop paddles, grips, bags, and court essentials with clear pricing."
         canonicalPath="/shop"
       />
       
@@ -165,7 +165,7 @@ export function Shop() {
         </p>
         {currentFilter === 'all' && (
           <p className="text-gray-600 max-w-3xl mt-4 leading-relaxed">
-            Looking for the best pickleball starter kit or a beginner pickleball set that is simple to choose? Our pickleball bundle collection is built for first-time and recreational players who want a quick setup without guesswork. Compare starter kits, essential accessories, and ready-to-play bundle options in one place, then pick the set that fits your game, budget, and playing frequency.
+            Looking for the best pickleball performance kit or a pickleball set that is built for real play? Our pickleball bundle collection is built for all-level and recreational to competitive players who want a performance setup without guesswork. Compare performance kits, essential accessories, and ready-to-play bundle options in one place, then pick the set that fits your game, budget, and playing frequency.
           </p>
         )}
       </div>

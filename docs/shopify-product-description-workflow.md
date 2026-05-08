@@ -33,10 +33,10 @@ Use this HTML pattern for each product `body_html`:
 ## Product-type mapping guide
 
 - Balls: indoor/outdoor type (if known), pack size, material (if known), hole count (if known), rec/training use.
-- Paddles: build/material (if known), shape/style, grip feel/info, beginner/balanced use.
+- Paddles: build/material (if known), shape/style, grip feel/info, recreational to competitive/balanced use.
 - Bags: paddle capacity, compartments, shoes/balls/towel fit, carry use.
 - Towels/sweatbands/grips/accessories: comfort, sweat control, portability, practice/match convenience.
-- Bundles/kits: explicit included items and why the bundle is useful for beginners/convenience.
+- Bundles/kits: explicit included items and why the bundle is useful for recreational to competitive players/convenience.
 
 ## Recommended bulk update path in Shopify
 

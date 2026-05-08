@@ -153,7 +153,7 @@ export function About() {
           </h2>
           <p className="text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed">{closing.body}</p>
           <p className="text-sm text-gray-600 mb-5">
-            New to the game? Start with a <Link to="/shop?filter=bundles" className="text-teal-700 font-semibold hover:underline">beginner pickleball starter bundle</Link>.
+            New to the game? Start with a <Link to="/shop?filter=bundles" className="text-teal-700 font-semibold hover:underline">pickleball performance bundle</Link>.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
             <Link to={closing.primary.href}>

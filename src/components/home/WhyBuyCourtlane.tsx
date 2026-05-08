@@ -1,8 +1,8 @@
 const reasons = [
   {
-    title: 'Beginner-Friendly Gear',
+    title: 'Performance-First Gear',
     description:
-      'We focus on essentials that are easy to choose and easy to use, so new players can get on court without overthinking specs.',
+      'We focus on essentials that are built for real play, so recreational to competitive players can get on court without overthinking specs.',
   },
   {
     title: 'Straightforward Support',
@@ -17,7 +17,7 @@ const reasons = [
   {
     title: 'Court-Tested Essentials',
     description:
-      'Our lineup is intentionally tight around items everyday players actually use, from starter kits to repeat-purchase basics.',
+      'Our lineup is intentionally tight around items everyday players actually use, from performance kits to repeat-purchase essentials.',
   },
 ];
 

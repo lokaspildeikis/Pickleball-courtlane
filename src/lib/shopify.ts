@@ -87,7 +87,7 @@ const MOCK_PRODUCTS: Product[] = [
     handle: "pro-tour-overgrip-3-pack",
     title: "Pro Tour Overgrip (3-Pack)",
     description: "An easy overgrip refill for players who want a steadier paddle hold during rec games and practice. It is built to improve hand comfort and control when your sessions run long.",
-    descriptionHtml: "<p>An easy overgrip refill for players who want a steadier paddle hold during rec games and practice. It is built to improve hand comfort and control when your sessions run long.</p><ul><li>Includes: 3 overgrips</li><li>Surface feel: tacky, comfort-first wrap</li><li>Use case: everyday rec play and repeat practice sessions</li><li>Fit: wraps over most standard pickleball paddle handles</li></ul><p><strong>Who it's for:</strong> Beginners and casual players who want a simple grip upgrade without changing paddles.</p>",
+    descriptionHtml: "<p>An easy overgrip refill for players who want a steadier paddle hold during rec games and practice. It is built to improve hand comfort and control when your sessions run long.</p><ul><li>Includes: 3 overgrips</li><li>Surface feel: tacky, comfort-first wrap</li><li>Use case: everyday rec play and repeat practice sessions</li><li>Fit: wraps over most standard pickleball paddle handles</li></ul><p><strong>Who it's for:</strong> Recreational to competitive players who want a performance grip upgrade without changing paddles.</p>",
     priceRange: { minVariantPrice: { amount: "12.00", currencyCode: "USD" } },
     images: {
       edges: [
@@ -145,8 +145,8 @@ const MOCK_PRODUCTS: Product[] = [
     id: "gid://shopify/Product/4",
     handle: "starter-bundle",
     title: "The Court Starter Bundle",
-    description: "A practical starter setup that bundles core pickleball accessories into one easy purchase. It helps new players skip the guesswork and get court-ready faster.",
-    descriptionHtml: "<p>A practical starter setup that bundles core pickleball accessories into one easy purchase. It helps new players skip the guesswork and get court-ready faster.</p><ul><li>Includes: 3 overgrips, 1 paddle cover, 1 cooling towel</li><li>Bundle benefit: coordinated essentials in one order</li><li>Use case: first-time setup, gifting, or simple gear refresh</li><li>Value: lower bundled price vs buying each item separately</li></ul><p><strong>Who it's for:</strong> Beginners and casual players who want an all-in-one essentials kit.</p>",
+    description: "A practical performance setup that bundles core pickleball accessories into one easy purchase. It helps recreational to competitive players skip the guesswork and get court-ready faster.",
+    descriptionHtml: "<p>A practical performance setup that bundles core pickleball accessories into one easy purchase. It helps recreational to competitive players skip the guesswork and get court-ready faster.</p><ul><li>Includes: 3 overgrips, 1 paddle cover, 1 cooling towel</li><li>Bundle benefit: coordinated essentials in one order</li><li>Use case: all-level setup, gifting, or upgrading their game</li><li>Value: lower bundled price vs buying each item separately</li></ul><p><strong>Who it's for:</strong> Recreational to competitive players who want an all-in-one essentials kit.</p>",
     priceRange: { minVariantPrice: { amount: "45.00", currencyCode: "USD" } },
     compareAtPriceRange: { minVariantPrice: { amount: "54.00", currencyCode: "USD" } },
     images: {

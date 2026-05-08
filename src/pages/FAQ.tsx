@@ -6,7 +6,7 @@ export function FAQ() {
     {
       question: "What is Courtlane?",
       answer:
-        "Courtlane is an online store focused on pickleball accessories and essentials—think grips, balls, bags, covers, towels, and starter bundles. We cater to beginners and everyday recreational players who want practical gear and clear information, not marketplace guesswork.",
+        "Courtlane is an online store focused on pickleball accessories and essentials—think grips, balls, bags, covers, towels, and performance bundles. We cater to recreational to competitive players who want performance gear and clear information, not marketplace guesswork.",
     },
     {
       question: "What is your return policy?",
@@ -21,8 +21,8 @@ export function FAQ() {
       answer: "This depends on how often you play and how much you sweat. For casual players (1-2 times a week), we recommend changing it every month. For competitive players, you may want to change it every 1-2 weeks to maintain optimal tackiness."
     },
     {
-      question: "What is the best pickleball starter kit for beginners?",
-      answer: "The best starter kit is one that includes core essentials together, such as paddles, balls, and basic accessories. Most new players choose a simple beginner pickleball set or bundle so they can start playing right away without buying each item separately.",
+      question: "What is the best pickleball performance kit for recreational to competitive players?",
+      answer: "The best performance kit is one that includes core essentials together, such as paddles, balls, and essential accessories. Most players choose a performance pickleball set or bundle so they can start playing right away without buying each item separately.",
     },
     {
       question: "Is pickleball a low-impact sport for older adults?",
@@ -30,7 +30,7 @@ export function FAQ() {
     },
     {
       question: "What comes in a pickleball bundle?",
-      answer: "It depends on the specific product, but most pickleball bundles include a starter combination of paddles, balls, and useful accessories. Check each product page for exact bundle contents and options before checkout.",
+      answer: "It depends on the specific product, but most pickleball bundles include a performance combination of paddles, balls, and useful accessories. Check each product page for exact bundle contents and options before checkout.",
     },
   ];
 
@@ -75,7 +75,7 @@ export function FAQ() {
         <h2 className="text-xl font-bold text-gray-900 mb-2">Still have questions?</h2>
         <p className="text-gray-600 mb-6">Our support team is ready to help you out.</p>
         <p className="text-sm text-gray-600 mb-4">
-          Want to start quickly? <a href="/shop?filter=bundles" className="text-teal-700 font-semibold hover:underline">Shop starter kits &amp; bundles</a>.
+          Want to start quickly? <a href="/shop?filter=bundles" className="text-teal-700 font-semibold hover:underline">Shop performance kits &amp; bundles</a>.
         </p>
         <a 
           href={`mailto:${SUPPORT_EMAIL}`} 

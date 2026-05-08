@@ -57,7 +57,7 @@ const REVIEW_DATA: {
       { title: "Happy with this order", text: "Arrived in good condition and has worked well in regular use.", rating: 4.3 },
     ],
     "arronax-high-quality-custom-beach-tennis-bag-with-padel-racquet-backpack-pocket-tennis-sport-pickleball-paddle-backpack": [
-      { title: "Works as expected", text: "Everything feels practical and easy to use for everyday sessions.", rating: 4.7 },
+      { title: "Works as expected", text: "Everything feels practical and built for real play for everyday sessions.", rating: 4.7 },
       { title: "Solid purchase", text: "Good value for the price and the quality has been consistent.", rating: 4.5 },
       { title: "Would buy again", text: "No complaints so far and it has been reliable since it arrived.", rating: 4.4 },
     ],
@@ -99,7 +99,7 @@ const REVIEW_DATA: {
       { title: "Works as expected", text: "Reliable so far and does exactly what I hoped.", rating: 4.4 },
     ],
     bundles: [
-      { title: "Good starter set", text: "Everything feels cohesive and convenient in one package.", rating: 4.6 },
+      { title: "Good performance set", text: "Everything feels cohesive and convenient in one package.", rating: 4.6 },
       { title: "Convenient choice", text: "Saved time and made setup simple from the start.", rating: 4.5 },
       { title: "Nice value", text: "Good quality-to-price balance for a complete option.", rating: 4.4 },
       { title: "Easy choice", text: "Straightforward purchase and everything arrived as expected.", rating: 4.5 },
@@ -252,7 +252,7 @@ const REVIEW_INTENTS: ReviewIntent[] = [
   },
   {
     id: "ease",
-    titleOptions: ["super easy to use", "no setup headache", "easy from day one", "quick to get going"],
+    titleOptions: ["built for real play", "no setup headache", "ready from day one", "quick to get going"],
     lineAOptions: [
       "out of the box it was pretty straight forward.",
       "didnt need to figure out much, just started using it.",

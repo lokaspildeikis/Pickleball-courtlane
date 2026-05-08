@@ -8,7 +8,7 @@ Use this checklist to compare baseline vs post-release performance for the conve
 - `AddToCart` (existing): add-to-cart actions from product detail.
 - `InitiateCheckout` (existing): checkout start from cart drawer.
 - `ShopFilterChanged` (new custom): category filter usage on shop page.
-- `ShopIntentSelected` (new custom): quick-pick chip usage (`beginner`, `best-seller`, `budget`).
+- `ShopIntentSelected` (new custom): quick-pick chip usage (`best-seller`, `budget`, etc.).
 - `ShopSortChanged` (new custom): sorting behavior.
 - `ShopFiltersCleared` (new custom): filter reset behavior.
 - `StickyAtcShown` (new custom): sticky mobile ATC visibility.

@@ -39,7 +39,8 @@ function getBenefitCopy(product: Product): string {
 
   if (tags.includes('best-seller')) return 'Tried-and-true pick from repeat players.';
   if (tags.includes('bundle') || tags.includes('bundles')) return 'Everything you need in one easy setup.';
-  if (tags.includes('beginner') || tags.includes('starter')) return 'Easy-to-use setup for newer players.';
+  if (tags.includes('beginner') || tags.includes('starter'))
+    return 'Built for real play for recreational to competitive players.';
   if (tags.includes('grip') || tags.includes('grips')) return 'Quick comfort and control upgrade.';
   if (tags.includes('backpack') || tags.includes('backpacks')) return 'Carry court essentials without bulk.';
 

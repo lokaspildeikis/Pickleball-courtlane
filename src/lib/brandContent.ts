@@ -9,7 +9,7 @@ export const BRAND_NAME = "Courtlane";
 
 /** Short line used in the footer (and anywhere else you need a one-line blurb). */
 export const FOOTER_BRAND_BLURB =
-  "Pickleball accessories and essentials for beginners and everyday players—clear info, practical gear, and email support when you need it.";
+  "Pickleball accessories and essentials for recreational to competitive players—clear info, performance gear, and email support when you need it.";
 
 /** Homepage: compact credibility block above the fold area (keep brief). */
 export const HOME_BRAND_STORY = {
@@ -17,7 +17,7 @@ export const HOME_BRAND_STORY = {
   heading: "Built for real court days",
   paragraphs: [
     "Courtlane is a pickleball-focused shop for people who play for fun, exercise, and regular rec games—not for chasing pro hype or sorting through endless marketplace listings.",
-    "We stick to useful essentials and starter-friendly bundles, with straightforward descriptions and policies so you can grab what you need and get back to playing.",
+    "We stick to useful essentials and performance-ready bundles, with straightforward descriptions and policies so you can grab what you need and get back to playing.",
   ] as const,
   readMoreLabel: "About Courtlane",
   readMoreHref: "/about",
@@ -30,23 +30,23 @@ export const ABOUT_PAGE = {
   meta: {
     title: "About Courtlane — Pickleball essentials for everyday players",
     description:
-      "Courtlane sells pickleball accessories and essentials for beginners and recreational players. Simple gear, clear product info, secure checkout, and straightforward shipping & returns.",
+      "Courtlane sells pickleball accessories and essentials for recreational to competitive players. Performance gear, clear product info, secure checkout, and straightforward shipping & returns.",
   },
   /** Section 1 — intro */
   intro: {
     headline: "Pickleball essentials for everyday players",
     subheading:
-      "Courtlane exists so beginners and recreational players can find reliable gear without wading through generic sports copy or marketplace clutter. Useful products, plain language, simple support.",
+      "Courtlane exists so recreational to competitive players can find reliable gear without wading through generic sports copy or marketplace clutter. Useful products, plain language, straightforward support.",
     ctaPrimary: { label: "Shop essentials", href: "/shop" },
-    ctaSecondary: { label: "Browse starter bundles", href: "/shop?filter=bundles" },
+    ctaSecondary: { label: "Browse performance bundles", href: "/shop?filter=bundles" },
   },
   /** Section 2 — narrative (2–4 short paragraphs) */
   story: {
     paragraphs: [
       "Pickleball shopping shouldn’t feel like homework. Too many listings read the same, stack specs you’ll never use, or push “elite performance” when you just want a comfortable grip and gear that shows up when expected.",
-      "Courtlane is built for players who want simple, dependable accessories—balls, grips, bags, covers, towels, and bundled starters—chosen for everyday play, not showroom flex.",
+      "Courtlane is built for players who want dependable accessories—balls, grips, bags, covers, towels, and performance bundles—chosen for everyday play, not showroom flex.",
       "We’re not trying to sound like a giant sports brand. We’re aiming for the opposite: a small, pickleball-specific shelf where you can read what something does, see what’s in a bundle, and check shipping or returns without digging.",
-      "If you’re new, play a few times a week, or you’re buying for someone who does, that’s who this store is for. Questions before checkout? Email us—we’d rather answer plainly than leave you guessing.",
+      "Whether you play a few times a week or you’re upgrading their game, that’s who this store is for. Questions before checkout? Email us—we’d rather answer plainly than leave you guessing.",
     ] as const,
   },
   /** Section 3 — what we care about in selection */
@@ -55,7 +55,7 @@ export const ABOUT_PAGE = {
     items: [
       "Simple, useful gear you’ll actually use between sessions",
       "Everyday practicality over trend-chasing or spec overload",
-      "Beginner-friendly bundles when you want fewer decisions",
+      "Performance bundles when you want fewer decisions",
       "Straightforward support by email",
       "Clean product information—what it is, who it’s for, how to choose",
     ] as const,
@@ -86,7 +86,7 @@ export const ABOUT_PAGE = {
     body: "Browse the full catalog, start with a bundle, or get in touch if you want a quick recommendation.",
     primary: { label: "Shop all", href: "/shop" },
     secondary: [
-      { label: "Starter bundles", href: "/shop?filter=bundles" },
+      { label: "Performance bundles", href: "/shop?filter=bundles" },
       { label: "Contact support", href: `mailto:${SUPPORT_EMAIL}` },
     ] as const,
   },

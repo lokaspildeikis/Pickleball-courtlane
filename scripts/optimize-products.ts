@@ -117,7 +117,7 @@ function parseJsonObject<T>(raw: string): T {
 
 async function generateLuxuryContent(product: ShopifyProduct): Promise<AiResult> {
   const prompt = `
-You rewrite Shopify listings for Courtlane: pickleball essentials for beginners and everyday (rec) players.
+You rewrite Shopify listings for Courtlane: pickleball essentials for recreational to competitive players.
 
 Rules:
 1) Realistic claims only—no medical promises, fake warranties, or shipping guarantees not in the source.

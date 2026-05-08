@@ -13,7 +13,7 @@ export function Terms() {
           Terms of Service
         </h1>
         <p className="text-gray-600">
-          These terms explain the basic conditions for shopping on Courtlane.
+          These terms explain the essential conditions for shopping on Courtlane.
         </p>
       </div>
 

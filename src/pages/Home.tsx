@@ -79,8 +79,8 @@ export function Home() {
   return (
     <div>
       <PageMeta
-        title="Courtlane — Pickleball gear & starter bundles for every player"
-        description="Pickleball is a low-impact sport that is easy to learn and gentle on joints. Discover beginner-friendly gear and bundles for anyone who wants simple, quality equipment and a fun way to stay active."
+        title="Courtlane — Pickleball gear & performance bundles for every player"
+        description="Pickleball is a low-impact sport that is easy to learn and gentle on joints. Discover performance gear and bundles for anyone who wants quality equipment and a fun way to stay active."
         canonicalPath="/"
       />
       {/* Hero Section */}
@@ -100,10 +100,10 @@ export function Home() {
             <div className="lg:col-span-7 max-w-2xl">
             {/* Hero copy: inclusive, low-impact benefit for all ages and skill levels */}
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-tight">
-              Pickleball Starter Kits &amp; Bundles for <span className="text-teal-400 md:text-teal-500">Every Player.</span>
+              Pickleball Performance Kits &amp; Bundles for <span className="text-teal-400 md:text-teal-500">Every Player.</span>
             </h1>
             <p className="text-base md:text-xl text-gray-300 mb-8 max-w-lg">
-              Pickleball is low-impact, easy to learn, and a fun way for anyone to stay active—beginners, families, and seasoned players alike.
+              Pickleball is low-impact, easy to learn, and a fun way for anyone to stay active—recreational to competitive players, families, and seasoned players alike.
             </p>
             <a
               href="https://usapickleball.org/docs/rules/USAP-Official-Rulebook.pdf"
@@ -135,7 +135,7 @@ export function Home() {
               </Link>
             </div>
             <p className="mt-3 text-xs uppercase tracking-wide text-gray-300">
-              Beginner-friendly, low-impact, and easy to start
+              Low-impact, for all skill levels, and easy to start
             </p>
             <div className="mt-6 lg:hidden">
               <div className="flex gap-3 overflow-x-auto pb-2">
@@ -334,7 +334,7 @@ export function Home() {
           <div className="flex flex-col sm:flex-row gap-3">
             <Link to={starterBundleHref}>
               <Button size="lg" variant="outline" className="w-full sm:w-auto border-white text-white hover:bg-teal-600 hover:text-white">
-                View starter bundle
+                View performance bundle
               </Button>
             </Link>
             <Link to="/shop?filter=bundles">
@@ -362,15 +362,15 @@ export function Home() {
             <div className="w-full md:w-1/2 md:pl-8">
               <span className="text-teal-700 font-bold text-sm uppercase tracking-widest mb-2 block">Bundles</span>
               <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
-                Starter kits &amp; bundles
+                Performance kits &amp; bundles
               </h2>
               <p className="text-gray-600 mb-6 text-lg">
-                One place to grab paddles, balls, grips, and other basics together—less scrolling, fewer separate orders.
+                One place to grab paddles, balls, grips, and other essentials together—less scrolling, fewer separate orders.
               </p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center text-gray-700">
                   <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3"></div>
-                  Geared toward beginners and rec players
+                  Geared toward recreational to competitive players
                 </li>
                 <li className="flex items-center text-gray-700">
                   <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3"></div>

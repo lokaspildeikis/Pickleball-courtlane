@@ -148,13 +148,13 @@ function buildIntro(product: Product, type: ProductType, cleanedDescription: str
   }
 
   if (type === 'bundle') {
-    return `${product.title} bundles the basics so you can head to the court with less guesswork. Good when you want a simple, coordinated setup in one order.`;
+    return `${product.title} bundles the essentials so you can head to the court with less guesswork. Good when you want a performance, coordinated setup in one order.`;
   }
   if (type === 'bag') {
     return `${product.title} is for carrying paddles, layers, and small essentials between home and the court. It keeps your routine organized for practice and rec games.`;
   }
   if (type === 'paddle') {
-    return `${product.title} is a no-fuss paddle option for beginners and everyday players who want dependable feel during rec sessions.`;
+    return `${product.title} is a no-fuss paddle option for recreational to competitive players who want dependable feel during rec sessions.`;
   }
   if (type === 'balls') {
     return `${product.title} is meant for regular pickleball play—warm-ups, drills, and casual games with friends.`;
@@ -163,13 +163,13 @@ function buildIntro(product: Product, type: ProductType, cleanedDescription: str
     return `${product.title} helps shield your paddle from bumps and scratches in your bag or between sessions.`;
   }
   if (type === 'grip') {
-    return `${product.title} is an easy way to refresh how your handle feels without swapping paddles.`;
+    return `${product.title} is a built-for-real-play way to refresh how your handle feels without swapping paddles.`;
   }
   if (type === 'towel') {
     return `${product.title} is a small comfort item for sweat and quick wipe-downs during longer sessions.`;
   }
   if (type === 'sweat-accessory') {
-    return `${product.title} is a simple add-on for players who want a bit less distraction from heat and sweat on court.`;
+    return `${product.title} is an all-skill-level add-on for players who want a bit less distraction from heat and sweat on court.`;
   }
 
   return `${product.title} is part of Courtlane’s essentials lineup—gear picked for real rec play, not showroom filler.`;
@@ -187,14 +187,14 @@ function buildUseCase(product: Product, type: ProductType): string {
     if (price >= 70 || mentionsAdvanced) {
       return 'Best if you usually carry more gear and want pockets that keep things sorted.';
     }
-    return 'Best for beginners and rec players who want an easier way to pack for the court.';
+    return 'Best for recreational to competitive players who want an easier way to pack for the court.';
   }
 
   if (type === 'paddle') {
     if (mentionsAdvanced || price >= 90) {
       return 'Best if you play often and want a paddle that still feels approachable.';
     }
-    return 'Best for newer players and casual sessions where comfort and clarity matter more than chasing specs.';
+    return 'Best for all-level players and casual sessions where comfort and clarity matter more than chasing specs.';
   }
 
   if (type === 'balls') {
@@ -202,11 +202,11 @@ function buildUseCase(product: Product, type: ProductType): string {
   }
 
   if (type === 'bundle') {
-    return 'Best for gifts, first-time setups, or anyone refreshing the basics in one purchase.';
+    return 'Built for players who want real performance without paying $200+. Great for casual games, league play, and competitive matches.';
   }
 
   if (type === 'towel' || type === 'sweat-accessory') {
-    return 'Best for longer sessions, warm weather, or anyone who likes a quick refresh between games.';
+    return 'Best for longer sessions, warm weather, or anyone who likes a quick reset between games.';
   }
 
   if (type === 'grip' || type === 'cover') {

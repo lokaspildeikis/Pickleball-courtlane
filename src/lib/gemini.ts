@@ -29,7 +29,7 @@ export async function optimizeProduct(
   }
 
   const prompt = `
-You are editing copy for Courtlane, a pickleball essentials store for beginners and everyday (rec) players.
+You are editing copy for Courtlane, a pickleball essentials store for recreational to competitive players.
 
 BRAND VOICE:
 - Plain English, calm and specific. Pickleball and court context, not generic “sport life” fluff.
