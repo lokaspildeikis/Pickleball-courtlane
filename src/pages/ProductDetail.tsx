@@ -620,28 +620,24 @@ export function ProductDetail() {
                   </button>
                 ))}
               </div>
-              {product.images.edges.length > VISIBLE_THUMBNAILS && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setThumbnailStartIndex((prev) => Math.max(0, prev - 1))}
-                    disabled={thumbnailStartIndex === 0}
-                    aria-label="Show previous product photos"
-                    className="absolute -left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setThumbnailStartIndex((prev) => Math.min(maxThumbnailStartIndex, prev + 1))}
-                    disabled={thumbnailStartIndex >= maxThumbnailStartIndex}
-                    aria-label="Show next product photos"
-                    className="absolute -right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    ›
-                  </button>
-                </>
-              )}
+              <button
+                type="button"
+                onClick={() => setThumbnailStartIndex((prev) => Math.max(0, prev - 1))}
+                disabled={thumbnailStartIndex === 0}
+                aria-label="Show previous product photos"
+                className="absolute left-1 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full border border-gray-300 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={() => setThumbnailStartIndex((prev) => Math.min(maxThumbnailStartIndex, prev + 1))}
+                disabled={thumbnailStartIndex >= maxThumbnailStartIndex}
+                aria-label="Show next product photos"
+                className="absolute right-1 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full border border-gray-300 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                ›
+              </button>
             </div>
           )}
         </div>
