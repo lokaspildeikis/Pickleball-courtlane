@@ -145,8 +145,8 @@ function trackVisitorType(): void {
 
 export function MetaPixel() {
   const location = useLocation();
-  const hasTrackedInitialRoute = useRef(false);
   const hasTrackedVisitorType = useRef(false);
+  const lastTrackedRouteRef = useRef<string>('');
 
   useEffect(() => {
     if (hasTrackedVisitorType.current) return;
@@ -155,14 +155,29 @@ export function MetaPixel() {
   }, []);
 
   useEffect(() => {
-    if (!window.fbq) return;
-    if (!hasTrackedInitialRoute.current) {
-      hasTrackedInitialRoute.current = true;
+    const routeKey = `${location.pathname}${location.search}`;
+    if (lastTrackedRouteRef.current === routeKey) return;
+
+    const fireRouteEvents = () => {
+      if (!window.fbq) return false;
+      track('PageView');
       maybeTrackPurchase(location.pathname, location.search);
-      return;
-    }
-    track('PageView');
-    maybeTrackPurchase(location.pathname, location.search);
+      lastTrackedRouteRef.current = routeKey;
+      return true;
+    };
+
+    if (fireRouteEvents()) return;
+
+    let attempts = 0;
+    const maxAttempts = 20;
+    const retryInterval = window.setInterval(() => {
+      attempts += 1;
+      if (fireRouteEvents() || attempts >= maxAttempts) {
+        window.clearInterval(retryInterval);
+      }
+    }, 250);
+
+    return () => window.clearInterval(retryInterval);
   }, [location.pathname, location.search]);
 
   return null;
