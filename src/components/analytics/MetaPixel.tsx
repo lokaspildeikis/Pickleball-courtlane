@@ -5,6 +5,7 @@ declare global {
   interface Window {
     fbq?: MetaPixelFbq;
     _fbq?: MetaPixelFbq;
+    dataLayer?: Array<Record<string, unknown>>;
   }
 }
 
@@ -20,6 +21,7 @@ type MetaPixelFbq = {
 type PixelParams = Record<string, unknown>;
 const VISITOR_STATE_KEY = 'pb_visitor_state_v1';
 const PURCHASE_TRACKED_PREFIX = 'pb_purchase_tracked_';
+const META_PIXEL_ID = '4195644437414374';
 
 type VisitorState = {
   firstSeenAt: string;
@@ -28,7 +30,11 @@ type VisitorState = {
 };
 
 function track(eventName: string, params?: PixelParams): void {
-  if (typeof window === 'undefined' || !window.fbq) return;
+  if (typeof window === 'undefined') return;
+  if (!window.fbq) {
+    trackFallback(eventName, params);
+    return;
+  }
   if (params) {
     window.fbq('track', eventName, params);
     return;
@@ -49,12 +55,39 @@ export function trackInitiateCheckout(params: PixelParams): void {
 }
 
 export function trackCustomEvent(eventName: string, params?: PixelParams): void {
-  if (typeof window === 'undefined' || !window.fbq) return;
+  if (typeof window === 'undefined') return;
+  if (!window.fbq) {
+    trackFallback(eventName, params);
+    return;
+  }
   if (params) {
     window.fbq('trackCustom', eventName, params);
     return;
   }
   window.fbq('trackCustom', eventName);
+}
+
+function trackFallback(eventName: string, params?: PixelParams): void {
+  try {
+    const qs = new URLSearchParams({
+      id: META_PIXEL_ID,
+      ev: eventName,
+      dl: window.location.href,
+      rl: document.referrer || '',
+      if: 'false',
+      ts: String(Date.now()),
+      sw: String(window.screen?.width || 0),
+      sh: String(window.screen?.height || 0),
+      v: '2.9.201',
+    });
+    if (params && Object.keys(params).length > 0) {
+      qs.set('cd', JSON.stringify(params));
+    }
+    const img = new Image();
+    img.src = `https://www.facebook.com/tr?${qs.toString()}`;
+  } catch {
+    // Ignore fallback tracking failures.
+  }
 }
 
 export function trackPurchase(params: PixelParams): void {
@@ -98,6 +131,11 @@ function maybeTrackPurchase(pathname: string, search: string): void {
   const trackerKey = `${PURCHASE_TRACKED_PREFIX}${orderId}`;
 
   if (window.sessionStorage.getItem(trackerKey) === '1') return;
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: 'purchase',
+  });
 
   const value = extractPurchaseValue(searchParams);
   trackPurchase({
