@@ -15,6 +15,7 @@ import { TrustBar } from '../components/TrustBar';
 import { PageMeta } from '../components/seo/PageMeta';
 import { isValidEmail, resolveCouponCode, resolveCouponSignupEndpoint, submitCouponSignup } from '../lib/couponSignup';
 import { setMarketingEmail } from '../lib/marketingIdentity';
+import { getEstimatedDeliveryRange } from '../lib/deliveryEstimate';
 
 type VariantNode = Product['variants']['edges'][number]['node'];
 type VariantOption = { name: string; value: string };
@@ -409,6 +410,7 @@ export function ProductDetail() {
       url: `https://courtlane.us/product/${product.handle}`,
     },
   };
+  const estimatedDeliveryRange = getEstimatedDeliveryRange();
 
   const getVariantOptionValue = (variant: VariantNode, optionName: string): string => {
     const option = extractVariantOptions(variant).find((entry) => entry.name === optionName);
@@ -631,7 +633,10 @@ export function ProductDetail() {
             )}
           </div>
           <p className="text-sm text-gray-700 mb-3">
-            Orders are usually processed in 1-3 business days.
+            Estimated delivery: {estimatedDeliveryRange}
+          </p>
+          <p className="text-xs font-semibold text-teal-800 mb-3">
+            Fast delivery window - hard to beat.
           </p>
           <p className={`text-sm mb-6 ${selectedVariant.availableForSale ? 'text-emerald-700' : 'text-gray-500'}`}>
             {selectedVariant.availableForSale ? 'In stock and ready to process.' : 'Currently out of stock.'}

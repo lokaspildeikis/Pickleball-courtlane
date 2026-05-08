@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { CheckoutConfidence } from '../CheckoutConfidence';
 import { CheckoutPaymentMethods } from '../payments/CheckoutPaymentMethods';
 import { getSyntheticReviewSummary } from '../../lib/syntheticReviews';
+import { getEstimatedDeliveryRange } from '../../lib/deliveryEstimate';
 
 const URGENCY_TIMER_KEY = 'courtlane_urgency_offer_ends_at';
 const HEADLINE_VARIANT_KEY = 'pb_cart_urgency_headline_variant';
@@ -40,6 +41,7 @@ export function CartDrawer() {
   const [cutoffEndsAt, setCutoffEndsAt] = useState(0);
   const [cutoffRemainingMs, setCutoffRemainingMs] = useState(0);
   const [openFaqId, setOpenFaqId] = useState<string | null>(null);
+  const estimatedDeliveryRange = getEstimatedDeliveryRange();
 
   // Prevent body scroll when cart is open
   useEffect(() => {
@@ -160,8 +162,7 @@ export function CartDrawer() {
       question: 'When will my order ship?',
       answer: (
         <>
-          Orders are usually processed in <b>1-3 business days</b>. After dispatch, delivery is typically{' '}
-          <b>10-14 business days</b> depending on your location.
+          Estimated arrival for most orders: <b>{estimatedDeliveryRange}</b>.
         </>
       ),
       href: '/shipping',
@@ -376,6 +377,8 @@ export function CartDrawer() {
               Over 500+ fullfilled orders
             </p>
             <p className="text-xs text-gray-500 mb-4">Shipping and taxes calculated at checkout.</p>
+            <p className="text-xs font-semibold text-teal-800 mb-3">Estimated delivery: {estimatedDeliveryRange}</p>
+            <p className="text-[11px] font-semibold text-teal-700 mb-3">Fast delivery window - hard to beat.</p>
             <p className="text-xs font-semibold text-teal-800 mb-2">
               Order cutoff timer: <span className="tabular-nums">{formatMs(cutoffRemainingMs)}</span>
             </p>

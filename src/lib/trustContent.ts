@@ -26,7 +26,7 @@ export const TRUST_POINTS = {
   cartCheckout: [
     { id: "secure-checkout", label: "Secure Checkout" },
     { id: "returns-30", label: "30-Day Returns" },
-    { id: "shipping-estimate", label: "Delivery estimate shown in policy" },
+    { id: "shipping-estimate", label: "Estimated delivery shown before checkout" },
   ] satisfies TrustPoint[],
   homeTop: [
     { id: "pickleball-focused", label: "Pickleball-focused essentials" },
@@ -45,7 +45,7 @@ export const POLICY_SNIPPETS = {
     {
       id: "shipping",
       title: "Shipping",
-      text: "Orders are usually processed in 1-3 business days. Delivery is typically 10-14 business days after dispatch.",
+      text: "Orders are usually processed in 1-3 business days. A delivery date range is shown before checkout.",
       href: "/shipping",
     },
     {

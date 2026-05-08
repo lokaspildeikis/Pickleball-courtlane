@@ -1,11 +1,15 @@
+import { getEstimatedDeliveryRange } from "../lib/deliveryEstimate";
+
 type CheckoutConfidenceProps = {
   freeShipping?: boolean;
   className?: string;
 };
 
 export function CheckoutConfidence({ freeShipping = true, className = "" }: CheckoutConfidenceProps) {
+  const estimatedDeliveryRange = getEstimatedDeliveryRange();
   const bullets = [
     freeShipping ? "Free shipping on this order" : null,
+    `Estimated delivery: ${estimatedDeliveryRange}`,
     "Easy 30-day money-back guarantee",
     "Secure Shopify checkout - all payments encrypted",
   ].filter(Boolean) as string[];

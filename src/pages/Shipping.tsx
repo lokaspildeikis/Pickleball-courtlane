@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { PageMeta } from "../components/seo/PageMeta";
+import { getEstimatedDeliveryRange } from "../lib/deliveryEstimate";
 
 export function Shipping() {
+  const estimatedDeliveryRange = getEstimatedDeliveryRange();
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
       <PageMeta
@@ -24,6 +27,12 @@ export function Shipping() {
           <p className="text-gray-600 leading-relaxed">
             We offer free express shipping on all orders.
           </p>
+          <p className="mt-2 text-sm font-semibold text-teal-800">
+            Estimated delivery range: {estimatedDeliveryRange}
+          </p>
+          <p className="mt-1 text-xs font-semibold text-teal-700">
+            Fast delivery window - hard to beat.
+          </p>
         </section>
 
         <section className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm">
@@ -36,7 +45,9 @@ export function Shipping() {
         <section className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-2">Delivery Time</h2>
           <p className="text-gray-600 leading-relaxed">
-            After your order has been processed and shipped, delivery takes around 10-14 business days in most cases. Please note that this is an estimate, not a guarantee. Shipping times can vary depending on your country, local carrier operations, customs clearance, weather conditions, and seasonal demand.
+            Most orders currently arrive between <strong>{estimatedDeliveryRange}</strong>. This is an estimate
+            rather than a guarantee. Delivery timing can vary depending on your country, local carrier operations,
+            customs clearance, weather conditions, and seasonal demand.
           </p>
         </section>
 

@@ -1,14 +1,16 @@
+import { getEstimatedDeliveryRange } from "../lib/deliveryEstimate";
+
 type TrustBarProps = {
   className?: string;
 };
 
-const trustItems = [
-  { id: "money-back", icon: "↺", text: "30-Day Money-Back Guarantee" },
-  { id: "free-shipping", icon: "🚚", text: "Limited-time express shipping" },
-  { id: "secure-checkout", icon: "🔒", text: "Secure checkout - Encrypted payments" },
-];
-
 export function TrustBar({ className = "" }: TrustBarProps) {
+  const trustItems = [
+    { id: "money-back", icon: "↺", text: "30-Day Money-Back Guarantee" },
+    { id: "delivery-range", icon: "🚚", text: `Estimated delivery: ${getEstimatedDeliveryRange()}` },
+    { id: "secure-checkout", icon: "🔒", text: "Secure checkout - Encrypted payments" },
+  ];
+
   return (
     <div
       className={`rounded-sm border border-gray-200 bg-gray-50 p-3 sm:p-4 ${className}`}
