@@ -29,6 +29,7 @@ const VIEWING_MAX = 20;
 const VIEWING_REFRESH_MIN_MS = 15 * 60 * 1000;
 const VIEWING_REFRESH_MAX_MS = 30 * 60 * 1000;
 const PRODUCT_POPUP_DISMISS_TTL_MS = 12 * 60 * 60 * 1000;
+const VISIBLE_THUMBNAILS = 5;
 
 type ViewingNowState = {
   value: number;
@@ -165,6 +166,7 @@ export function ProductDetail() {
   const [selectedOptionValues, setSelectedOptionValues] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState<string>('');
+  const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0);
   const primaryCtaRef = useRef<HTMLDivElement | null>(null);
   const [showStickyMobileAtc, setShowStickyMobileAtc] = useState(false);
   const hasTrackedStickyShown = useRef(false);
@@ -239,6 +241,10 @@ export function ProductDetail() {
       currency: selectedVariant.price.currencyCode || 'USD',
     });
   }, [product, selectedVariant]);
+
+  useEffect(() => {
+    setThumbnailStartIndex(0);
+  }, [product?.id]);
 
   useEffect(() => {
     const target = primaryCtaRef.current;
@@ -417,6 +423,11 @@ export function ProductDetail() {
     },
   };
   const estimatedDeliveryRange = getEstimatedDeliveryRange();
+  const maxThumbnailStartIndex = Math.max(0, product.images.edges.length - VISIBLE_THUMBNAILS);
+  const visibleThumbnailEdges = product.images.edges.slice(
+    thumbnailStartIndex,
+    thumbnailStartIndex + VISIBLE_THUMBNAILS,
+  );
 
   const getVariantOptionValue = (variant: VariantNode, optionName: string): string => {
     const option = extractVariantOptions(variant).find((entry) => entry.name === optionName);
@@ -597,16 +608,40 @@ export function ProductDetail() {
           
           {/* Thumbnails */}
           {product.images.edges.length > 1 && (
-            <div className="grid grid-cols-5 gap-4">
-              {product.images.edges.map((img, idx) => (
-                <button 
-                  key={idx}
-                  onClick={() => setActiveImage(img.node.url)}
-                  className={`aspect-square bg-gray-50 rounded-sm overflow-hidden border-2 transition-colors ${activeImage === img.node.url ? 'border-teal-800' : 'border-transparent hover:border-gray-300'}`}
-                >
-                  <img src={img.node.url} alt="" className="w-full h-full object-contain" />
-                </button>
-              ))}
+            <div className="relative">
+              <div className="grid grid-cols-5 gap-4">
+                {visibleThumbnailEdges.map((img) => (
+                  <button
+                    key={img.node.url}
+                    onClick={() => setActiveImage(img.node.url)}
+                    className={`aspect-square bg-gray-50 rounded-sm overflow-hidden border-2 transition-colors ${activeImage === img.node.url ? 'border-teal-800' : 'border-transparent hover:border-gray-300'}`}
+                  >
+                    <img src={img.node.url} alt="" className="w-full h-full object-contain" />
+                  </button>
+                ))}
+              </div>
+              {product.images.edges.length > VISIBLE_THUMBNAILS && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setThumbnailStartIndex((prev) => Math.max(0, prev - 1))}
+                    disabled={thumbnailStartIndex === 0}
+                    aria-label="Show previous product photos"
+                    className="absolute -left-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setThumbnailStartIndex((prev) => Math.min(maxThumbnailStartIndex, prev + 1))}
+                    disabled={thumbnailStartIndex >= maxThumbnailStartIndex}
+                    aria-label="Show next product photos"
+                    className="absolute -right-3 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>

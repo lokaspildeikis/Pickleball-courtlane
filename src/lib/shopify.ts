@@ -312,7 +312,7 @@ export async function getProduct(handle: string) {
             currencyCode
           }
         }
-        images(first: 5) {
+        images(first: 50) {
           edges {
             node {
               url
