@@ -18,6 +18,10 @@
     {
       "path": "/api/cart-abandonment-cron",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/newsletter-cron",
+      "schedule": "15 */4 * * *"
     }
   ]
 }

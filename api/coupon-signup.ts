@@ -24,6 +24,38 @@ function envTrim(key: string): string | undefined {
   return t;
 }
 
+const NEWSLETTER_SUBSCRIBERS_KEY = 'newsletter:subscribers';
+
+async function redisPipelineCoupon(args: string[][]): Promise<void> {
+  const url = envTrim('UPSTASH_REDIS_REST_URL');
+  const token = envTrim('UPSTASH_REDIS_REST_TOKEN');
+  if (!url || !token) return;
+
+  const response = await fetch(`${url}/pipeline`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(args),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Redis pipeline failed: ${response.status} ${text}`);
+  }
+  const data = (await response.json()) as Array<{ error?: string }>;
+  const first = data?.[0];
+  if (first?.error) throw new Error(first.error);
+}
+
+async function recordMarketingSubscriber(email: string): Promise<void> {
+  try {
+    await redisPipelineCoupon([['SADD', NEWSLETTER_SUBSCRIBERS_KEY, email]]);
+  } catch (err) {
+    console.error('Newsletter subscriber recording failed (signup still OK):', err);
+  }
+}
+
 function collectSmtpMissing(): {
   missing: string[];
   smtpHost: string | undefined;
@@ -157,6 +189,8 @@ export default async function handler(req: any, res: any) {
       text: `Welcome to Courtlane! Your 5% discount code is ${couponCode}. Shop here: ${shopUrl}`,
       html,
     });
+
+    await recordMarketingSubscriber(email);
 
     if (adminNotifyEmail) {
       const timestamp = new Date().toISOString();
