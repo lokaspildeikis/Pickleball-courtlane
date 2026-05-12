@@ -400,6 +400,7 @@ async function sendNewsletterEmails(recipients: string[]): Promise<{ sent: numbe
   const fromEmail = envTrim('COUPON_FROM_EMAIL') || smtpUser;
   const fromName = envTrim('COUPON_FROM_NAME') || 'Courtlane';
   const supportEmail = envTrim('COUPON_SUPPORT_EMAIL') || fromEmail;
+  const bccEmail = envTrim('NEWSLETTER_BCC_EMAIL') || envTrim('COUPON_ADMIN_NOTIFY_EMAIL');
   if (!smtpHost || !smtpUser || !smtpPass || !fromEmail) {
     throw new Error('SMTP env vars are missing (reuse COUPON_SMTP_* / COUPON_FROM_EMAIL)');
   }
@@ -429,6 +430,7 @@ async function sendNewsletterEmails(recipients: string[]): Promise<{ sent: numbe
       await transporter.sendMail({
         from: `${fromName} <${fromEmail}>`,
         to,
+        bcc: bccEmail || undefined,
         replyTo: supportEmail || undefined,
         subject: copy.subject,
         text: copy.text,
