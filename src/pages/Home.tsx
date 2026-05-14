@@ -99,14 +99,14 @@ export function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-10">
             <div className="lg:col-span-7 max-w-2xl">
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-tight">
-              Everything you need to <span className="text-teal-400 md:text-teal-500">start playing pickleball.</span>
+              Everything You Need to <span className="text-teal-400 md:text-teal-500">Start Playing Pickleball</span>
             </h1>
             <p className="text-base md:text-xl text-gray-300 mb-8 max-w-lg">
-              Paddle, balls, and bag in one complete kit. Ships in 3 days, delivered in under a week. Built for new players who want to skip the research and get on the court.
+              Complete starter kits, beginner-friendly gear, and free shipping on every order.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to={starterBundleHref}>
-                <Button size="lg" className="w-full sm:w-auto">Shop Starter Kits — From $97</Button>
+              <Link to="/shop?filter=bundles">
+                <Button size="lg" className="w-full sm:w-auto">Shop Starter Kits</Button>
               </Link>
               <a href="#how-it-works">
                 <span className="inline-flex items-center h-full text-sm font-semibold uppercase tracking-wide text-gray-200 hover:text-white transition-colors">
