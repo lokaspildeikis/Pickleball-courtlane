@@ -314,7 +314,7 @@ export function CartDrawer() {
             <div className="mb-4 rounded-sm border border-gray-200 bg-white p-3 hidden">
               <p className="text-xs font-bold uppercase tracking-wide text-gray-900">Why buy now</p>
               <div className="mt-2 space-y-1.5 text-xs text-gray-700">
-                <p>• <b>Limited-time express shipping</b></p>
+                <p>• <b>Free shipping on every order</b></p>
                 <p>• <b>Not happy in 30 days? Money-back guarantee</b></p>
                 <p>• <b>Email support</b> when you have questions</p>
               </div>

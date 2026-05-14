@@ -16,8 +16,8 @@ export const HOME_BRAND_STORY = {
   /** Section heading — one short line */
   heading: "Built for real court days",
   paragraphs: [
-    "Courtlane is a pickleball-focused shop for people who play for fun, exercise, and regular rec games—not for chasing pro hype or sorting through endless marketplace listings.",
-    "We stick to useful essentials and performance-ready bundles, with straightforward descriptions and policies so you can grab what you need and get back to playing.",
+    "Courtlane is a beginner-friendly pickleball shop. We put together the gear new players actually need — a quality paddle, real outdoor balls, and a bag that holds it all — so you can stop researching and start playing.",
+    "No marketplace clutter, no spec overload. One straightforward kit, shipped to your door.",
   ] as const,
   readMoreLabel: "About Courtlane",
   readMoreHref: "/about",

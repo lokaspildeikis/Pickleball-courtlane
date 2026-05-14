@@ -161,13 +161,8 @@ export function Shop() {
            currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1)}
         </h1>
         <p className="text-gray-500 max-w-2xl">
-          Practical pickleball gear for everyday play—paddles, balls, bags, and small essentials without marketplace clutter.
+          Everything you need to start playing pickleball. Start with a Starter Kit if you're new — it has the paddle, balls, and bag in one box. Or shop individual essentials below.
         </p>
-        {currentFilter === 'all' && (
-          <p className="text-gray-600 max-w-3xl mt-4 leading-relaxed">
-            Looking for the best pickleball performance kit or a pickleball set that is built for real play? Our pickleball bundle collection is built for all-level and recreational to competitive players who want a performance setup without guesswork. Compare performance kits, essential accessories, and ready-to-play bundle options in one place, then pick the set that fits your game, budget, and playing frequency.
-          </p>
-        )}
       </div>
 
       {/* Controls */}
@@ -241,14 +236,14 @@ export function Shop() {
       <div className="mb-8 flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Quick picks:</span>
         <button
-          onClick={() => handleIntentChange('beginner')}
+          onClick={() => handleFilterChange('bundles')}
           className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition-colors ${
-            currentIntent === 'beginner'
+            currentFilter === 'bundles'
               ? 'border-teal-700 bg-teal-50 text-teal-800'
               : 'border-gray-300 text-gray-700 hover:border-gray-400'
           }`}
         >
-          Beginner Friendly
+          Starter Kits
         </button>
         <button
           onClick={() => handleIntentChange('best-seller')}
@@ -258,7 +253,7 @@ export function Shop() {
               : 'border-gray-300 text-gray-700 hover:border-gray-400'
           }`}
         >
-          Best Seller
+          Best Sellers
         </button>
         <button
           onClick={() => handleIntentChange('budget')}
@@ -268,7 +263,7 @@ export function Shop() {
               : 'border-gray-300 text-gray-700 hover:border-gray-400'
           }`}
         >
-          Budget Picks
+          Under $30
         </button>
         {hasActiveFilters && (
           <button

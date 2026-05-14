@@ -22,7 +22,7 @@ function formatDate(date: Date, locale: string): string {
 
 export function getEstimatedDeliveryRange(config: DeliveryEstimateConfig = {}): string {
   const {
-    minDaysAfterToday = 8,
+    minDaysAfterToday = 5,
     maxDaysAfterToday = 10,
     baseDate = new Date(),
     locale = DEFAULT_LOCALE,

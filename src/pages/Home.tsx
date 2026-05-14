@@ -79,8 +79,8 @@ export function Home() {
   return (
     <div>
       <PageMeta
-        title="Courtlane — Pickleball gear & performance bundles for every player"
-        description="Pickleball is a low-impact sport that is easy to learn and gentle on joints. Discover performance gear and bundles for anyone who wants quality equipment and a fun way to stay active."
+        title="Courtlane — Pickleball Starter Kits for Beginners"
+        description="Everything you need to start playing pickleball. One kit with paddle, balls, and bag. Ships in 3 days. Built for new players who want to skip the research and get on the court."
         canonicalPath="/"
       />
       {/* Hero Section */}
@@ -98,44 +98,24 @@ export function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40">
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-10">
             <div className="lg:col-span-7 max-w-2xl">
-            {/* Hero copy: inclusive, low-impact benefit for all ages and skill levels */}
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-tight">
-              Pickleball Performance Kits &amp; Bundles for <span className="text-teal-400 md:text-teal-500">Every Player.</span>
+              Everything you need to <span className="text-teal-400 md:text-teal-500">start playing pickleball.</span>
             </h1>
             <p className="text-base md:text-xl text-gray-300 mb-8 max-w-lg">
-              Pickleball is low-impact, easy to learn, and a fun way for anyone to stay active—recreational to competitive players, families, and seasoned players alike.
+              Paddle, balls, and bag in one complete kit. Ships in 3 days, delivered in under a week. Built for new players who want to skip the research and get on the court.
             </p>
-            <a
-              href="https://usapickleball.org/docs/rules/USAP-Official-Rulebook.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-sm font-semibold uppercase tracking-wide text-teal-300 hover:text-teal-200 transition-colors mb-6"
-            >
-              Download official pickleball rules (PDF)
-            </a>
-            <div className="mb-6">
-              <a
-                href="https://www.youtube.com/watch?v=fTvPYdKZqO0"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center text-sm font-semibold uppercase tracking-wide text-teal-300 hover:text-teal-200 transition-colors"
-              >
-                Watch how to play pickleball (YouTube)
-              </a>
-            </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to={starterBundleHref}>
-                <Button size="lg" className="w-full sm:w-auto">Get Started With Pickleball</Button>
+                <Button size="lg" className="w-full sm:w-auto">Shop Starter Kits — From $97</Button>
               </Link>
-              {/* Keep one primary action while offering a lower-emphasis path for bundle shoppers. */}
-              <Link to="/shop?filter=bundles">
+              <a href="#how-it-works">
                 <span className="inline-flex items-center h-full text-sm font-semibold uppercase tracking-wide text-gray-200 hover:text-white transition-colors">
-                  Compare all bundles
+                  How It Works
                 </span>
-              </Link>
+              </a>
             </div>
             <p className="mt-3 text-xs uppercase tracking-wide text-gray-300">
-              Low-impact, for all skill levels, and easy to start
+              30-Day Money-Back · Free Shipping · 1–3 Day Processing
             </p>
             <div className="mt-6 lg:hidden">
               <div className="flex gap-3 overflow-x-auto pb-2">
@@ -217,11 +197,6 @@ export function Home() {
             </div>
           </div>
         </div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 md:pb-10">
-          <p className="inline-flex items-center rounded-sm border border-amber-300/40 bg-amber-300/15 px-3 py-1.5 text-xs md:text-sm font-bold uppercase tracking-wide text-amber-200">
-            Limited-time free express shipping on all orders
-          </p>
-        </div>
       </section>
 
       <section className="border-b border-gray-200 bg-white">
@@ -229,43 +204,6 @@ export function Home() {
           <TrustPointsRow points={TRUST_POINTS.homeTop} className="sm:grid-cols-2 lg:grid-cols-3" />
         </div>
       </section>
-
-      <section className="bg-white py-12 md:py-16 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
-                What is pickleball?
-              </h2>
-              <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-                Pickleball is a paddle game that mixes parts of tennis, badminton, and ping-pong.
-                It is played on a smaller court, so there is less running and less impact on knees, hips, and back.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
-                Why people love it
-              </h2>
-              <ul className="space-y-3 text-gray-700">
-                <li className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3" />
-                  Easy to pick up whether you are brand new or crossing over from another sport
-                </li>
-                <li className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3" />
-                  Gentle on joints compared to high-impact workouts
-                </li>
-                <li className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3" />
-                  A safe, social way to stay active at your own pace
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <HomeBrandStory />
 
       {/* Store confidence strip */}
       <section className="bg-teal-900 text-teal-50 py-6">
@@ -275,7 +213,7 @@ export function Home() {
               <span className="text-sm font-medium uppercase tracking-wide">Secure Checkout</span>
             </div>
             <div className="pt-4 md:pt-0">
-              <span className="text-sm font-medium uppercase tracking-wide">Limited-time express shipping</span>
+              <span className="text-sm font-medium uppercase tracking-wide">Free Shipping on Every Order</span>
             </div>
             <div className="pt-4 md:pt-0">
               <span className="text-sm font-medium uppercase tracking-wide">30-Day Money-Back Guarantee</span>
@@ -323,6 +261,43 @@ export function Home() {
           </Link>
         </div>
       </section>
+
+      <section className="bg-white py-12 md:py-16 border-b border-gray-200" id="how-it-works">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
+                What is pickleball?
+              </h2>
+              <p className="text-gray-600 text-base md:text-lg leading-relaxed">
+                Pickleball is a paddle game that mixes parts of tennis, badminton, and ping-pong.
+                It is played on a smaller court, so there is less running and less impact on knees, hips, and back.
+              </p>
+            </div>
+            <div>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-4">
+                Why people love it
+              </h2>
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-center">
+                  <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3" />
+                  Easy to pick up whether you are brand new or crossing over from another sport
+                </li>
+                <li className="flex items-center">
+                  <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3" />
+                  Gentle on joints compared to high-impact workouts
+                </li>
+                <li className="flex items-center">
+                  <div className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-3" />
+                  A safe, social way to stay active at your own pace
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <HomeBrandStory />
 
       <section className="bg-teal-700 text-white py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">

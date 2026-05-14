@@ -23,15 +23,12 @@ export function Shipping() {
 
       <div className="space-y-8">
         <section className="bg-white border border-gray-200 p-6 rounded-sm shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Free express shipping</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Free shipping on all orders</h2>
           <p className="text-gray-600 leading-relaxed">
-            We offer free express shipping on all orders.
+            We offer free shipping on every order — no minimum purchase required.
           </p>
           <p className="mt-2 text-sm font-semibold text-teal-800">
-            Estimated delivery range: {estimatedDeliveryRange}
-          </p>
-          <p className="mt-1 text-xs font-semibold text-teal-700">
-            Fast delivery window - hard to beat.
+            Estimated delivery: {estimatedDeliveryRange} (5–10 business days)
           </p>
         </section>
 

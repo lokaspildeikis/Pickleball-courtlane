@@ -21,20 +21,7 @@ type VariantNode = Product['variants']['edges'][number]['node'];
 type VariantOption = { name: string; value: string };
 
 const FALLBACK_OPTION_NAMES = ['Ball color', 'Sweatband color', 'Towel color'];
-const URGENCY_TIMER_KEY = 'courtlane_urgency_offer_ends_at';
-const URGENCY_DURATION_MS = 2 * 60 * 60 * 1000;
-const VIEWING_NOW_KEY_PREFIX = 'courtlane_viewing_now_';
-const VIEWING_MIN = 1;
-const VIEWING_MAX = 20;
-const VIEWING_REFRESH_MIN_MS = 15 * 60 * 1000;
-const VIEWING_REFRESH_MAX_MS = 30 * 60 * 1000;
-const PRODUCT_POPUP_DISMISS_TTL_MS = 12 * 60 * 60 * 1000;
 const VISIBLE_THUMBNAILS = 5;
-
-type ViewingNowState = {
-  value: number;
-  nextUpdateAt: number;
-};
 
 function extractVariantOptions(variant: VariantNode): VariantOption[] {
   if (variant.selectedOptions?.length) {
@@ -62,73 +49,6 @@ function getRoundedComparePrice(currentPrice: number): number {
   }
 
   return Number(rounded.toFixed(2));
-}
-
-function getOfferEndTime(): number {
-  if (typeof window === 'undefined') return Date.now() + URGENCY_DURATION_MS;
-
-  const stored = window.localStorage.getItem(URGENCY_TIMER_KEY);
-  const parsed = stored ? Number.parseInt(stored, 10) : NaN;
-
-  if (Number.isFinite(parsed) && parsed > Date.now()) {
-    return parsed;
-  }
-
-  const nextEnd = Date.now() + URGENCY_DURATION_MS;
-  window.localStorage.setItem(URGENCY_TIMER_KEY, String(nextEnd));
-  return nextEnd;
-}
-
-function formatRemaining(ms: number): string {
-  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-
-  return [hours, minutes, seconds]
-    .map((value) => String(value).padStart(2, '0'))
-    .join(':');
-}
-
-function getRandomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function buildViewingNowState(now: number): ViewingNowState {
-  return {
-    value: getRandomInt(VIEWING_MIN, VIEWING_MAX),
-    nextUpdateAt: now + getRandomInt(VIEWING_REFRESH_MIN_MS, VIEWING_REFRESH_MAX_MS),
-  };
-}
-
-function getViewingNowState(handle: string): ViewingNowState {
-  const fallback = buildViewingNowState(Date.now());
-  if (typeof window === 'undefined') return fallback;
-
-  const key = `${VIEWING_NOW_KEY_PREFIX}${handle}`;
-  const stored = window.localStorage.getItem(key);
-  if (!stored) {
-    window.localStorage.setItem(key, JSON.stringify(fallback));
-    return fallback;
-  }
-
-  try {
-    const parsed = JSON.parse(stored) as Partial<ViewingNowState>;
-    if (
-      typeof parsed.value === 'number' &&
-      typeof parsed.nextUpdateAt === 'number' &&
-      parsed.value >= VIEWING_MIN &&
-      parsed.value <= VIEWING_MAX &&
-      parsed.nextUpdateAt > Date.now()
-    ) {
-      return { value: parsed.value, nextUpdateAt: parsed.nextUpdateAt };
-    }
-  } catch {
-    // Ignore invalid localStorage payload and regenerate below.
-  }
-
-  window.localStorage.setItem(key, JSON.stringify(fallback));
-  return fallback;
 }
 
 function shouldShowPostAddCouponPopup(productHandle: string): boolean {
@@ -166,10 +86,6 @@ export function ProductDetail() {
   const primaryCtaRef = useRef<HTMLDivElement | null>(null);
   const [showStickyMobileAtc, setShowStickyMobileAtc] = useState(false);
   const hasTrackedStickyShown = useRef(false);
-  const [offerEndsAt, setOfferEndsAt] = useState(() => getOfferEndTime());
-  const [remainingMs, setRemainingMs] = useState(() => Math.max(0, offerEndsAt - Date.now()));
-  const [viewingNow, setViewingNow] = useState(7);
-  const [viewingNowRefreshAt, setViewingNowRefreshAt] = useState(() => Date.now() + VIEWING_REFRESH_MIN_MS);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [showProductCouponPopup, setShowProductCouponPopup] = useState(false);
   const [couponEmail, setCouponEmail] = useState('');
@@ -271,47 +187,6 @@ export function ProductDetail() {
       product_handle: product?.handle,
     });
   }, [showStickyMobileAtc, product?.handle, product?.id]);
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      const diff = offerEndsAt - Date.now();
-      if (diff <= 0) {
-        const nextEnd = Date.now() + URGENCY_DURATION_MS;
-        window.localStorage.setItem(URGENCY_TIMER_KEY, String(nextEnd));
-        setOfferEndsAt(nextEnd);
-        setRemainingMs(URGENCY_DURATION_MS);
-        return;
-      }
-      setRemainingMs(diff);
-    }, 1000);
-
-    return () => window.clearInterval(interval);
-  }, [offerEndsAt]);
-
-  useEffect(() => {
-    if (!product?.handle || typeof window === 'undefined') return;
-
-    const state = getViewingNowState(product.handle);
-    setViewingNow(state.value);
-    setViewingNowRefreshAt(state.nextUpdateAt);
-  }, [product?.handle]);
-
-  useEffect(() => {
-    if (!product?.handle || typeof window === 'undefined') return;
-
-    const key = `${VIEWING_NOW_KEY_PREFIX}${product.handle}`;
-    const interval = window.setInterval(() => {
-      const now = Date.now();
-      if (now < viewingNowRefreshAt) return;
-
-      const next = buildViewingNowState(now);
-      window.localStorage.setItem(key, JSON.stringify(next));
-      setViewingNow(next.value);
-      setViewingNowRefreshAt(next.nextUpdateAt);
-    }, 60 * 1000);
-
-    return () => window.clearInterval(interval);
-  }, [product?.handle, viewingNowRefreshAt]);
 
   if (loading) {
     return (
@@ -651,10 +526,6 @@ export function ProductDetail() {
             <span aria-hidden="true">•</span>
             <span>{Math.max(reviewSummary.reviewCount, visibleReviewCount)} reviews</span>
           </div>
-          <p className="text-sm font-semibold text-amber-700 mb-4">
-            {viewingNow} people are viewing this right now
-          </p>
-          
           <div className="flex items-center gap-3 mb-6">
             <span className="text-2xl font-bold text-gray-900">
               ${currentPriceValue.toFixed(2)}
@@ -668,14 +539,8 @@ export function ProductDetail() {
           <p className="text-sm text-gray-700 mb-3">
             Estimated delivery: {estimatedDeliveryRange}
           </p>
-          <p className="text-xs font-semibold text-teal-800 mb-3">
-            Fast delivery window - hard to beat.
-          </p>
           <p className={`text-sm mb-6 ${selectedVariant.availableForSale ? 'text-emerald-700' : 'text-gray-500'}`}>
             {selectedVariant.availableForSale ? 'In stock and ready to process.' : 'Currently out of stock.'}
-          </p>
-          <p className="mb-4 inline-flex items-center rounded-sm border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wide text-emerald-800">
-            Over 500+ fullfilled orders
           </p>
           <TrustBar className="mb-6" />
 
@@ -751,23 +616,6 @@ export function ProductDetail() {
 
           {/* Quantity & Add to Cart */}
           <div className="mb-8" ref={primaryCtaRef}>
-            <div className="mb-4 rounded-sm border border-amber-300/70 bg-amber-50 p-3 sm:p-4">
-              <p className="text-xs font-bold uppercase tracking-wide text-amber-900">
-                Save 15% + free express shipping
-              </p>
-              <p className="mt-1 text-sm text-amber-900">
-                Limited-time offer - ends in{' '}
-                <span className="font-extrabold tabular-nums">{formatRemaining(remainingMs)}</span>
-              </p>
-            </div>
-            <div className="mb-4 rounded-sm border border-teal-200 bg-teal-50 p-3 sm:p-4">
-              <p className="text-xs font-bold uppercase tracking-wide text-teal-900">
-                Up to 30% discounts available
-              </p>
-              <p className="mt-1 text-sm text-teal-900">
-                Stack eligible offers for up to 30% total savings at checkout.
-              </p>
-            </div>
             <div className="flex gap-4">
               <div className="flex items-center border border-gray-300 rounded-sm h-14 w-32">
                 <button 
@@ -791,7 +639,7 @@ export function ProductDetail() {
                 onClick={handleAddToCart}
                 disabled={combinationUnavailable}
               >
-                {combinationUnavailable ? 'Sold Out' : 'Add to Cart — Ships in 1-3 Days'}
+                {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
               </Button>
             </div>
             <div className="mt-4 rounded-sm border border-gray-200 bg-gray-50 p-3 sm:p-4">
@@ -886,7 +734,7 @@ export function ProductDetail() {
               </button>
             </div>
             <Button onClick={handleStickyAddToCart} disabled={combinationUnavailable}>
-              {combinationUnavailable ? 'Sold Out' : 'Add to Cart — Ships in 1-3 Days'}
+              {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
             </Button>
           </div>
         </div>
