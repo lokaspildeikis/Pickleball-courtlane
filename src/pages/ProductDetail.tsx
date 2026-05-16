@@ -15,7 +15,6 @@ import { TrustBar } from '../components/TrustBar';
 import { PageMeta } from '../components/seo/PageMeta';
 import { isValidEmail, resolveCouponCode, resolveCouponSignupEndpoint, submitCouponSignup } from '../lib/couponSignup';
 import { setMarketingEmail } from '../lib/marketingIdentity';
-import { getEstimatedDeliveryRange } from '../lib/deliveryEstimate';
 
 type VariantNode = Product['variants']['edges'][number]['node'];
 type VariantOption = { name: string; value: string };
@@ -106,9 +105,11 @@ export function ProductDetail() {
         // Set initial variant
         const firstAvailable = data.variants.edges.find(v => v.node.availableForSale)?.node || data.variants.edges[0].node;
         setSelectedVariant(firstAvailable);
-        
-        // Set initial image
-        if (data.images.edges.length > 0) {
+
+        // Use lifestyle image (index 1) as hero; fall back to index 0 if only one image
+        if (data.images.edges.length > 1) {
+          setActiveImage(data.images.edges[1].node.url);
+        } else if (data.images.edges.length > 0) {
           setActiveImage(data.images.edges[0].node.url);
         }
       }
@@ -218,7 +219,7 @@ export function ProductDetail() {
   const displayTitle =
     product.title ===
     'COURTLANE RAW CARBON FIBER PICKLEBALL PADDLE SET – USAPA APPROVED, LIGHTWEIGHT GRAPHITE RACKETS FOR INDOOR & OUTDOOR PLAY'
-      ? 'Courtlane Carbon Fiber Paddle Set'
+      ? 'One Box, Ready to Play — Pickleball Paddle Set'
       : product.title;
 
   const currentPriceValue = parseFloat(selectedVariant.price.amount);
@@ -264,10 +265,10 @@ export function ProductDetail() {
     .filter((candidate) => candidate.tags.some((tag) => productTags.includes(tag.toLowerCase())))
     .slice(0, 3);
   const whoItsFor = productTags.some((tag) => ['beginner', 'starter', 'bundle'].includes(tag))
-    ? 'For recreational to competitive players who want performance gear at an honest price.'
+    ? 'For first-time players and casual rec players who want a quality set without the overwhelm. Great gear that grows with you as you improve.'
     : 'Everyday players who want reliable gear without overthinking specs.';
   const whatsIncluded = productTags.includes('bundle') || productTags.includes('bundles')
-    ? '2 raw carbon fiber paddles, 2 outdoor pickleballs, and a premium sling backpack — everything you need to play today.'
+    ? '2 carbon fiber paddles, 4 outdoor pickleballs, and a square gray backpack — everything you need to play today.'
     : 'Core product shown above, ready for regular practice and play.';
   const metaTitle = `${displayTitle} | Courtlane`;
   const metaDescription = `${displayTitle} available at Courtlane. ${whoItsFor} ${whatsIncluded}`;
@@ -293,9 +294,13 @@ export function ProductDetail() {
       url: `https://courtlane.us/product/${product.handle}`,
     },
   };
-  const estimatedDeliveryRange = getEstimatedDeliveryRange();
-  const maxThumbnailStartIndex = Math.max(0, product.images.edges.length - VISIBLE_THUMBNAILS);
-  const visibleThumbnailEdges = product.images.edges.slice(
+  // Swap first two images so lifestyle shot (index 1) leads; flatlay becomes second
+  const displayImages =
+    product.images.edges.length > 1
+      ? [product.images.edges[1], product.images.edges[0], ...product.images.edges.slice(2)]
+      : product.images.edges;
+  const maxThumbnailStartIndex = Math.max(0, displayImages.length - VISIBLE_THUMBNAILS);
+  const visibleThumbnailEdges = displayImages.slice(
     thumbnailStartIndex,
     thumbnailStartIndex + VISIBLE_THUMBNAILS,
   );
@@ -515,9 +520,12 @@ export function ProductDetail() {
 
         {/* Product Info */}
         <div className="w-full md:w-1/2 flex flex-col">
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-2">
             {displayTitle}
           </h1>
+          {(product.title === 'COURTLANE RAW CARBON FIBER PICKLEBALL PADDLE SET – USAPA APPROVED, LIGHTWEIGHT GRAPHITE RACKETS FOR INDOOR & OUTDOOR PLAY' || productTags.some((tag) => ['bundle', 'beginner', 'starter'].includes(tag))) && (
+            <p className="text-base text-gray-600 mb-3">Carbon-fiber paddles, balls, and bag — everything you need to start playing today. USAPA approved.</p>
+          )}
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
             {renderStars(visibleAverageRating || reviewSummary.rating)}
             <span>
@@ -537,7 +545,7 @@ export function ProductDetail() {
             )}
           </div>
           <p className="text-sm text-gray-700 mb-3">
-            Estimated delivery: {estimatedDeliveryRange}
+            Ships in 1–3 business days · Free shipping
           </p>
           <p className={`text-sm mb-6 ${selectedVariant.availableForSale ? 'text-emerald-700' : 'text-gray-500'}`}>
             {selectedVariant.availableForSale ? 'In stock and ready to process.' : 'Currently out of stock.'}
@@ -551,6 +559,82 @@ export function ProductDetail() {
             <p className="text-sm text-gray-700">{whatsIncluded}</p>
           </div>
 
+          {/* Variants — swatch style */}
+          {hasVariantChoices && (
+            <div className="mb-6">
+              <div className="space-y-4">
+                {displayOptionNames.map((optionName) => (
+                  <div key={optionName}>
+                    <p className="block text-sm font-bold uppercase tracking-wide text-gray-900 mb-2">
+                      {optionName}: <span className="font-normal normal-case">{selectedOptionValues[optionName]}</span>
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {getOptionValues(optionName).map((optionValue) => {
+                        const isSelected = selectedOptionValues[optionName] === optionValue;
+                        const isEnabled = isOptionValueEnabled(optionName, optionValue);
+                        return (
+                          <button
+                            key={optionValue}
+                            type="button"
+                            onClick={() => isEnabled && handleOptionSelection(optionName, optionValue)}
+                            disabled={!isEnabled}
+                            className={`px-3 py-2 rounded-sm border text-sm font-medium transition-colors ${
+                              isSelected
+                                ? 'border-teal-800 bg-teal-50 text-teal-900'
+                                : isEnabled
+                                ? 'border-gray-300 bg-white text-gray-800 hover:border-teal-500'
+                                : 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed line-through'
+                            }`}
+                          >
+                            {optionValue}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+                {combinationUnavailable && (
+                  <p className="text-sm text-red-700">This combination is unavailable.</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Quantity & Add to Cart */}
+          <div className="mb-8" ref={primaryCtaRef}>
+            <div className="flex gap-4">
+              <div className="flex items-center border border-gray-300 rounded-sm h-14 w-32">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="px-4 h-full text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                >
+                  <Minus size={16} />
+                </button>
+                <span className="flex-1 text-center font-medium">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="px-4 h-full text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+
+              <Button
+                size="lg"
+                className="flex-1"
+                onClick={handleAddToCart}
+                disabled={combinationUnavailable}
+              >
+                {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
+              </Button>
+            </div>
+            <div className="mt-4 rounded-sm border border-gray-200 bg-gray-50 p-3 sm:p-4">
+              <TrustPointsRow points={TRUST_POINTS.productCta} />
+              <CheckoutPaymentMethods />
+            </div>
+          </div>
+
+          {/* Complete Your Kit — shown after ATC so it doesn't distract before purchase */}
           {relatedUpsellProducts.length > 0 && (
             <div className="mb-6 rounded-sm border border-gray-200 bg-white p-4">
               <p className="text-xs font-bold uppercase tracking-wide text-teal-800">Complete your kit</p>
@@ -579,74 +663,6 @@ export function ProductDetail() {
               </div>
             </div>
           )}
-
-          {/* Variants */}
-          {hasVariantChoices && (
-            <div className="mb-6">
-              <div className="space-y-4">
-                {displayOptionNames.map((optionName) => (
-                  <div key={optionName}>
-                    <label htmlFor={`option-${optionName}`} className="block text-sm font-bold uppercase tracking-wide text-gray-900 mb-2">
-                      {optionName}
-                    </label>
-                    <select
-                      id={`option-${optionName}`}
-                      value={selectedOptionValues[optionName] || ''}
-                      onChange={(event) => handleOptionSelection(optionName, event.target.value)}
-                      className="w-full rounded-sm border border-gray-300 bg-white px-3 py-3 text-sm text-gray-900 focus:border-teal-700 focus:outline-none"
-                    >
-                      {getOptionValues(optionName).map((optionValue) => (
-                        <option
-                          key={optionValue}
-                          value={optionValue}
-                          disabled={!isOptionValueEnabled(optionName, optionValue)}
-                        >
-                          {optionValue}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-                {combinationUnavailable && (
-                  <p className="text-sm text-red-700">This combination is unavailable.</p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Quantity & Add to Cart */}
-          <div className="mb-8" ref={primaryCtaRef}>
-            <div className="flex gap-4">
-              <div className="flex items-center border border-gray-300 rounded-sm h-14 w-32">
-                <button 
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 h-full text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                >
-                  <Minus size={16} />
-                </button>
-                <span className="flex-1 text-center font-medium">{quantity}</span>
-                <button 
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="px-4 h-full text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
-              
-              <Button 
-                size="lg" 
-                className="flex-1"
-                onClick={handleAddToCart}
-                disabled={combinationUnavailable}
-              >
-                {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
-              </Button>
-            </div>
-            <div className="mt-4 rounded-sm border border-gray-200 bg-gray-50 p-3 sm:p-4">
-              <TrustPointsRow points={TRUST_POINTS.productCta} />
-              <CheckoutPaymentMethods />
-            </div>
-          </div>
 
           {/* Description — trust row lives above near Add to cart; policy snippets below */}
           <div className="max-w-none">

@@ -202,7 +202,7 @@ function buildUseCase(product: Product, type: ProductType): string {
   }
 
   if (type === 'bundle') {
-    return 'Built for players who want real performance without paying $200+. Great for casual games, league play, and competitive matches.';
+    return 'Built for beginners and weekend players who want gear that actually plays well. Easy to pick up, light enough for new players, durable enough for years of casual and league play.';
   }
 
   if (type === 'towel' || type === 'sweat-accessory') {
