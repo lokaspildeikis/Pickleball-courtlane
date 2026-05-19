@@ -46,7 +46,7 @@ export const ABOUT_PAGE = {
       "Pickleball shopping shouldn’t feel like homework. Too many listings read the same, stack specs you’ll never use, or push “elite performance” when you just want a comfortable grip and gear that shows up when expected.",
       "Courtlane is built for players who want dependable accessories—balls, grips, bags, covers, towels, and performance bundles—chosen for everyday play, not showroom flex.",
       "We’re not trying to sound like a giant sports brand. We’re aiming for the opposite: a small, pickleball-specific shelf where you can read what something does, see what’s in a bundle, and check shipping or returns without digging.",
-      "Whether you play a few times a week or you’re upgrading their game, that’s who this store is for. Questions before checkout? Email us—we’d rather answer plainly than leave you guessing.",
+      "Whether you play a few times a week or you’re looking to upgrade your game, that’s who this store is for. Questions before checkout? Email us—we’d rather answer plainly than leave you guessing.",
     ] as const,
   },
   /** Section 3 — what we care about in selection */
