@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { MetaPixel } from './components/analytics/MetaPixel';
 import { CartProvider } from './context/CartContext';
 import { Layout } from './components/layout/Layout';
@@ -22,7 +22,8 @@ export default function App() {
             <Route index element={<Home />} />
             <Route path="shop" element={<Shop />} />
             <Route path="product/:handle" element={<ProductDetail />} />
-            <Route path="about" element={<About />} />
+            <Route path="our-story" element={<About />} />
+            <Route path="about" element={<Navigate to="/our-story" replace />} />
             <Route path="faq" element={<FAQ />} />
             <Route path="shipping" element={<Shipping />} />
             <Route path="returns" element={<Returns />} />

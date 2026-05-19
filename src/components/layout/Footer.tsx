@@ -78,7 +78,7 @@ export function Footer() {
               <li><Link to="/returns" className="text-gray-400 hover:text-white text-sm transition-colors">Returns Policy</Link></li>
               <li><Link to="/faq" className="text-gray-400 hover:text-white text-sm transition-colors">FAQ</Link></li>
               <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-gray-400 hover:text-white text-sm transition-colors">Contact Us</a></li>
-              <li><Link to="/about" className="text-gray-400 hover:text-white text-sm transition-colors">About Courtlane</Link></li>
+              <li><Link to="/our-story" className="text-gray-400 hover:text-white text-sm transition-colors">Our Story</Link></li>
             </ul>
           </div>
 
