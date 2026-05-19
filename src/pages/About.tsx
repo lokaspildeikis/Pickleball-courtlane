@@ -20,11 +20,6 @@ export function About() {
           </h1>
         </div>
 
-        {/* TODO: Founder photo goes here */}
-        <div className="mx-auto w-full max-w-[400px] aspect-square bg-gray-100 rounded-sm mb-12 flex items-center justify-center text-gray-400 text-sm border border-gray-200">
-          Photo of Rokas · ~400 × 400 px
-        </div>
-
         <div className="space-y-5 text-gray-700 text-base md:text-lg leading-relaxed">
           <p>Hi, I'm Rokas — the founder of Courtlane.</p>
 
