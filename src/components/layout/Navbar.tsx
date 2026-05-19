@@ -53,7 +53,7 @@ export function Navbar() {
             <Link to="/shop?filter=essentials" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Essentials</Link>
             <Link to="/shop?filter=backpacks" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Backpacks</Link>
             <Link to="/shop?filter=bundles" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Bundles</Link>
-            <Link to="/about" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Our Story</Link>
+            <Link to="/our-story" className="text-gray-900 hover:text-teal-700 font-medium text-sm tracking-wide uppercase">Our Story</Link>
           </nav>
 
           {/* Cart Icon */}
@@ -113,8 +113,8 @@ export function Navbar() {
             >
               Bundles
             </Link>
-            <Link 
-              to="/about" 
+            <Link
+              to="/our-story"
               className="block px-3 py-4 text-base font-medium text-gray-900"
               onClick={() => setIsMobileMenuOpen(false)}
             >
