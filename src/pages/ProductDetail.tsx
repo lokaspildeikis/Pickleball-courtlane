@@ -14,6 +14,7 @@ import { trackAddToCart, trackCustomEvent, trackViewContent } from '../component
 import { TrustBar } from '../components/TrustBar';
 import { PageMeta } from '../components/seo/PageMeta';
 import { isValidEmail, resolveCouponCode, resolveCouponSignupEndpoint, submitCouponSignup } from '../lib/couponSignup';
+import { sanitizeProductTitle } from '../lib/productDescription';
 import { setMarketingEmail } from '../lib/marketingIdentity';
 import { getEstimatedDeliveryRange } from '../lib/deliveryEstimate';
 
@@ -215,11 +216,12 @@ export function ProductDetail() {
     );
   }
 
-  const displayTitle =
+  const displayTitle = sanitizeProductTitle(
     product.title ===
     'COURTLANE RAW CARBON FIBER PICKLEBALL PADDLE SET – USAPA APPROVED, LIGHTWEIGHT GRAPHITE RACKETS FOR INDOOR & OUTDOOR PLAY'
       ? 'Courtlane Carbon Fiber Paddle Set'
-      : product.title;
+      : product.title
+  );
 
   const currentPriceValue = parseFloat(selectedVariant.price.amount);
   const existingCompareAtValue = selectedVariant.compareAtPrice ? parseFloat(selectedVariant.compareAtPrice.amount) : 0;
@@ -259,15 +261,21 @@ export function ProductDetail() {
     ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / visibleReviewCount).toFixed(1))
     : 0;
   const productTags = product.tags.map((tag) => tag.toLowerCase());
+  const isCarbonFiberPaddle = displayTitle === 'Courtlane Carbon Fiber Paddle Set';
+  const isStarterBundle = (productTags.includes('bundle') || productTags.includes('bundles')) && !isCarbonFiberPaddle;
   const relatedUpsellProducts = allProducts
     .filter((candidate) => candidate.id !== product.id)
     .filter((candidate) => candidate.tags.some((tag) => productTags.includes(tag.toLowerCase())))
     .slice(0, 3);
-  const whoItsFor = productTags.some((tag) => ['beginner', 'starter', 'bundle'].includes(tag))
-    ? 'For recreational to competitive players who want performance gear at an honest price.'
+  const whoItsFor = isCarbonFiberPaddle
+    ? 'Players looking to step up from a basic paddle — USAPA approved for recreational and league play.'
+    : isStarterBundle
+    ? 'First-time and recreational players who want everything in one order — no research required.'
     : 'Everyday players who want reliable gear without overthinking specs.';
-  const whatsIncluded = productTags.includes('bundle') || productTags.includes('bundles')
-    ? '2 raw carbon fiber paddles, 2 outdoor pickleballs, and a premium sling backpack — everything you need to play today.'
+  const whatsIncluded = isCarbonFiberPaddle
+    ? '2 raw carbon fiber paddles, 4 outdoor pickleballs, and a premium sling backpack.'
+    : isStarterBundle
+    ? 'Everything you need to play today — core gear bundled into one convenient order.'
     : 'Core product shown above, ready for regular practice and play.';
   const metaTitle = `${displayTitle} | Courtlane`;
   const metaDescription = `${displayTitle} available at Courtlane. ${whoItsFor} ${whatsIncluded}`;
@@ -515,16 +523,19 @@ export function ProductDetail() {
 
         {/* Product Info */}
         <div className="w-full md:w-1/2 flex flex-col">
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight uppercase italic text-gray-900 mb-2">
+          <h1 className={`text-3xl md:text-4xl font-black tracking-tight text-gray-900 mb-2 ${isCarbonFiberPaddle ? '' : 'uppercase italic'}`}>
             {displayTitle}
           </h1>
+          {isCarbonFiberPaddle && (
+            <p className="text-sm text-gray-600 mb-2">Performance gear at a beginner-friendly price. USAPA approved.</p>
+          )}
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-            {renderStars(visibleAverageRating || reviewSummary.rating)}
+            {renderStars(reviewSummary.rating)}
             <span>
-              {(visibleAverageRating || reviewSummary.rating).toFixed(1)} / 5
+              {reviewSummary.rating.toFixed(1)} / 5
             </span>
             <span aria-hidden="true">•</span>
-            <span>{Math.max(reviewSummary.reviewCount, visibleReviewCount)} reviews</span>
+            <span>{reviewSummary.reviewCount} reviews</span>
           </div>
           <div className="flex items-center gap-3 mb-6">
             <span className="text-2xl font-bold text-gray-900">
@@ -551,60 +562,36 @@ export function ProductDetail() {
             <p className="text-sm text-gray-700">{whatsIncluded}</p>
           </div>
 
-          {relatedUpsellProducts.length > 0 && (
-            <div className="mb-6 rounded-sm border border-gray-200 bg-white p-4">
-              <p className="text-xs font-bold uppercase tracking-wide text-teal-800">Complete your kit</p>
-              <p className="mt-1 text-sm text-gray-700">Customers often add these before checkout.</p>
-              <div className="mt-3 space-y-2">
-                {relatedUpsellProducts.map((related) => {
-                  const relatedPrice = related.variants.edges[0]?.node.price.amount || related.priceRange.minVariantPrice.amount;
-                  const relatedImage = related.images.edges[0]?.node.url;
-                  return (
-                    <Link
-                      key={related.id}
-                      to={`/product/${related.handle}`}
-                      className="flex items-center gap-3 rounded-sm border border-gray-100 p-2 hover:border-teal-200 hover:bg-teal-50/40 transition-colors"
-                    >
-                      {relatedImage && (
-                        <img src={relatedImage} alt={related.title} className="h-12 w-12 rounded-sm object-cover" />
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{related.title}</p>
-                        <p className="text-xs text-gray-600">${Number.parseFloat(relatedPrice).toFixed(2)}</p>
-                      </div>
-                      <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">View</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
           {/* Variants */}
           {hasVariantChoices && (
             <div className="mb-6">
               <div className="space-y-4">
                 {displayOptionNames.map((optionName) => (
                   <div key={optionName}>
-                    <label htmlFor={`option-${optionName}`} className="block text-sm font-bold uppercase tracking-wide text-gray-900 mb-2">
-                      {optionName}
-                    </label>
-                    <select
-                      id={`option-${optionName}`}
-                      value={selectedOptionValues[optionName] || ''}
-                      onChange={(event) => handleOptionSelection(optionName, event.target.value)}
-                      className="w-full rounded-sm border border-gray-300 bg-white px-3 py-3 text-sm text-gray-900 focus:border-teal-700 focus:outline-none"
-                    >
-                      {getOptionValues(optionName).map((optionValue) => (
-                        <option
-                          key={optionValue}
-                          value={optionValue}
-                          disabled={!isOptionValueEnabled(optionName, optionValue)}
-                        >
-                          {optionValue}
-                        </option>
-                      ))}
-                    </select>
+                    <p className="text-sm font-bold uppercase tracking-wide text-gray-900 mb-2">{optionName}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {getOptionValues(optionName).map((optionValue) => {
+                        const isSelected = selectedOptionValues[optionName] === optionValue;
+                        const isEnabled = isOptionValueEnabled(optionName, optionValue);
+                        return (
+                          <button
+                            key={optionValue}
+                            type="button"
+                            disabled={!isEnabled}
+                            onClick={() => handleOptionSelection(optionName, optionValue)}
+                            className={`px-4 py-2 text-sm rounded-sm border transition-colors ${
+                              isSelected
+                                ? 'border-teal-800 bg-teal-800 text-white'
+                                : isEnabled
+                                ? 'border-gray-300 text-gray-900 hover:border-teal-700 hover:text-teal-700'
+                                : 'border-gray-200 text-gray-400 cursor-not-allowed line-through'
+                            }`}
+                          >
+                            {optionValue}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 ))}
                 {combinationUnavailable && (
@@ -653,6 +640,35 @@ export function ProductDetail() {
             <ProductDescription product={product} />
           </div>
 
+          {relatedUpsellProducts.length > 0 && (
+            <div className="mt-8 rounded-sm border border-gray-200 bg-white p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-teal-800">Complete your kit</p>
+              <p className="mt-1 text-sm text-gray-700">Customers often add these before checkout.</p>
+              <div className="mt-3 space-y-2">
+                {relatedUpsellProducts.map((related) => {
+                  const relatedPrice = related.variants.edges[0]?.node.price.amount || related.priceRange.minVariantPrice.amount;
+                  const relatedImage = related.images.edges[0]?.node.url;
+                  return (
+                    <Link
+                      key={related.id}
+                      to={`/product/${related.handle}`}
+                      className="flex items-center gap-3 rounded-sm border border-gray-100 p-2 hover:border-teal-200 hover:bg-teal-50/40 transition-colors"
+                    >
+                      {relatedImage && (
+                        <img src={relatedImage} alt={related.title} className="h-12 w-12 rounded-sm object-cover" />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-gray-900 truncate">{sanitizeProductTitle(related.title)}</p>
+                        <p className="text-xs text-gray-600">${Number.parseFloat(relatedPrice).toFixed(2)}</p>
+                      </div>
+                      <span className="text-xs font-semibold uppercase tracking-wide text-teal-700">View</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="mt-8">
             <h2 className="text-lg font-bold text-gray-900 mb-3">Shipping, returns, and support</h2>
             <PolicySnippetGrid snippets={POLICY_SNIPPETS.productDetail} />
@@ -681,7 +697,7 @@ export function ProductDetail() {
             {visibleReviewCount > 0 ? (
               <>
                 <p className="text-sm text-gray-600 mb-4">
-                  {visibleAverageRating.toFixed(1)} / 5 • {Math.max(reviewSummary.reviewCount, visibleReviewCount)} reviews
+                  {reviewSummary.rating.toFixed(1)} / 5 • {reviewSummary.reviewCount} reviews
                 </p>
                 <div className="space-y-4">
                   {reviews.map((review) => (

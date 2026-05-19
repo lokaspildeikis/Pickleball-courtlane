@@ -8,6 +8,7 @@ import { HomeBrandStory } from '../components/home/HomeBrandStory';
 import { PageMeta } from '../components/seo/PageMeta';
 import { SUPPORT_EMAIL, TRUST_POINTS } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
+import { getSyntheticReviewSummary } from '../lib/syntheticReviews';
 
 const FEATURED_BUNDLE_IMAGE = '/images/featured-bundle-sale.png';
 const STARTER_KIT_IMAGE = '/images/offer-starter-kit.png';
@@ -25,7 +26,14 @@ export function Home() {
     fetchProducts();
   }, []);
 
-  const bestSellers = products.filter(p => p.tags.includes('best-seller')).slice(0, 4);
+  const bestSellers = products
+    .filter(p => p.tags.includes('best-seller'))
+    .filter(p => {
+      const s = getSyntheticReviewSummary(p.handle);
+      return s.rating >= 4.4 && s.reviewCount >= 30;
+    })
+    .sort((a, b) => getSyntheticReviewSummary(b.handle).rating - getSyntheticReviewSummary(a.handle).rating)
+    .slice(0, 4);
   const bundles = products.filter(p => p.tags.includes('bundle')).slice(0, 4);
 
   // If we don't have enough tagged products, just use the first few
@@ -309,12 +317,12 @@ export function Home() {
           <div className="flex flex-col sm:flex-row gap-3">
             <Link to={starterBundleHref}>
               <Button size="lg" variant="outline" className="w-full sm:w-auto border-white text-white hover:bg-teal-600 hover:text-white">
-                View performance bundle
+                See the Performance Bundle
               </Button>
             </Link>
             <Link to="/shop?filter=bundles">
               <Button size="lg" className="w-full sm:w-auto bg-teal-900 text-white hover:bg-teal-950">
-                Browse bundles
+                Shop All Bundles
               </Button>
             </Link>
           </div>
