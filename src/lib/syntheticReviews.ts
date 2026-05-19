@@ -1,3 +1,5 @@
+import { getProductReviews, getStaticReviewSummary } from './productReviews';
+
 export interface SyntheticReview {
   id: string;
   author: string;
@@ -160,11 +162,16 @@ function seededFloat(seed: number): number {
   return x - Math.floor(x);
 }
 
+// Fixed reference date — do NOT replace with new Date(). Dates must be static.
+const REVIEW_DATE_REFERENCE_MS = new Date("2026-04-15").getTime();
+
 function formatDateFromSeed(seed: number): string {
-  const now = new Date();
   const daysAgo = 7 + Math.floor(seededFloat(seed + 51) * 180);
-  const d = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
-  return d.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit" });
+  const d = new Date(REVIEW_DATE_REFERENCE_MS - daysAgo * 24 * 60 * 60 * 1000);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function detectProductType(handle: string, title: string): ProductReviewType {
@@ -385,13 +392,33 @@ function getAssignedReviewTemplates(handle: string, productTitle: string): { typ
 }
 
 export function getSyntheticReviewSummary(handle: string) {
+  // Prefer static review data — rating is computed from actual review entries.
+  const staticSummary = getStaticReviewSummary(handle);
+  if (staticSummary) return { ...staticSummary, source: "synthetic" as const };
+
+  // Fallback: hash-based stable rating for products without static reviews.
   const seed = hashString(handle);
   const rating = Number((3.9 + seededFloat(seed + 1) * 1.1).toFixed(1));
-  const reviewCount = 30 + Math.floor(seededFloat(seed + 2) * 61); // 30-90
+  const reviewCount = 30 + Math.floor(seededFloat(seed + 2) * 61); // 30–90
   return { rating: Math.min(5, rating), reviewCount, source: "synthetic" as const };
 }
 
 export function getSyntheticReviews(handle: string, productTitle: string): SyntheticReview[] {
+  // Prefer static product-specific reviews (static dates, product-specific copy).
+  const staticReviews = getProductReviews(handle);
+  if (staticReviews.length > 0) {
+    return staticReviews.map((r) => ({
+      id: r.id,
+      author: r.author,
+      rating: r.rating,
+      date: r.date,
+      title: r.title,
+      text: r.body,
+      source: "synthetic" as const,
+    }));
+  }
+
+  // Fallback: template-based reviews for products without static entries.
   const seed = hashString(`${handle}-${productTitle}`);
   const selected = buildHumanReviewTemplates(handle, productTitle, 3);
 
@@ -409,7 +436,7 @@ export function getSyntheticReviews(handle: string, productTitle: string): Synth
       date: formatDateFromSeed(seed + idx * 19),
       title: template.title,
       text: template.text,
-      source: "synthetic",
+      source: "synthetic" as const,
     };
   });
 }
