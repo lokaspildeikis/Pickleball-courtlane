@@ -2,10 +2,16 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { trackCustomEvent } from '../analytics/MetaPixel';
 import { isValidEmail, resolveCouponCode, resolveCouponSignupEndpoint, submitCouponSignup } from '../../lib/couponSignup';
 import { setMarketingEmail } from '../../lib/marketingIdentity';
+import { useCart } from '../../context/CartContext';
 
 const DISMISS_KEY = 'pb_coupon_popup_dismissed_v1';
 const CLAIMED_KEY = 'pb_coupon_popup_claimed_v1';
-const DISMISS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+const SESSION_KEY = 'pb_coupon_popup_shown';
+const DISMISS_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const MIN_TIME_ON_SITE_MS = 5_000; // must be on site 5s before exit-intent fires
+
+// Pages where the popup should never appear.
+const BLOCKED_PATHS = ['/cart', '/checkout'];
 
 export function NewCustomerCouponPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,9 +19,15 @@ export function NewCustomerCouponPopup() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
+  const { isCartOpen } = useCart();
 
   const signupEndpoint = useMemo(() => resolveCouponSignupEndpoint(), []);
   const couponCode = useMemo(() => resolveCouponCode(), []);
+
+  // Close popup immediately if the cart drawer opens while it's showing.
+  useEffect(() => {
+    if (isCartOpen) setIsOpen(false);
+  }, [isCartOpen]);
 
   useEffect(() => {
     const forceOpen = typeof window !== 'undefined' && window.location.search.includes('couponPopup=1');
@@ -26,9 +38,14 @@ export function NewCustomerCouponPopup() {
         const hasClaimed = window.localStorage.getItem(CLAIMED_KEY) === '1';
         const isDismissedRecently = dismissedAt > 0 && Date.now() - dismissedAt < DISMISS_COOLDOWN_MS;
         if (!forceOpen && (isDismissedRecently || hasClaimed)) return false;
+        if (!forceOpen && window.sessionStorage.getItem(SESSION_KEY) === '1') return false;
       } catch {
         // Continue and still show popup if storage is unavailable.
       }
+      // Never overlay the cart drawer or appear on cart/checkout pages.
+      if (isCartOpen) return false;
+      const path = window.location.pathname;
+      if (BLOCKED_PATHS.some((p) => path === p || path.startsWith(p + '/'))) return false;
       return true;
     };
 
@@ -38,20 +55,25 @@ export function NewCustomerCouponPopup() {
       return;
     }
 
-    const onAddedToCart = () => {
+    // Exit-intent: fires when the mouse leaves through the top of the viewport.
+    const mountedAt = Date.now();
+
+    const onMouseLeave = (e: MouseEvent) => {
+      if (e.clientY > 20) return; // only top-of-viewport exits
+      if (Date.now() - mountedAt < MIN_TIME_ON_SITE_MS) return; // too soon
       if (!canOpenPopup()) return;
       setIsOpen(true);
-      trackCustomEvent('CouponPopupShown', { trigger: 'add_to_cart', force_open: 0 });
+      try { window.sessionStorage.setItem(SESSION_KEY, '1'); } catch { /* ignore */ }
+      trackCustomEvent('CouponPopupShown', { trigger: 'exit_intent', force_open: 0 });
     };
 
-    window.addEventListener('courtlane:add-to-cart', onAddedToCart);
-    return () => window.removeEventListener('courtlane:add-to-cart', onAddedToCart);
-  }, []);
+    document.addEventListener('mouseleave', onMouseLeave);
+    return () => document.removeEventListener('mouseleave', onMouseLeave);
+  }, [isCartOpen]);
 
   const closePopup = () => {
     setIsOpen(false);
     try {
-      // Dismiss only temporarily so returning visitors can see the offer again.
       window.localStorage.setItem(DISMISS_KEY, String(Date.now()));
     } catch {
       // Ignore storage failures.
@@ -102,7 +124,7 @@ export function NewCustomerCouponPopup() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-[40] flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-md rounded-sm bg-white p-5 shadow-2xl sm:p-6">
         <button
           type="button"
