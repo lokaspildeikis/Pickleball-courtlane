@@ -14,7 +14,7 @@ import { trackAddToCart, trackCustomEvent, trackViewContent } from '../component
 import { TrustBar } from '../components/TrustBar';
 import { PageMeta } from '../components/seo/PageMeta';
 import { isValidEmail, resolveCouponCode, resolveCouponSignupEndpoint, submitCouponSignup } from '../lib/couponSignup';
-import { sanitizeProductTitle } from '../lib/productDescription';
+import { sanitizeProductTitle, extractWhatsIncludedItems } from '../lib/productDescription';
 import { setMarketingEmail } from '../lib/marketingIdentity';
 import { getEstimatedDeliveryRange } from '../lib/deliveryEstimate';
 
@@ -272,13 +272,16 @@ export function ProductDetail() {
     : isStarterBundle
     ? 'First-time and recreational players who want everything in one order — no research required.'
     : 'Everyday players who want reliable gear without overthinking specs.';
-  const whatsIncluded = isCarbonFiberPaddle
+  const whatsIncludedFallback = isCarbonFiberPaddle
     ? '2 raw carbon fiber paddles, 4 outdoor pickleballs, and a premium sling backpack.'
     : isStarterBundle
     ? 'Everything you need to play today — core gear bundled into one convenient order.'
     : 'Core product shown above, ready for regular practice and play.';
+  // Prefer bullet items parsed from the Shopify description over the hardcoded fallback.
+  const whatsIncludedItems = extractWhatsIncludedItems(product.descriptionHtml || '');
   const metaTitle = `${displayTitle} | Courtlane`;
-  const metaDescription = `${displayTitle} available at Courtlane. ${whoItsFor} ${whatsIncluded}`;
+  const whatsIncludedText = whatsIncludedItems?.join(', ') ?? whatsIncludedFallback;
+  const metaDescription = `${displayTitle} available at Courtlane. ${whoItsFor} ${whatsIncludedText}`;
   const productImage = product.images.edges[0]?.node.url;
   const productSchema: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -559,7 +562,18 @@ export function ProductDetail() {
             <p className="text-xs font-bold uppercase tracking-wide text-gray-700">Who this is for</p>
             <p className="text-sm text-gray-700">{whoItsFor}</p>
             <p className="text-xs font-bold uppercase tracking-wide text-gray-700 pt-1">What&apos;s included</p>
-            <p className="text-sm text-gray-700">{whatsIncluded}</p>
+            {whatsIncludedItems && whatsIncludedItems.length > 0 ? (
+              <ul className="space-y-1">
+                {whatsIncludedItems.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-teal-600 shrink-0" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-gray-700">{whatsIncludedFallback}</p>
+            )}
           </div>
 
           {/* Variants */}

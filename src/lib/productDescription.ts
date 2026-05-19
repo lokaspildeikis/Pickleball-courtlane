@@ -5,6 +5,53 @@ export function sanitizeProductTitle(title: string): string {
   return title.replace(/\s*-\s*Save\s+\d+%\s*!*/gi, '').trim();
 }
 
+/**
+ * Extracts "What's Included" bullet items from Shopify product descriptionHtml.
+ *
+ * Handles two common Shopify rich-text formats:
+ *   1. A heading containing "included" / "in the box" followed by a <ul>
+ *   2. A <li> item starting with "Includes:" — value is split on commas into
+ *      individual lines, and sibling items in that same list are also returned.
+ *
+ * Returns null when neither pattern is found so the caller can fall back.
+ */
+export function extractWhatsIncludedItems(html: string): string[] | null {
+  if (!html) return null;
+
+  // Pattern 1 — heading ("What's Included", "In the Box", "Package Includes", …) followed by <ul>
+  const headingSectionRe =
+    /<h[1-6][^>]*>[^<]*(?:what.?s\s+included?|in\s+the\s+box|package\s+includes?|box\s+contents?)[^<]*<\/h[1-6]>\s*<ul[^>]*>([\s\S]*?)<\/ul>/i;
+  const headingMatch = html.match(headingSectionRe);
+  if (headingMatch) {
+    const items = extractListItems(`<ul>${headingMatch[1]}</ul>`);
+    if (items.length) return items;
+  }
+
+  // Pattern 2 — a <li> starting with "Includes:" (common in flat Shopify lists)
+  const allUlsRe = /<ul[^>]*>([\s\S]*?)<\/ul>/gi;
+  for (const ulMatch of html.matchAll(allUlsRe)) {
+    const items = extractListItems(`<ul>${ulMatch[1]}</ul>`);
+    const includesIdx = items.findIndex((item) =>
+      /^(?:includes?|what.?s\s+included?|package\s+contents?)\s*:/i.test(item),
+    );
+    if (includesIdx !== -1) {
+      const prefix = items[includesIdx].replace(
+        /^(?:includes?|what.?s\s+included?|package\s+contents?)\s*:\s*/i,
+        '',
+      );
+      // If the includes value is comma-separated, expand into individual lines
+      const expanded = prefix.includes(',')
+        ? prefix.split(',').map((s) => s.trim()).filter(Boolean)
+        : [prefix];
+      // Also collect sibling items (skip the "Includes:" one itself)
+      const siblings = items.filter((_, i) => i !== includesIdx);
+      return [...expanded, ...siblings];
+    }
+  }
+
+  return null;
+}
+
 export type ProductType =
   | 'balls'
   | 'paddle'
