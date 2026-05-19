@@ -1,7 +1,7 @@
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { Button } from '../ui/Button';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { POLICY_SNIPPETS, SUPPORT_EMAIL } from '../../lib/trustContent';
 import { Link } from 'react-router-dom';
 import { CheckoutConfidence } from '../CheckoutConfidence';
@@ -9,19 +9,6 @@ import { CheckoutPaymentMethods } from '../payments/CheckoutPaymentMethods';
 import { getSyntheticReviewSummary } from '../../lib/syntheticReviews';
 import { getEstimatedDeliveryRange } from '../../lib/deliveryEstimate';
 
-const URGENCY_TIMER_KEY = 'courtlane_urgency_offer_ends_at';
-const HEADLINE_VARIANT_KEY = 'pb_cart_urgency_headline_variant';
-const HEADLINE_STATS_KEY = 'pb_cart_urgency_headline_stats';
-
-type HeadlineVariant = 'stacked' | 'deadline';
-
-function formatMs(ms: number): string {
-  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  return [hours, minutes, seconds].map((part) => String(part).padStart(2, '0')).join(':');
-}
 
 function renderStars(rating: number) {
   const fullStars = Math.round(rating);
@@ -38,8 +25,6 @@ function renderStars(rating: number) {
 
 export function CartDrawer() {
   const { isCartOpen, closeCart, items, updateQuantity, removeFromCart, cartTotal, createCheckout, isCheckingOut } = useCart();
-  const [cutoffEndsAt, setCutoffEndsAt] = useState(0);
-  const [cutoffRemainingMs, setCutoffRemainingMs] = useState(0);
   const [openFaqId, setOpenFaqId] = useState<string | null>(null);
   const estimatedDeliveryRange = getEstimatedDeliveryRange();
 
@@ -55,100 +40,9 @@ export function CartDrawer() {
     };
   }, [isCartOpen]);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const stored = Number(window.localStorage.getItem(URGENCY_TIMER_KEY) || '0');
-    const base = stored > Date.now() ? stored : Date.now() + 2 * 60 * 60 * 1000;
-    setCutoffEndsAt(base);
-    setCutoffRemainingMs(Math.max(0, base - Date.now()));
-  }, []);
-
-  useEffect(() => {
-    if (!cutoffEndsAt) return;
-    const interval = window.setInterval(() => {
-      const diff = cutoffEndsAt - Date.now();
-      if (diff <= 0) {
-        const next = Date.now() + 2 * 60 * 60 * 1000;
-        window.localStorage.setItem(URGENCY_TIMER_KEY, String(next));
-        setCutoffEndsAt(next);
-        setCutoffRemainingMs(next - Date.now());
-        return;
-      }
-      setCutoffRemainingMs(diff);
-    }, 1000);
-
-    return () => window.clearInterval(interval);
-  }, [cutoffEndsAt]);
-
-  const headlineVariant: HeadlineVariant = useMemo(() => {
-    if (typeof window === 'undefined') return 'stacked';
-    const existing = window.localStorage.getItem(HEADLINE_VARIANT_KEY) as HeadlineVariant | null;
-    if (existing === 'stacked' || existing === 'deadline') return existing;
-
-    const statsRaw = window.localStorage.getItem(HEADLINE_STATS_KEY);
-    if (statsRaw) {
-      try {
-        const stats = JSON.parse(statsRaw) as Record<string, { views: number; clicks: number }>;
-        const stackedRate = (stats.stacked?.clicks || 0) / Math.max(1, stats.stacked?.views || 0);
-        const deadlineRate = (stats.deadline?.clicks || 0) / Math.max(1, stats.deadline?.views || 0);
-        const winner: HeadlineVariant = deadlineRate > stackedRate ? 'deadline' : 'stacked';
-        window.localStorage.setItem(HEADLINE_VARIANT_KEY, winner);
-        return winner;
-      } catch {
-        // Ignore and randomize below.
-      }
-    }
-
-    const assigned: HeadlineVariant = Math.random() < 0.5 ? 'stacked' : 'deadline';
-    window.localStorage.setItem(HEADLINE_VARIANT_KEY, assigned);
-    return assigned;
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const statsRaw = window.localStorage.getItem(HEADLINE_STATS_KEY);
-    let stats: Record<string, { views: number; clicks: number }> = {
-      stacked: { views: 0, clicks: 0 },
-      deadline: { views: 0, clicks: 0 },
-    };
-    if (statsRaw) {
-      try {
-        stats = { ...stats, ...JSON.parse(statsRaw) };
-      } catch {
-        // Keep defaults.
-      }
-    }
-    stats[headlineVariant].views += 1;
-    window.localStorage.setItem(HEADLINE_STATS_KEY, JSON.stringify(stats));
-  }, [headlineVariant]);
-
   const handleCheckout = async () => {
-    if (typeof window !== 'undefined') {
-      const statsRaw = window.localStorage.getItem(HEADLINE_STATS_KEY);
-      let stats: Record<string, { views: number; clicks: number }> = {
-        stacked: { views: 0, clicks: 0 },
-        deadline: { views: 0, clicks: 0 },
-      };
-      if (statsRaw) {
-        try {
-          stats = { ...stats, ...JSON.parse(statsRaw) };
-        } catch {
-          // Keep defaults.
-        }
-      }
-      stats[headlineVariant].clicks += 1;
-      window.localStorage.setItem(HEADLINE_STATS_KEY, JSON.stringify(stats));
-    }
     await createCheckout();
   };
-
-  const urgencyHeadline = headlineVariant === 'deadline'
-    ? 'Last call: keep your stacked savings'
-    : 'Maximize your savings before checkout';
-
-  const urgencyBody = headlineVariant === 'deadline'
-    ? `Checkout before ${formatMs(cutoffRemainingMs)} to keep up to 30% total off.`
-    : 'Use eligible offers at checkout for up to 30% total discounts.';
   const compareTotal = items.reduce((sum, item) => {
     const compareAt = typeof item.compareAtPrice === 'number' ? item.compareAtPrice : 0;
     return sum + compareAt * item.quantity;
@@ -301,14 +195,6 @@ export function CartDrawer() {
         {items.length > 0 && (
           <div className="border-t border-gray-100 p-6 pb-24 md:pb-6 bg-gray-50">
             <CheckoutConfidence className="mb-3" />
-            <div className="mb-4 rounded-sm border border-amber-300/70 bg-amber-50 p-3 hidden">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-amber-900">
-                {urgencyHeadline}
-              </p>
-              <p className="mt-1 text-xs text-amber-900">
-                {urgencyBody}
-              </p>
-            </div>
 
             {/* Bottom-funnel reassurance near checkout */}
             <div className="mb-4 rounded-sm border border-gray-200 bg-white p-3 hidden">
@@ -374,14 +260,10 @@ export function CartDrawer() {
               </p>
             )}
             <p className="mb-3 inline-flex items-center rounded-sm border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wide text-emerald-800">
-              Over 500+ fullfilled orders
+              Over 500+ fulfilled orders
             </p>
             <p className="text-xs text-gray-500 mb-4">Shipping and taxes calculated at checkout.</p>
             <p className="text-xs font-semibold text-teal-800 mb-3">Estimated delivery: {estimatedDeliveryRange}</p>
-            <p className="text-[11px] font-semibold text-teal-700 mb-3">Fast delivery window - hard to beat.</p>
-            <p className="text-xs font-semibold text-teal-800 mb-2">
-              Order cutoff timer: <span className="tabular-nums">{formatMs(cutoffRemainingMs)}</span>
-            </p>
             <Button size="full" onClick={handleCheckout} disabled={isCheckingOut} className="hidden md:flex">
               {isCheckingOut ? 'Redirecting...' : 'Checkout'}
             </Button>

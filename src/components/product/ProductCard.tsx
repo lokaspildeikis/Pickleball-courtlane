@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../lib/shopify';
 import { getSyntheticReviewSummary } from '../../lib/syntheticReviews';
+import { sanitizeProductTitle } from '../../lib/productDescription';
 
 interface ProductCardProps {
   key?: React.Key;
@@ -102,7 +103,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <span>{reviewSummary.rating.toFixed(1)} • {reviewSummary.reviewCount} reviews</span>
         </div>
         <h3 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-teal-700 transition-colors">
-          {product.title}
+          {sanitizeProductTitle(product.title)}
         </h3>
         <p className="text-xs text-gray-600 mb-2 leading-relaxed">{benefitCopy}</p>
         <div className="flex items-center gap-2">

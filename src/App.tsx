@@ -24,6 +24,11 @@ export default function App() {
             <Route path="product/:handle" element={<ProductDetail />} />
             <Route path="our-story" element={<About />} />
             <Route path="about" element={<Navigate to="/our-story" replace />} />
+            <Route path="shop/bundles" element={<Navigate to="/shop?filter=bundles" replace />} />
+            <Route path="shop/essentials" element={<Navigate to="/shop?filter=essentials" replace />} />
+            <Route path="shop/grips" element={<Navigate to="/shop?filter=grips" replace />} />
+            <Route path="shop/protection" element={<Navigate to="/shop?filter=protection" replace />} />
+            <Route path="shop/backpacks" element={<Navigate to="/shop?filter=backpacks" replace />} />
             <Route path="faq" element={<FAQ />} />
             <Route path="shipping" element={<Shipping />} />
             <Route path="returns" element={<Returns />} />

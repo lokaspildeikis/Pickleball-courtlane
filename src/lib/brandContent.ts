@@ -19,8 +19,8 @@ export const HOME_BRAND_STORY = {
     "Courtlane is a beginner-friendly pickleball shop. We put together the gear new players actually need — a quality paddle, real outdoor balls, and a bag that holds it all — so you can stop researching and start playing.",
     "No marketplace clutter, no spec overload. One straightforward kit, shipped to your door.",
   ] as const,
-  readMoreLabel: "About Courtlane",
-  readMoreHref: "/about",
+  readMoreLabel: "Our Story",
+  readMoreHref: "/our-story",
   shopCtaLabel: "Shop essentials",
   shopHref: "/shop",
 };

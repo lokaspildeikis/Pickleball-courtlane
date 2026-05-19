@@ -1,11 +1,9 @@
 import type { Product } from './shopify';
 
-/**
- * Structured product copy for the storefront.
- *
- * Supplier / marketplace noise is stripped here (factory fields, marketplace boilerplate).
- * For Shopify: keep catalog data clean in admin; this layer sanitizes anything still messy in HTML.
- */
+/** Strips promo suffixes added by Shopify admin (e.g. " - Save 15% !!"). */
+export function sanitizeProductTitle(title: string): string {
+  return title.replace(/\s*-\s*Save\s+\d+%\s*!*/gi, '').trim();
+}
 
 export type ProductType =
   | 'balls'
@@ -202,7 +200,11 @@ function buildUseCase(product: Product, type: ProductType): string {
   }
 
   if (type === 'bundle') {
-    return 'Built for players who want real performance without paying $200+. Great for casual games, league play, and competitive matches.';
+    const isCarbon = haystack.includes('carbon') || haystack.includes('graphite');
+    if (isCarbon) {
+      return 'Best for players ready to step up with USAPA-approved carbon fiber gear at an honest price — great for recreational and league play.';
+    }
+    return 'Best for first-time buyers who want everything they need in a single, no-research order.';
   }
 
   if (type === 'towel' || type === 'sweat-accessory') {
@@ -216,10 +218,7 @@ function buildUseCase(product: Product, type: ProductType): string {
   return 'Best for everyday pickleball players who prefer straightforward, usable gear.';
 }
 
-function buildNote(product: Product): string | undefined {
-  if (meaningfulVariantCount(product) > 1) {
-    return 'Options and availability can vary—pick the variant that matches your color or size preference.';
-  }
+function buildNote(_product: Product): string | undefined {
   return undefined;
 }
 
