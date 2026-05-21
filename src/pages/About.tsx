@@ -35,7 +35,7 @@ export function About() {
           <p>So I built one.</p>
 
           <p>
-            Courtlane is the shop I wished existed when I started. Honest descriptions,
+            Courtlane is a USA-based shop — the one I wished existed when I started. Honest descriptions,
             USAPA-approved equipment, prices that don't gatekeep the sport. Whether you're picking up
             a paddle for the first time or you've been playing for years and want a clean second set,
             you'll find something here.
