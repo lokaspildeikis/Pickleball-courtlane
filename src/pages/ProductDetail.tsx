@@ -22,6 +22,7 @@ type VariantNode = Product['variants']['edges'][number]['node'];
 type VariantOption = { name: string; value: string };
 
 const FALLBACK_OPTION_NAMES = ['Ball color', 'Sweatband color', 'Towel color'];
+const PRODUCT_POPUP_DISMISS_TTL_MS = 12 * 60 * 60 * 1000;
 const VISIBLE_THUMBNAILS = 5;
 
 function extractVariantOptions(variant: VariantNode): VariantOption[] {
@@ -643,6 +644,9 @@ export function ProductDetail() {
                 {combinationUnavailable ? 'Sold Out' : 'Add to Cart'}
               </Button>
             </div>
+            <p className="mt-3 text-xs text-gray-500 text-center tracking-wide">
+              1–3 Day Processing · Free Shipping · 30-Day Money-Back
+            </p>
             <div className="mt-4 rounded-sm border border-gray-200 bg-gray-50 p-3 sm:p-4">
               <TrustPointsRow points={TRUST_POINTS.productCta} />
               <CheckoutPaymentMethods />

@@ -74,12 +74,12 @@ export function Shop() {
         const tags = p.tags.map((tag) => tag.trim().toLowerCase());
         const minPrice = parseFloat(p.priceRange.minVariantPrice.amount);
 
-        if (currentIntent === 'beginner') {
-          return tags.some((tag) => ['beginner', 'starter', 'essentials', 'bundle'].includes(tag));
+        if (currentIntent === 'beginner' || currentIntent === 'starter-kits') {
+          return tags.some((tag) => ['beginner', 'starter', 'essentials', 'bundle', 'bundles'].includes(tag));
         }
 
         if (currentIntent === 'budget') {
-          return minPrice <= 25;
+          return minPrice <= 30;
         }
 
         return true;
@@ -160,7 +160,7 @@ export function Shop() {
            currentFilter === 'backpacks' ? 'Court Backpacks' :
            currentFilter.charAt(0).toUpperCase() + currentFilter.slice(1)}
         </h1>
-        <p className="text-gray-500 max-w-2xl">
+        <p className="text-gray-600 max-w-2xl">
           Everything you need to start playing pickleball. Start with a Starter Kit if you're new — it has the paddle, balls, and bag in one box. Or shop individual essentials below.
         </p>
       </div>
@@ -236,9 +236,9 @@ export function Shop() {
       <div className="mb-8 flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">Quick picks:</span>
         <button
-          onClick={() => handleFilterChange('bundles')}
+          onClick={() => handleIntentChange('starter-kits')}
           className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wide transition-colors ${
-            currentFilter === 'bundles'
+            currentIntent === 'starter-kits'
               ? 'border-teal-700 bg-teal-50 text-teal-800'
               : 'border-gray-300 text-gray-700 hover:border-gray-400'
           }`}

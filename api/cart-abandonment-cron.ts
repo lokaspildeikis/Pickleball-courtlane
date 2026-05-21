@@ -74,7 +74,9 @@ function isDue(updatedAtIso: string, delayMs: number): boolean {
 }
 
 function shouldSuppress(record: any): boolean {
-  return Boolean(record?.completedAt || record?.checkoutStartedAt);
+  // Keep reminders active for started checkouts (including signed-in buyers)
+  // and suppress only once the order is actually completed.
+  return Boolean(record?.completedAt);
 }
 
 function formatCurrency(value: number, currency: string): string {

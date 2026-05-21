@@ -87,13 +87,12 @@ export function Home() {
   return (
     <div>
       <PageMeta
-        title="Courtlane — Pickleball Starter Kits for Beginners"
-        description="Everything you need to start playing pickleball. One kit with paddle, balls, and bag. Ships in 3 days. Built for new players who want to skip the research and get on the court."
+        title="Courtlane — Everything you need to start playing pickleball"
+        description="Paddle, balls, and bag in one complete starter kit. Free shipping, 30-day money-back guarantee. Built for new players who want to skip the research and get on the court."
         canonicalPath="/"
       />
       {/* Hero Section */}
       <section className="relative bg-gray-900 text-white overflow-hidden">
-        {/* TODO: replace with on-brand Courtlane photography (avoid stock that reads as generic template). */}
         <div className="absolute inset-0 z-0">
           <img 
             src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Pickleball_Pros.jpg" 
@@ -107,14 +106,14 @@ export function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-10">
             <div className="lg:col-span-7 max-w-2xl">
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-tight">
-              Everything You Need to <span className="text-teal-400 md:text-teal-500">Start Playing Pickleball</span>
+              Everything You Need to <span className="text-teal-400 md:text-teal-500">Start Playing Pickleball.</span>
             </h1>
             <p className="text-base md:text-xl text-gray-300 mb-8 max-w-lg">
-              Complete starter kits, beginner-friendly gear, and free shipping on every order.
+              Paddle, balls, and bag in one complete kit. Ships in 3 days, delivered in under a week. Built for new players who want to skip the research and get on the court.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/shop?filter=bundles">
-                <Button size="lg" className="w-full sm:w-auto">Shop Starter Kits</Button>
+                <Button size="lg" className="w-full sm:w-auto">Shop Starter Kits — From $97</Button>
               </Link>
               <a href="#how-it-works">
                 <span className="inline-flex items-center h-full text-sm font-semibold uppercase tracking-wide text-gray-200 hover:text-white transition-colors">
@@ -122,7 +121,7 @@ export function Home() {
                 </span>
               </a>
             </div>
-            <p className="mt-3 text-xs uppercase tracking-wide text-gray-300">
+            <p className="mt-4 text-xs tracking-wide text-gray-400">
               30-Day Money-Back · Free Shipping · 1–3 Day Processing
             </p>
             <div className="mt-6 lg:hidden">
@@ -213,6 +212,10 @@ export function Home() {
         </div>
       </section>
 
+
+
+      <HomeBrandStory />
+
       {/* Store confidence strip */}
       <section className="bg-teal-900 text-teal-50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -221,7 +224,7 @@ export function Home() {
               <span className="text-sm font-medium uppercase tracking-wide">Secure Checkout</span>
             </div>
             <div className="pt-4 md:pt-0">
-              <span className="text-sm font-medium uppercase tracking-wide">Free Shipping on Every Order</span>
+              <span className="text-sm font-medium uppercase tracking-wide">Free Shipping on All Orders</span>
             </div>
             <div className="pt-4 md:pt-0">
               <span className="text-sm font-medium uppercase tracking-wide">30-Day Money-Back Guarantee</span>
@@ -270,7 +273,8 @@ export function Home() {
         </div>
       </section>
 
-      <section className="bg-white py-12 md:py-16 border-b border-gray-200" id="how-it-works">
+      {/* What is Pickleball — moved below Best Sellers so shop content shows first */}
+      <section id="how-it-works" className="bg-white py-12 md:py-16 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
@@ -305,24 +309,17 @@ export function Home() {
         </div>
       </section>
 
-      <HomeBrandStory />
-
       <section className="bg-teal-700 text-white py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-100 mb-1">On sale now</p>
-            <h3 className="text-2xl md:text-3xl font-black uppercase italic">Skip the guesswork. Start with one bundle.</h3>
-            <p className="text-teal-100 mt-2">Your fastest path from browsing to getting court-ready gear.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-100 mb-1">For new players</p>
+            <h3 className="text-2xl md:text-3xl font-black uppercase italic">Skip the guesswork. Start with one kit.</h3>
+            <p className="text-teal-100 mt-2">Paddle, balls, and bag — everything in one box, ready to play.</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
-            <Link to={starterBundleHref}>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto border-white text-white hover:bg-teal-600 hover:text-white">
-                See the Performance Bundle
-              </Button>
-            </Link>
             <Link to="/shop?filter=bundles">
               <Button size="lg" className="w-full sm:w-auto bg-teal-900 text-white hover:bg-teal-950">
-                Shop All Bundles
+                Shop Starter Kits
               </Button>
             </Link>
           </div>

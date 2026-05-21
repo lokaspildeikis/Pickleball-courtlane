@@ -9,7 +9,7 @@ export const BRAND_NAME = "Courtlane";
 
 /** Short line used in the footer (and anywhere else you need a one-line blurb). */
 export const FOOTER_BRAND_BLURB =
-  "Pickleball accessories and essentials for recreational to competitive players—clear info, performance gear, and email support when you need it.";
+  "A beginner-friendly pickleball shop. One kit — paddle, balls, and bag — so you can stop researching and start playing.";
 
 /** Homepage: compact credibility block above the fold area (keep brief). */
 export const HOME_BRAND_STORY = {
@@ -17,12 +17,12 @@ export const HOME_BRAND_STORY = {
   heading: "Built for real court days",
   paragraphs: [
     "Courtlane is a beginner-friendly pickleball shop. We put together the gear new players actually need — a quality paddle, real outdoor balls, and a bag that holds it all — so you can stop researching and start playing.",
-    "No marketplace clutter, no spec overload. One straightforward kit, shipped to your door.",
+    "Clear descriptions, honest shipping timelines, and a 30-day money-back guarantee. No guesswork, no marketplace clutter.",
   ] as const,
-  readMoreLabel: "Our Story",
-  readMoreHref: "/our-story",
-  shopCtaLabel: "Shop essentials",
-  shopHref: "/shop",
+  readMoreLabel: "About Courtlane",
+  readMoreHref: "/about",
+  shopCtaLabel: "Shop Starter Kits",
+  shopHref: "/shop?filter=bundles",
 };
 
 /** Full About page — sections map to the page layout in About.tsx */

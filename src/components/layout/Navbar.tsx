@@ -10,16 +10,10 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-100">
       <div className="bg-teal-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-3">
-          <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wide">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-center gap-3">
+          <p className="text-[11px] sm:text-xs font-medium tracking-wide text-center">
             Free shipping on every order · 30-day money-back guarantee
           </p>
-          <Link
-            to="/shop"
-            className="text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-amber-200 hover:text-amber-100 transition-colors whitespace-nowrap"
-          >
-            Shop now
-          </Link>
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
