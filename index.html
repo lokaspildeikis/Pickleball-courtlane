@@ -64,6 +64,34 @@
       'https://connect.facebook.net/en_US/fbevents.js');
       fbq('init', '4195644437414374');
       fbq('track', 'PageView');
+
+      (function() {
+        var lastTrackedUrl = window.location.pathname + window.location.search + window.location.hash;
+        function trackRoutePageView() {
+          if (!window.fbq) return;
+          var nextUrl = window.location.pathname + window.location.search + window.location.hash;
+          if (nextUrl === lastTrackedUrl) return;
+          lastTrackedUrl = nextUrl;
+          window.fbq('track', 'PageView');
+        }
+
+        var originalPushState = history.pushState;
+        history.pushState = function() {
+          var result = originalPushState.apply(this, arguments);
+          trackRoutePageView();
+          return result;
+        };
+
+        var originalReplaceState = history.replaceState;
+        history.replaceState = function() {
+          var result = originalReplaceState.apply(this, arguments);
+          trackRoutePageView();
+          return result;
+        };
+
+        window.addEventListener('popstate', trackRoutePageView);
+        window.addEventListener('hashchange', trackRoutePageView);
+      })();
     </script>
     <!-- End Meta Pixel Code -->
   </head>

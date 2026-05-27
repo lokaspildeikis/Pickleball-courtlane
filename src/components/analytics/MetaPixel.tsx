@@ -29,47 +29,17 @@ type VisitorState = {
   visitCount: number;
 };
 
-function generateEventId(): string {
-  try {
-    return crypto.randomUUID();
-  } catch {
-    return `${Date.now()}${Math.random().toString(36).slice(2)}`;
-  }
-}
-
-function readCookie(name: string): string | undefined {
-  if (typeof document === 'undefined') return undefined;
-  const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
-  return m ? decodeURIComponent(m[1]) : undefined;
-}
-
-function sendCapi(eventName: string, eventId: string, sourceUrl: string, customData?: PixelParams): void {
-  if (typeof fetch === 'undefined') return;
-  fetch('/api/meta-capi', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    keepalive: true,
-    body: JSON.stringify({
-      eventName,
-      eventId,
-      sourceUrl,
-      customData,
-      fbp: readCookie('_fbp'),
-      fbc: readCookie('_fbc'),
-    }),
-  }).catch(() => {});
-}
-
 function track(eventName: string, params?: PixelParams): void {
   if (typeof window === 'undefined') return;
-  const eventId = generateEventId();
-  const sourceUrl = window.location.href;
-  if (window.fbq) {
-    window.fbq('track', eventName, params ?? {}, { eventID: eventId });
-  } else {
+  if (!window.fbq) {
     trackFallback(eventName, params);
+    return;
   }
-  sendCapi(eventName, eventId, sourceUrl, params);
+  if (params) {
+    window.fbq('track', eventName, params);
+    return;
+  }
+  window.fbq('track', eventName);
 }
 
 export function trackViewContent(params: PixelParams): void {
@@ -86,14 +56,15 @@ export function trackInitiateCheckout(params: PixelParams): void {
 
 export function trackCustomEvent(eventName: string, params?: PixelParams): void {
   if (typeof window === 'undefined') return;
-  const eventId = generateEventId();
-  const sourceUrl = window.location.href;
-  if (window.fbq) {
-    window.fbq('trackCustom', eventName, params ?? {}, { eventID: eventId });
-  } else {
+  if (!window.fbq) {
     trackFallback(eventName, params);
+    return;
   }
-  sendCapi(eventName, eventId, sourceUrl, params);
+  if (params) {
+    window.fbq('trackCustom', eventName, params);
+    return;
+  }
+  window.fbq('trackCustom', eventName);
 }
 
 function trackFallback(eventName: string, params?: PixelParams): void {
@@ -214,7 +185,6 @@ export function MetaPixel() {
   const location = useLocation();
   const hasTrackedVisitorType = useRef(false);
   const lastProcessedRouteRef = useRef<string>('');
-  const isFirstRender = useRef(true);
 
   useEffect(() => {
     if (hasTrackedVisitorType.current) return;
@@ -225,16 +195,6 @@ export function MetaPixel() {
   useEffect(() => {
     const routeKey = `${location.pathname}${location.search}`;
     if (lastProcessedRouteRef.current === routeKey) return;
-
-    // index.html fires PageView for the initial load — only mirror route changes to CAPI+pixel
-    if (!isFirstRender.current) {
-      const pageViewId = generateEventId();
-      if (window.fbq) {
-        window.fbq('track', 'PageView', {}, { eventID: pageViewId });
-      }
-      sendCapi('PageView', pageViewId, window.location.href);
-    }
-    isFirstRender.current = false;
 
     const processRouteEvents = () => {
       if (!window.fbq) return false;
