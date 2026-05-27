@@ -21,7 +21,7 @@ type MetaPixelFbq = {
 type PixelParams = Record<string, unknown>;
 const VISITOR_STATE_KEY = 'pb_visitor_state_v1';
 const PURCHASE_TRACKED_PREFIX = 'pb_purchase_tracked_';
-const META_PIXEL_ID = '4195644437414374';
+const META_PIXEL_ID = '1620809536712172';
 
 type VisitorState = {
   firstSeenAt: string;
