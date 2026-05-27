@@ -1,4 +1,4 @@
-const META_PIXEL_ID = '1620809536712172';
+const META_PIXEL_ID = '4195644437414374';
 
 function json(res: any, status: number, body: Record<string, unknown>) {
   res.setHeader('Access-Control-Allow-Origin', '*');
