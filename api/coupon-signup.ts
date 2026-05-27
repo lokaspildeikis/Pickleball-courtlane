@@ -1,4 +1,31 @@
 import nodemailer from 'nodemailer';
+import { createHash } from 'crypto';
+
+const META_PIXEL_ID = '4195644437414374';
+
+async function sendCapiLead(email: string, sourceUrl: string): Promise<void> {
+  const token = process.env.META_ACCESS_TOKEN?.trim();
+  if (!token) return;
+  try {
+    const hashedEmail = createHash('sha256').update(email.toLowerCase().trim()).digest('hex');
+    await fetch(`https://graph.facebook.com/v19.0/${META_PIXEL_ID}/events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        data: [{
+          event_name: 'Lead',
+          event_time: Math.floor(Date.now() / 1000),
+          action_source: 'website',
+          event_source_url: sourceUrl,
+          user_data: { em: hashedEmail },
+        }],
+        access_token: token,
+      }),
+    });
+  } catch (err) {
+    console.error('Meta CAPI Lead event failed (signup still OK):', err);
+  }
+}
 
 function json(res: any, status: number, body: Record<string, unknown>) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -191,6 +218,7 @@ export default async function handler(req: any, res: any) {
     });
 
     await recordMarketingSubscriber(email);
+    sendCapiLead(email, shopUrl).catch(() => {});
 
     if (adminNotifyEmail) {
       const timestamp = new Date().toISOString();
