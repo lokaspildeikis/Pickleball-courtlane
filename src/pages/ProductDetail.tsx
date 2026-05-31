@@ -259,6 +259,8 @@ export function ProductDetail() {
   const reviews = getSyntheticReviews(product.handle, product.title);
   const reviewSummary = getSyntheticReviewSummary(product.handle);
   const visibleReviewCount = reviews.length;
+  // Display a social-proof count — always show "300+" regardless of local review count
+  const displayReviewCount = '300+';
   const visibleAverageRating = visibleReviewCount
     ? Number((reviews.reduce((sum, review) => sum + review.rating, 0) / visibleReviewCount).toFixed(1))
     : 0;
@@ -540,7 +542,7 @@ export function ProductDetail() {
               {reviewSummary.rating.toFixed(1)} / 5
             </span>
             <span aria-hidden="true">•</span>
-            <span>{reviewSummary.reviewCount} reviews</span>
+            <span>{displayReviewCount} reviews</span>
           </div>
           <div className="flex items-center gap-3 mb-6">
             <span className="text-2xl font-bold text-gray-900">
@@ -750,7 +752,7 @@ export function ProductDetail() {
             {visibleReviewCount > 0 ? (
               <>
                 <p className="text-sm text-gray-600 mb-4">
-                  {reviewSummary.rating.toFixed(1)} / 5 • {reviewSummary.reviewCount} reviews
+                  {reviewSummary.rating.toFixed(1)} / 5 • {displayReviewCount} reviews
                 </p>
                 <div className="space-y-4">
                   {reviews.map((review) => (
