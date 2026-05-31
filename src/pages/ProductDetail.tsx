@@ -1,10 +1,11 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProduct, getProducts, Product } from '../lib/shopify';
 import { useCart } from '../context/CartContext';
 import { Button } from '../components/ui/Button';
 import { ProductDescription } from '../components/product/ProductDescription';
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, Zap, Shield, Star, CheckCircle, Package, Wind, Award, Layers, Clock, Repeat, Droplets, Thermometer, Tag, Users } from 'lucide-react';
+import { getProductBullets, BulletIcon } from '../lib/productBullets';
 import { getSyntheticReviewSummary, getSyntheticReviews } from '../lib/syntheticReviews';
 import { TRUST_POINTS, POLICY_SNIPPETS, SUPPORT_EMAIL } from '../lib/trustContent';
 import { TrustPointsRow } from '../components/trust/TrustPointsRow';
@@ -554,9 +555,43 @@ export function ProductDetail() {
           <p className="text-sm text-gray-700 mb-3">
             Estimated delivery: {estimatedDeliveryRange}
           </p>
-          <p className={`text-sm mb-6 ${selectedVariant.availableForSale ? 'text-emerald-700' : 'text-gray-500'}`}>
+          <p className={`text-sm mb-4 ${selectedVariant.availableForSale ? 'text-emerald-700' : 'text-gray-500'}`}>
             {selectedVariant.availableForSale ? 'In stock and ready to process.' : 'Currently out of stock.'}
           </p>
+
+          {/* Product bullet highlights */}
+          {(() => {
+            const iconMap: Record<BulletIcon, React.ReactNode> = {
+              Zap:         <Zap className="w-4 h-4" />,
+              Shield:      <Shield className="w-4 h-4" />,
+              Star:        <Star className="w-4 h-4" />,
+              CheckCircle: <CheckCircle className="w-4 h-4" />,
+              Package:     <Package className="w-4 h-4" />,
+              Wind:        <Wind className="w-4 h-4" />,
+              Award:       <Award className="w-4 h-4" />,
+              Layers:      <Layers className="w-4 h-4" />,
+              Grip:        <Zap className="w-4 h-4" />,
+              Clock:       <Clock className="w-4 h-4" />,
+              Repeat:      <Repeat className="w-4 h-4" />,
+              Droplets:    <Droplets className="w-4 h-4" />,
+              Thermometer: <Thermometer className="w-4 h-4" />,
+              Tag:         <Tag className="w-4 h-4" />,
+              Users:       <Users className="w-4 h-4" />,
+            };
+            return (
+              <ul className="mb-6 space-y-2.5">
+                {getProductBullets(product.handle).map((bullet, i) => (
+                  <li key={i} className="flex items-center gap-3 text-sm text-gray-800">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-teal-50 text-teal-700 shrink-0">
+                      {iconMap[bullet.icon]}
+                    </span>
+                    <span className="font-medium">{bullet.label}</span>
+                  </li>
+                ))}
+              </ul>
+            );
+          })()}
+
           <TrustBar className="mb-6" />
 
           <div className="mb-6 rounded-sm border border-gray-200 bg-gray-50 p-4 space-y-2">
